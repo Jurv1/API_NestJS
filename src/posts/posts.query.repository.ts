@@ -52,13 +52,7 @@ export class PostQ {
             likesCount: 0,
             dislikesCount: 0,
             myStatus: 'None',
-            newestLikes: [
-              {
-                addedAt: '2023-05-02T20:33:06.537Z',
-                userId: 'string',
-                login: 'string',
-              },
-            ],
+            newestLikes: [],
           },
           createdAt: el.createdAt,
         },
@@ -80,13 +74,7 @@ export class PostQ {
         likesCount: 0,
         dislikesCount: 0,
         myStatus: 'None',
-        newestLikes: [
-          {
-            addedAt: '2023-05-02T20:33:06.537Z',
-            userId: 'string',
-            login: 'string',
-          },
-        ],
+        newestLikes: [],
       },
       createdAt: result.createdAt,
     };
@@ -128,13 +116,7 @@ export class PostQ {
             likesCount: 0,
             dislikesCount: 0,
             myStatus: 'None',
-            newestLikes: [
-              {
-                addedAt: '2023-05-02T20:33:06.537Z',
-                userId: 'string',
-                login: 'string',
-              },
-            ],
+            newestLikes: [],
           },
           createdAt: el.createdAt,
         },

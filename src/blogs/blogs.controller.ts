@@ -61,7 +61,7 @@ export class BlogController {
           createdAt: result.createdAt,
         };
       }
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -137,7 +137,7 @@ export class BlogController {
         };
       }
 
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
       // result
       //   ? res.status(201).send(mapPost(result))
       //   : res.status(404).json({
