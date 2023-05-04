@@ -70,7 +70,7 @@ export class PostQ {
     const result = await this.postModel.findOne({ _id: id });
 
     return {
-      id: result._id.toString(),
+      id: result.id.toString(),
       title: result.title,
       shortDescription: result.shortDescription,
       content: result.content,
