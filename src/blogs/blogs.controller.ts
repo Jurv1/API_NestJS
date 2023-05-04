@@ -17,10 +17,19 @@ import { makePagination } from '../utils/make.paggination';
 import { Errors } from '../utils/handle.error';
 import { BlogBody } from './dto/blog.body';
 import { BlogQueryParams } from './dto/blog.query.params';
+import { PostBodyWithoutBlogId } from '../posts/dto/post.body.without.blogId';
+import { PostService } from '../posts/posts.service';
+import { PostQuery } from '../posts/dto/post.query';
+import { PostQ } from '../posts/posts.query.repository';
 
 @Controller('blogs')
 export class BlogController {
-  constructor(protected blogService: BlogService, protected blogQ: BlogQ) {}
+  constructor(
+    protected blogService: BlogService,
+    protected blogQ: BlogQ,
+    protected postService: PostService,
+    protected postQ: PostQ,
+  ) {}
   @Get()
   async getAll(@Query() query: BlogQueryParams) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
@@ -59,6 +68,21 @@ export class BlogController {
     }
   }
 
+  @Get(':id/posts')
+  async getPostsByBlogId(@Param() id, @Query() query: PostQuery) {
+    const { sortBy, sortDirection, pageNumber, pageSize } = query;
+
+    const sort = queryValidator(sortBy, sortDirection);
+    const pagination = makePagination(pageNumber, pageSize);
+
+    try {
+      return await this.postQ.getAllPostsByBlogId(id.id, sort, pagination);
+    } catch (err) {
+      console.log(err);
+      throw new Errors.NOT_FOUND();
+    }
+  }
+
   @Post()
   async createOne(@Body() body: BlogBody) {
     const { name, description, websiteUrl } = body;
@@ -84,7 +108,53 @@ export class BlogController {
       throw new Errors.NOT_FOUND();
     }
   }
+  @Post(':id/posts')
+  async createOneByBlogId(@Param() id, @Body() body: PostBodyWithoutBlogId) {
+    const { title, shortDescription, content } = body;
+    try {
+      const result = await this.postService.createOnePostByBlogId(
+        title,
+        shortDescription,
+        content,
+        id.id,
+      );
 
+      if (result) {
+        return {
+          id: result._id.toString(),
+          title: result.title,
+          shortDescription: result.shortDescription,
+          content: result.content,
+          blogId: result.blogId,
+          blogName: result.blogName,
+          extendedLikesInfo: {
+            likesCount: result.extendedLikesInfo.likesCount,
+            dislikesCount: result.extendedLikesInfo.dislikesCount,
+            myStatus: result.extendedLikesInfo.myStatus,
+            newestLikes: result.extendedLikesInfo.newestLikes || [],
+          },
+          createdAt: result.createdAt,
+        };
+      }
+
+      return new Errors.NOT_FOUND();
+      // result
+      //   ? res.status(201).send(mapPost(result))
+      //   : res.status(404).json({
+      //       errorsMessages: [
+      //         {
+      //           message: 'No such blog',
+      //           field: 'blogId',
+      //         },
+      //       ],
+      //     });
+    } catch (err) {
+      console.log(err);
+      throw new Errors.NOT_FOUND();
+    }
+  }
+
+  @HttpCode(204)
   @Put(':id')
   async updateOne(@Param() id, @Body() body: BlogBody) {
     const { name, description, websiteUrl } = body;

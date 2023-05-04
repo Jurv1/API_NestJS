@@ -16,7 +16,6 @@ import { PostService } from './posts.service';
 import { PostQ } from './posts.query.repository';
 import { Errors } from '../utils/handle.error';
 import { PostBodyBlogId } from './dto/post.body.blogId';
-import { PostBodyWithoutBlogId } from './dto/post.body.without.blogId';
 import { PostQuery } from './dto/post.query';
 
 @Controller('posts')
@@ -49,21 +48,6 @@ export class PostController {
       } else {
         return new Errors.NOT_FOUND();
       }
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
-    }
-  }
-
-  @Get(':id/posts')
-  async getPostsByBlogId(@Param() id, @Query() query: PostQuery) {
-    const { sortBy, sortDirection, pageNumber, pageSize } = query;
-
-    const sort = queryValidator(sortBy, sortDirection);
-    const pagination = makePagination(pageNumber, pageSize);
-
-    try {
-      return await this.postQ.getAllPostsByBlogId(id.id, sort, pagination);
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -137,52 +121,7 @@ export class PostController {
     }
   }
 
-  @Post(':id/posts')
-  async createOneByBlogId(@Param() id, @Body() body: PostBodyWithoutBlogId) {
-    const { title, shortDescription, content } = body;
-    try {
-      const result = await this.postService.createOnePostByBlogId(
-        title,
-        shortDescription,
-        content,
-        id.id,
-      );
-
-      if (result) {
-        return {
-          id: result._id.toString(),
-          title: result.title,
-          shortDescription: result.shortDescription,
-          content: result.content,
-          blogId: result.blogId,
-          blogName: result.blogName,
-          extendedLikesInfo: {
-            likesCount: result.extendedLikesInfo.likesCount,
-            dislikesCount: result.extendedLikesInfo.dislikesCount,
-            myStatus: result.extendedLikesInfo.myStatus,
-            newestLikes: result.extendedLikesInfo.newestLikes || [],
-          },
-          createdAt: result.createdAt,
-        };
-      }
-
-      return new Errors.NOT_FOUND();
-      // result
-      //   ? res.status(201).send(mapPost(result))
-      //   : res.status(404).json({
-      //       errorsMessages: [
-      //         {
-      //           message: 'No such blog',
-      //           field: 'blogId',
-      //         },
-      //       ],
-      //     });
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
-    }
-  }
-
+  @HttpCode(204)
   @Put(':id')
   async updateOne(@Param() id, @Body() body: PostBodyBlogId) {
     try {

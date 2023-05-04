@@ -29,7 +29,13 @@ export class PostService {
           likesCount: 0,
           dislikesCount: 0,
           myStatus: 'None',
-          newestLikes: [],
+          newestLikes: [
+            {
+              addedAt: '2023-05-02T20:33:06.537Z',
+              login: 'string',
+              userId: 'string',
+            },
+          ],
         },
         createdAt: new Date().toISOString(),
       };
@@ -59,7 +65,13 @@ export class PostService {
           likesCount: 0,
           dislikesCount: 0,
           myStatus: 'None',
-          newestLikes: [],
+          newestLikes: [
+            {
+              addedAt: '2023-05-02T20:33:06.537Z',
+              login: 'string',
+              userId: 'string',
+            },
+          ],
         },
         createdAt: new Date().toISOString(),
       };
