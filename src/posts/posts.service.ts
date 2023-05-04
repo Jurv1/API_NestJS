@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { BlogQ } from '../blogs/blogs.query.repository';
-import { PostQ } from './posts.query.repository';
 import { PostsRepository } from './posts.repository';
 
 @Injectable()
@@ -29,13 +28,7 @@ export class PostService {
           likesCount: 0,
           dislikesCount: 0,
           myStatus: 'None',
-          newestLikes: [
-            {
-              addedAt: '2023-05-02T20:33:06.537Z',
-              login: 'string',
-              userId: 'string',
-            },
-          ],
+          newestLikes: [],
         },
         createdAt: new Date().toISOString(),
       };
@@ -65,13 +58,7 @@ export class PostService {
           likesCount: 0,
           dislikesCount: 0,
           myStatus: 'None',
-          newestLikes: [
-            {
-              addedAt: '2023-05-02T20:33:06.537Z',
-              login: 'string',
-              userId: 'string',
-            },
-          ],
+          newestLikes: [],
         },
         createdAt: new Date().toISOString(),
       };

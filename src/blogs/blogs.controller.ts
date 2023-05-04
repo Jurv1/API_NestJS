@@ -76,6 +76,8 @@ export class BlogController {
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
+      const blog = await this.blogQ.getOneBlog(id.id);
+      if (!blog) throw new Errors.NOT_FOUND();
       return await this.postQ.getAllPostsByBlogId(id.id, sort, pagination);
     } catch (err) {
       console.log(err);

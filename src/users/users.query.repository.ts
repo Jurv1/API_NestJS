@@ -33,7 +33,7 @@ export class UserQ {
       totalCount: countDocs,
       items: allUsers.map((el) => {
         return {
-          id: el.id,
+          id: el._id,
           login: el.accountData.login,
           email: el.accountData.email,
           createdAt: el.accountData.createdAt,
