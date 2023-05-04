@@ -40,8 +40,8 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: allPosts.map((el) => [
-        {
+      items: allPosts.map((el) => {
+        return {
           id: el._id.toString(),
           title: el.title,
           shortDescription: el.shortDescription,
@@ -55,8 +55,8 @@ export class PostQ {
             newestLikes: [],
           },
           createdAt: el.createdAt,
-        },
-      ]),
+        };
+      }),
     };
   }
 
@@ -104,8 +104,8 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDoc,
-      items: allPosts.map((el) => [
-        {
+      items: allPosts.map((el) => {
+        return {
           id: el._id.toString(),
           title: el.title,
           shortDescription: el.shortDescription,
@@ -119,8 +119,8 @@ export class PostQ {
             newestLikes: [],
           },
           createdAt: el.createdAt,
-        },
-      ]),
+        };
+      }),
     };
   }
 

@@ -102,7 +102,9 @@ export class BlogController {
           isMembership: result.isMembership,
           createdAt: result.createdAt,
         };
-      } else return new Errors.NOT_FOUND();
+      } else {
+        throw new Errors.NOT_FOUND();
+      }
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();

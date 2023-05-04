@@ -31,14 +31,14 @@ export class UserQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: allUsers.map((el) => [
-        {
-          id: el._id,
+      items: allUsers.map((el) => {
+        return {
+          id: el.id,
           login: el.accountData.login,
           email: el.accountData.email,
           createdAt: el.accountData.createdAt,
-        },
-      ]),
+        };
+      }),
     };
   }
 }

@@ -31,16 +31,16 @@ export class BlogQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: allBlogs.map((el) => [
-        {
+      items: allBlogs.map((el) => {
+        return {
           id: el._id.toString(),
           name: el.name,
           description: el.description,
           websiteUrl: el.websiteUrl,
           isMembership: el.isMembership,
           createdAt: el.createdAt,
-        },
-      ]),
+        };
+      }),
     };
   }
 
