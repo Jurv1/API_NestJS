@@ -98,11 +98,7 @@ export class PostController {
             likesCount: result.extendedLikesInfo.likesCount,
             dislikesCount: result.extendedLikesInfo.dislikesCount,
             myStatus: result.extendedLikesInfo.myStatus,
-            newestLikes: {
-              addedAt: '2023-05-02T20:33:06.537Z',
-              login: 'string',
-              userId: 'string',
-            },
+            newestLikes: [],
           },
           createdAt: result.createdAt,
         };
