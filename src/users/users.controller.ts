@@ -16,6 +16,7 @@ import { makePagination } from '../utils/make.paggination';
 import { Errors } from '../utils/handle.error';
 import { UserBody } from './dto/user.body';
 import { UserQuery } from './dto/user.query';
+import { SortOrder } from 'mongoose';
 
 @Controller('users')
 export class UsersController {
@@ -32,7 +33,16 @@ export class UsersController {
       pageSize,
     } = query;
 
-    const sort = queryValidator(sortBy, sortDirection);
+    const sorting = sortBy || 'createdAt';
+    const sortingObj: { [key: string]: SortOrder } = {
+      [`accountData.${sorting}`]: 'desc',
+    };
+
+    if (sortDirection === 'asc') {
+      sortingObj[`accountData.${sorting}`] = 'asc';
+    }
+
+    //const sort = queryValidator(sorting, sortDirection);
     const filter = filterQueryValid(
       undefined,
       searchLoginTerm,
@@ -41,7 +51,11 @@ export class UsersController {
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      const allUsers = await this.userQ.getAllUsers(filter, sort, pagination);
+      const allUsers = await this.userQ.getAllUsers(
+        filter,
+        sortingObj,
+        pagination,
+      );
 
       if (!allUsers) {
         return new Errors.NOT_FOUND();
