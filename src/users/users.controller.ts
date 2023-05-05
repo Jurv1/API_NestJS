@@ -25,15 +25,23 @@ export class UsersController {
 
   @Get()
   async getAll(@Query() query: UserQuery) {
-    const {
+    let {
+      // eslint-disable-next-line prefer-const
       searchLoginTerm,
+      // eslint-disable-next-line prefer-const
       searchEmailTerm,
       sortBy,
+      // eslint-disable-next-line prefer-const
       sortDirection,
+      // eslint-disable-next-line prefer-const
       pageNumber,
+      // eslint-disable-next-line prefer-const
       pageSize,
     } = query;
 
+    if (typeof sortBy === 'undefined') {
+      sortBy = 'createdAt';
+    }
     const filter: FilterQuery<UserDocument> = {};
 
     if (searchLoginTerm || searchEmailTerm) {
@@ -69,6 +77,7 @@ export class UsersController {
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
+      console.log(filter, sortingObj, pagination);
       const allUsers = await this.userQ.getAllUsers(
         filter,
         sortingObj,
