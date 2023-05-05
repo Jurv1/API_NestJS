@@ -77,7 +77,6 @@ export class UsersController {
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      console.log(filter, sortingObj, pagination);
       const allUsers = await this.userQ.getAllUsers(
         filter,
         sortingObj,
