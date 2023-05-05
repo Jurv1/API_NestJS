@@ -16,7 +16,8 @@ import { makePagination } from '../utils/make.paggination';
 import { Errors } from '../utils/handle.error';
 import { UserBody } from './dto/user.body';
 import { UserQuery } from './dto/user.query';
-import { SortOrder } from 'mongoose';
+import { FilterQuery, SortOrder } from 'mongoose';
+import { UserDocument } from './schemas/users.database.schema';
 
 @Controller('users')
 export class UsersController {
@@ -33,21 +34,38 @@ export class UsersController {
       pageSize,
     } = query;
 
-    const sorting = sortBy || 'createdAt';
+    const filter: FilterQuery<UserDocument> = {};
+
+    if (searchLoginTerm || searchEmailTerm) {
+      filter.$or = [];
+
+      if (searchLoginTerm) {
+        filter.$or.push({
+          'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
+        });
+      }
+
+      if (searchEmailTerm) {
+        filter.$or.push({
+          'accountData.email': { $regex: searchEmailTerm, $options: 'i' },
+        });
+      }
+    }
+
     const sortingObj: { [key: string]: SortOrder } = {
-      [`accountData.${sorting}`]: 'desc',
+      [`accountData.${sortBy}`]: 'desc',
     };
 
     if (sortDirection === 'asc') {
-      sortingObj[`accountData.${sorting}`] = 'asc';
+      sortingObj[`accountData.${sortBy}`] = 'asc';
     }
 
     //const sort = queryValidator(sorting, sortDirection);
-    const filter = filterQueryValid(
-      undefined,
-      searchLoginTerm,
-      searchEmailTerm,
-    );
+    // const filter = filterQueryValid(
+    //   undefined,
+    //   searchLoginTerm,
+    //   searchEmailTerm,
+    // );
     const pagination = makePagination(pageNumber, pageSize);
 
     try {

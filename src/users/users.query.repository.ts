@@ -7,7 +7,7 @@ import { User, UserDocument } from './schemas/users.database.schema';
 export class UserQ {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
   async getAllUsers(
-    filter: Document,
+    filter: any,
     sort: { [key: string]: SortOrder },
     pagination: {
       skipValue: number;
