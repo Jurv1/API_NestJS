@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import add from 'date-fns/add';
-import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { UserCreationDto } from './dto/user.creation.dto';
+import { UserDocument } from './schemas/users.database.schema';
 
 @Injectable()
 export class UsersService {
@@ -12,30 +12,19 @@ export class UsersService {
     email: string,
     password: string,
     confirmed: boolean,
-  ): Promise<any | null> {
-    console.log(bcrypt);
+  ): Promise<UserDocument | null> {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, passwordSalt);
 
-    const newUserTmp = {
-      accountData: {
-        login: login,
-        email: email,
-        password: passwordHash,
-        passwordSalt: passwordSalt,
-        createdAt: new Date().toISOString(),
-      },
-      emailConfirmation: {
-        confirmationCode: uuidv4(),
-        expirationDate: new Date(),
-        isConfirmed: confirmed,
-      },
-      passRecovery: {
-        recoveryCode: null,
-        expirationDate: null,
-      },
+    const userDto: UserCreationDto = {
+      login: login,
+      email: email,
+      passwordHash: passwordHash,
+      passwordSalt: passwordSalt,
+      isConfirmed: confirmed,
     };
-    return await this.usersRepository.createOne(newUserTmp);
+
+    return await this.usersRepository.createOne(userDto);
   }
 
   async deleteOneUser(id: string): Promise<boolean> {

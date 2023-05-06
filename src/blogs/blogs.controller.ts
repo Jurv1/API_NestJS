@@ -21,6 +21,7 @@ import { PostBodyWithoutBlogId } from '../posts/dto/post.body.without.blogId';
 import { PostService } from '../posts/posts.service';
 import { PostQuery } from '../posts/dto/post.query';
 import { PostQ } from '../posts/posts.query.repository';
+import { BlogDocument } from './schemas/blogs.database.schema';
 
 @Controller('blogs')
 export class BlogController {
@@ -31,7 +32,7 @@ export class BlogController {
     protected postQ: PostQ,
   ) {}
   @Get()
-  async getAll(@Query() query: BlogQueryParams) {
+  async getAll(@Query() query?: BlogQueryParams) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
@@ -90,7 +91,7 @@ export class BlogController {
     const { name, description, websiteUrl } = body;
 
     try {
-      const result = await this.blogService.createOneBlog(
+      const result: BlogDocument = await this.blogService.createOneBlog(
         name,
         description,
         websiteUrl,
@@ -116,7 +117,7 @@ export class BlogController {
   async createOneByBlogId(@Param() id, @Body() body: PostBodyWithoutBlogId) {
     const { title, shortDescription, content } = body;
     try {
-      const result = await this.postService.createOnePostByBlogId(
+      const result = await this.postService.createOnePost(
         title,
         shortDescription,
         content,
@@ -135,23 +136,13 @@ export class BlogController {
             likesCount: result.extendedLikesInfo.likesCount,
             dislikesCount: result.extendedLikesInfo.dislikesCount,
             myStatus: result.extendedLikesInfo.myStatus,
-            newestLikes: result.extendedLikesInfo.newestLikes || [],
+            newestLikes: [],
           },
           createdAt: result.createdAt,
         };
       }
 
       throw new Errors.NOT_FOUND();
-      // result
-      //   ? res.status(201).send(mapPost(result))
-      //   : res.status(404).json({
-      //       errorsMessages: [
-      //         {
-      //           message: 'No such blog',
-      //           field: 'blogId',
-      //         },
-      //       ],
-      //     });
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -164,8 +155,9 @@ export class BlogController {
     const { name, description, websiteUrl } = body;
 
     try {
+      const foundedBlog: BlogDocument = await this.blogQ.getOneBlog(id.id);
       const result = await this.blogService.updateOneBlog(
-        id.id,
+        foundedBlog,
         name,
         description,
         websiteUrl,

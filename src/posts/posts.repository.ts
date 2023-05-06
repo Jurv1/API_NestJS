@@ -1,35 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from './schemas/posts.database.schema';
-import { Model } from 'mongoose';
+import {
+  Post,
+  PostDocument,
+  PostModelType,
+} from './schemas/posts.database.schema';
+import { PostBodyBlogId } from './dto/post.body.blogId';
+import { BlogDocument } from '../blogs/schemas/blogs.database.schema';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
-  async createOne(newPostTmp: any): Promise<any | null> {
-    const resultId = await this.postModel.create(newPostTmp);
-    return this.postModel.findOne({ _id: resultId._id });
-  }
-
-  async updateOne(
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-  ): Promise<boolean> {
-    const updatedEl = await this.postModel.updateOne(
-      { _id: id },
-      {
-        $set: {
-          title: title,
-          shortDescription: shortDescription,
-          content: content,
-          blogId: blogId,
-        },
-      },
+  constructor(
+    @InjectModel(Post.name) private readonly postModel: PostModelType,
+  ) {}
+  async createOne(
+    postDto: PostBodyBlogId,
+    blog: BlogDocument,
+  ): Promise<PostDocument | null> {
+    const createdPost: PostDocument = await this.postModel.createPostWithBlogId(
+      postDto,
+      blog,
+      this.postModel,
     );
-    return updatedEl.matchedCount === 1;
+    await createdPost.save();
+    return createdPost;
   }
 
   async deleteOne(id: string): Promise<boolean> {

@@ -10,8 +10,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserQ } from './users.query.repository';
-import { queryValidator } from '../utils/sorting.func';
-import { filterQueryValid } from '../utils/query.validator';
 import { makePagination } from '../utils/make.paggination';
 import { Errors } from '../utils/handle.error';
 import { UserBody } from './dto/user.body';
@@ -98,7 +96,7 @@ export class UsersController {
   async createOne(@Body() body: UserBody) {
     const { login, email, password } = body;
     try {
-      const result = await this.userService.createOneUser(
+      const result: UserDocument = await this.userService.createOneUser(
         login,
         email,
         password,
@@ -111,8 +109,9 @@ export class UsersController {
           email: result.accountData.email,
           createdAt: result.accountData.createdAt,
         };
+      } else {
+        return new Errors.NOT_FOUND();
       }
-      return new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();

@@ -1,41 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument } from './schemas/blogs.database.schema';
-import { Model } from 'mongoose';
+import {
+  Blog,
+  BlogDocument,
+  BlogModelType,
+} from './schemas/blogs.database.schema';
+import { BlogBody } from './dto/blog.body';
 
 @Injectable()
 export class BlogsRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
-  async createOne(newBlogTmp: any): Promise<any | null> {
-    const createdBlog = new this.blogModel(newBlogTmp);
+  constructor(
+    @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
+  ) {}
+  async createOne(blogDto: BlogBody): Promise<any | null> {
+    const createdBlog: BlogDocument = await this.blogModel.createBlog(
+      blogDto,
+      this.blogModel,
+    );
     await createdBlog.save();
     return {
       id: createdBlog._id,
-      name: newBlogTmp.name,
-      description: newBlogTmp.description,
-      websiteUrl: newBlogTmp.websiteUrl,
-      createdAt: newBlogTmp.createdAt,
-      isMembership: newBlogTmp.isMembership,
+      name: createdBlog.name,
+      description: createdBlog.description,
+      websiteUrl: createdBlog.websiteUrl,
+      createdAt: createdBlog.createdAt,
+      isMembership: createdBlog.isMembership,
     };
   }
 
-  async updateOne(
-    id: string,
-    name: string,
-    description: string,
-    websiteUrl: string,
-  ): Promise<boolean> {
-    const updatedEl = await this.blogModel.updateOne(
-      { _id: id },
-      {
-        $set: {
-          name: name,
-          description: description,
-          websiteUrl: websiteUrl,
-        },
-      },
-    );
-    return updatedEl.matchedCount === 1;
+  async updateOne(blog: BlogDocument, blogBody: BlogBody): Promise<boolean> {
+    await blog.updateBlog(blogBody);
+    await blog.save();
+    return true;
   }
 
   async deleteOne(id: string): Promise<boolean> {

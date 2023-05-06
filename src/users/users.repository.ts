@@ -1,15 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/users.database.schema';
-import { Model } from 'mongoose';
+import {
+  User,
+  UserDocument,
+  UserModelType,
+} from './schemas/users.database.schema';
+import { UserCreationDto } from './dto/user.creation.dto';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
-  async createOne(newUserTmp: any): Promise<any | null> {
-    const resultId = await this.userModel.create(newUserTmp);
-    console.log(resultId);
-    return this.userModel.findOne({ _id: resultId._id });
+  constructor(
+    @InjectModel(User.name) private readonly userModel: UserModelType,
+  ) {}
+  async createOne(
+    userCreationDto: UserCreationDto,
+  ): Promise<UserDocument | null> {
+    const createdUser: UserDocument = this.userModel.createUser(
+      userCreationDto,
+      this.userModel,
+    );
+    await createdUser.save();
+    return createdUser;
   }
 
   async deleteOne(id: string): Promise<boolean> {

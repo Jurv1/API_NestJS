@@ -61,23 +61,7 @@ export class PostQ {
   }
 
   async getOnePost(id: string): Promise<any | null> {
-    const result = await this.postModel.findOne({ _id: id });
-
-    return {
-      id: result.id.toString(),
-      title: result.title,
-      shortDescription: result.shortDescription,
-      content: result.content,
-      blogId: result.blogId,
-      blogName: result.blogName,
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: 'None',
-        newestLikes: [],
-      },
-      createdAt: result.createdAt,
-    };
+    return this.postModel.findOne({ _id: id });
   }
   async getAllPostsByBlogId(
     id: string,

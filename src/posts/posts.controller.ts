@@ -44,7 +44,21 @@ export class PostController {
     try {
       const result = await this.postQ.getOnePost(id.id);
       if (result) {
-        return result;
+        return {
+          id: result.id.toString(),
+          title: result.title,
+          shortDescription: result.shortDescription,
+          content: result.content,
+          blogId: result.blogId,
+          blogName: result.blogName,
+          extendedLikesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None',
+            newestLikes: [],
+          },
+          createdAt: result.createdAt,
+        };
       } else {
         return new Errors.NOT_FOUND();
       }
@@ -105,16 +119,6 @@ export class PostController {
       }
 
       return new Errors.NOT_FOUND();
-      // result
-      //   ? res.status(201).send(mapPost(result))
-      //   : res.status(400).json({
-      //       errorsMessages: [
-      //         {
-      //           message: 'No such blog',
-      //           field: 'blogId',
-      //         },
-      //       ],
-      //     });
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();

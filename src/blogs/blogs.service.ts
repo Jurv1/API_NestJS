@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BlogsRepository } from './blogs.repository';
+import { BlogBody } from './dto/blog.body';
+import { BlogDocument } from './schemas/blogs.database.schema';
 
 @Injectable()
 export class BlogService {
@@ -9,28 +11,26 @@ export class BlogService {
     description: string,
     websiteUrl: string,
   ): Promise<any | null> {
-    const newBlogTmp = {
+    const blogDto: BlogBody = {
       name: name,
       description: description,
       websiteUrl: websiteUrl,
-      isMembership: false,
-      createdAt: new Date().toISOString(),
     };
-    return await this.blogsRepository.createOne(newBlogTmp);
+    return await this.blogsRepository.createOne(blogDto);
   }
 
   async updateOneBlog(
-    id: string,
+    blog: BlogDocument,
     name: string,
     description: string,
     websiteUrl: string,
   ): Promise<boolean> {
-    return await this.blogsRepository.updateOne(
-      id,
-      name,
-      description,
-      websiteUrl,
-    );
+    const blogBody = {
+      name: name,
+      description: description,
+      websiteUrl: websiteUrl,
+    };
+    return await this.blogsRepository.updateOne(blog, blogBody);
   }
 
   async deleteOneBlog(id: string): Promise<boolean> {
