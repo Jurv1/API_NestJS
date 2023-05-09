@@ -17,6 +17,8 @@ import { PostQ } from './posts.query.repository';
 import { Errors } from '../utils/handle.error';
 import { PostBodyBlogId } from './dto/post.body.blogId';
 import { PostQuery } from './dto/post.query';
+import { PostDocument } from './schemas/posts.database.schema';
+import { PostBody } from './dto/post.body.without.blogId';
 
 @Controller('posts')
 export class PostController {
@@ -40,9 +42,9 @@ export class PostController {
   }
 
   @Get(':id')
-  async getOne(@Param() id) {
+  async getOne(@Param('id') id: string) {
     try {
-      const result = await this.postQ.getOnePost(id.id);
+      const result = await this.postQ.getOnePost(id);
       if (result) {
         return {
           id: result.id.toString(),
@@ -69,7 +71,10 @@ export class PostController {
   }
 
   @Get(':id/comments')
-  async getAllCommentsByPostId(@Query() query: PostQuery, @Param() id) {
+  async getAllCommentsByPostId(
+    @Query() query: PostQuery,
+    @Param('id') id: string,
+  ) {
     const { sortBy, sortDirection, pageNumber, pageSize } = query;
 
     const sort = queryValidator(sortBy, sortDirection);
@@ -77,7 +82,7 @@ export class PostController {
 
     try {
       const allComments = await this.postQ.getAllCommentsByPostId(
-        id.id,
+        id,
         sort,
         pagination,
       );
@@ -90,10 +95,10 @@ export class PostController {
   }
 
   @Post()
-  async createOne(@Body() body: PostBodyBlogId) {
+  async createOne(@Body() body: PostBody) {
     try {
-      const { title, shortDescription, content, blogId, blogName } = body;
-      const result: any | null = await this.postService.createOnePost(
+      const { title, shortDescription, content, blogId } = body;
+      const result: PostDocument | null = await this.postService.createOnePost(
         title,
         shortDescription,
         content,
@@ -127,11 +132,11 @@ export class PostController {
 
   @HttpCode(204)
   @Put(':id')
-  async updateOne(@Param() id, @Body() body: PostBodyBlogId) {
+  async updateOne(@Param('id') id: string, @Body() body: PostBodyBlogId) {
     try {
       const { title, shortDescription, content, blogId } = body;
       const result = await this.postService.updateOnePost(
-        id.id,
+        id,
         title,
         shortDescription,
         content,
@@ -149,9 +154,9 @@ export class PostController {
 
   @HttpCode(204)
   @Delete(':id')
-  async deleteOne(@Param() id) {
+  async deleteOne(@Param('id') id: string) {
     try {
-      const result = await this.postService.deleteOnePost(id.id);
+      const result = await this.postService.deleteOnePost(id);
       if (!result) throw new Errors.NOT_FOUND();
       return;
     } catch (err) {

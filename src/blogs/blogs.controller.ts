@@ -17,11 +17,11 @@ import { makePagination } from '../utils/make.paggination';
 import { Errors } from '../utils/handle.error';
 import { BlogBody } from './dto/blog.body';
 import { BlogQueryParams } from './dto/blog.query.params';
-import { PostBodyWithoutBlogId } from '../posts/dto/post.body.without.blogId';
 import { PostService } from '../posts/posts.service';
 import { PostQuery } from '../posts/dto/post.query';
 import { PostQ } from '../posts/posts.query.repository';
 import { BlogDocument } from './schemas/blogs.database.schema';
+import { PostBody } from '../posts/dto/post.body.without.blogId';
 
 @Controller('blogs')
 export class BlogController {
@@ -49,9 +49,9 @@ export class BlogController {
   }
 
   @Get(':id')
-  async getOne(@Param() id) {
+  async getOne(@Param('id') id: string) {
     try {
-      const result = await this.blogQ.getOneBlog(id.id);
+      const result = await this.blogQ.getOneBlog(id);
       if (result) {
         return {
           id: result._id.toString(),
@@ -70,16 +70,16 @@ export class BlogController {
   }
 
   @Get(':id/posts')
-  async getPostsByBlogId(@Param() id, @Query() query: PostQuery) {
+  async getPostsByBlogId(@Param('id') id: string, @Query() query: PostQuery) {
     const { sortBy, sortDirection, pageNumber, pageSize } = query;
 
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      const blog = await this.blogQ.getOneBlog(id.id);
+      const blog = await this.blogQ.getOneBlog(id);
       if (!blog) throw new Errors.NOT_FOUND();
-      return await this.postQ.getAllPostsByBlogId(id.id, sort, pagination);
+      return await this.postQ.getAllPostsByBlogId(id, sort, pagination);
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -114,14 +114,14 @@ export class BlogController {
     }
   }
   @Post(':id/posts')
-  async createOneByBlogId(@Param() id, @Body() body: PostBodyWithoutBlogId) {
+  async createOneByBlogId(@Param('id') id: string, @Body() body: PostBody) {
     const { title, shortDescription, content } = body;
     try {
       const result = await this.postService.createOnePost(
         title,
         shortDescription,
         content,
-        id.id,
+        id,
       );
 
       if (result) {
@@ -151,11 +151,11 @@ export class BlogController {
 
   @HttpCode(204)
   @Put(':id')
-  async updateOne(@Param() id, @Body() body: BlogBody) {
+  async updateOne(@Param('id') id: string, @Body() body: BlogBody) {
     const { name, description, websiteUrl } = body;
 
     try {
-      const foundedBlog: BlogDocument = await this.blogQ.getOneBlog(id.id);
+      const foundedBlog: BlogDocument = await this.blogQ.getOneBlog(id);
       const result = await this.blogService.updateOneBlog(
         foundedBlog,
         name,
@@ -174,10 +174,9 @@ export class BlogController {
 
   @HttpCode(204)
   @Delete(':id')
-  async deleteOne(@Param() id) {
-    console.log(id.id);
+  async deleteOne(@Param('id') id: string) {
     try {
-      const result = await this.blogService.deleteOneBlog(id.id);
+      const result = await this.blogService.deleteOneBlog(id);
       if (!result) throw new Errors.NOT_FOUND();
       return;
     } catch (err) {

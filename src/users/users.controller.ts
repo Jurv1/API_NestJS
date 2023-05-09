@@ -120,9 +120,9 @@ export class UsersController {
 
   @HttpCode(204)
   @Delete(':id')
-  async deleteOne(@Param() id) {
+  async deleteOne(@Param('id') id: string) {
     try {
-      const result = await this.userService.deleteOneUser(id.id);
+      const result = await this.userService.deleteOneUser(id);
       if (result) return;
       throw new Errors.NOT_FOUND();
     } catch (err) {

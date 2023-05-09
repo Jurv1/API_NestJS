@@ -41,4 +41,8 @@ export class UserQ {
       }),
     };
   }
+
+  async getOneUserByLogin(login: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ 'accountData.login': login });
+  }
 }

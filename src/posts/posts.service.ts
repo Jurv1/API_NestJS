@@ -5,6 +5,7 @@ import { BlogDocument } from '../blogs/schemas/blogs.database.schema';
 import { PostQ } from './posts.query.repository';
 import { postUpdateBody } from './dto/post.update.body';
 import { PostDocument } from './schemas/posts.database.schema';
+import { Errors } from '../utils/handle.error';
 
 @Injectable()
 export class PostService {
@@ -32,31 +33,16 @@ export class PostService {
       };
       return await this.postsRepository.createOne(postDto, foundedEl);
     } else {
-      return null;
+      throw new Errors.BAD_REQUEST({
+        errorsMessages: [
+          {
+            message: 'No such blog',
+            field: 'blogId',
+          },
+        ],
+      });
     }
   }
-
-  // async createOnePostByBlogId(
-  //   title: string,
-  //   shortDescription: string,
-  //   content: string,
-  //   blogId: string,
-  // ): Promise<any | null> {
-  //   const foundedEl = await this.blogQ.getOneBlog(blogId);
-  //   if (foundedEl) {
-  //     const blogName = foundedEl.name;
-  //     const postDto = {
-  //       title: title,
-  //       shortDescription: shortDescription,
-  //       content: content,
-  //       blogId: blogId,
-  //       blogName: blogName,
-  //     };
-  //     return await this.postsRepository.createOne(postDto, foundedEl);
-  //   } else {
-  //     return null;
-  //   }
-  // }
 
   async updateOnePost(
     id: string,
