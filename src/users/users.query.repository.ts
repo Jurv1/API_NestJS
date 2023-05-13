@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Model, SortOrder } from 'mongoose';
+import { SortOrder } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/users.database.schema';
+import {
+  User,
+  UserDocument,
+  UserModelType,
+} from './schemas/users.database.schema';
 
+//todo change model
 @Injectable()
 export class UserQ {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: UserModelType) {}
   async getAllUsers(
     filter: any,
     sort: { [key: string]: SortOrder },
@@ -44,5 +49,9 @@ export class UserQ {
 
   async getOneUserByLogin(login: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ 'accountData.login': login });
+  }
+
+  async getOneUserById(id: string): Promise<UserDocument | null> {
+    return this.userModel.findById(id);
   }
 }

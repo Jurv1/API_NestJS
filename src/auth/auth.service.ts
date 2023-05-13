@@ -18,10 +18,19 @@ export class AuthService {
         password,
         user.accountData.password,
       );
+      if (isPasswordLegit) {
+        return user;
+      }
     }
+
+    return null;
   }
 
-  async login(user: any) {
-    //this.jwtService.sign();
+  async login(user: UserDocument) {
+    const payload = { username: user.accountData.login, sub: user._id };
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: this.jwtService.sign(payload),
+    };
   }
 }

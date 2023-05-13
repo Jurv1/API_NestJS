@@ -23,6 +23,9 @@ import {
   CommentSchema,
   DBComment,
 } from './comments/schemas/comments.database.schema';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,12 +33,19 @@ import {
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([
       { name: DBComment.name, schema: CommentSchema },
     ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    AuthModule,
   ],
-  controllers: [AppController, BlogController, PostController, UsersController],
+  controllers: [
+    AppController,
+    BlogController,
+    PostController,
+    UsersController,
+    AuthController,
+  ],
   providers: [
     AppService,
     BlogService,
