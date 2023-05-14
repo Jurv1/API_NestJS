@@ -51,7 +51,30 @@ export class UserQ {
     return this.userModel.findOne({ 'accountData.login': login });
   }
 
+  async getOneByLoginOrEmail(
+    loginOrEmail: string,
+  ): Promise<UserDocument | null> {
+    return this.userModel.findOne({
+      $or: [
+        { 'accountData.login': loginOrEmail },
+        { 'accountData.email': loginOrEmail },
+      ],
+    });
+  }
+
   async getOneUserById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id);
+  }
+
+  async getOneByConfirmationCode(
+    confirmationCode: string,
+  ): Promise<UserDocument | null> {
+    return this.userModel.findOne({
+      'emailConfirmation.confirmationCode': confirmationCode,
+    });
+  }
+
+  async getOneByPassCode(code: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ 'passRecovery.recoveryCode': code });
   }
 }

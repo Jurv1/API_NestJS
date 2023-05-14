@@ -5,6 +5,8 @@ import { EmailConfirmation } from './email.confirmation.schema';
 import { PasswordRecovery } from './password.recovery.schema';
 import { UserCreationDto } from '../dto/user.creation.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { PasswordRecoveryDto } from '../dto/password-recovery.dto';
+import { UpdatePasswordDto } from '../dto/update.password.dto';
 
 export type UserDocument = HydratedDocument<User>;
 @Schema()
@@ -40,6 +42,16 @@ export class User {
     };
     return new UserModel(createdUser);
   }
+
+  updateRecoveryCode(recoveryCodeDto: PasswordRecoveryDto) {
+    this.passRecovery.recoveryCode = recoveryCodeDto.recoveryCode;
+    this.passRecovery.expirationDate = recoveryCodeDto.expirationDate;
+  }
+
+  updatePassword(passwordUpdateDto: UpdatePasswordDto) {
+    this.accountData.password = passwordUpdateDto.passwordHash;
+    this.accountData.passwordSalt = passwordUpdateDto.passwordSalt;
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -56,5 +68,10 @@ const userStaticMethods: UserModelStaticType = {
 };
 
 UserSchema.statics = userStaticMethods;
+
+UserSchema.methods = {
+  updateRecoveryCode: User.prototype.updateRecoveryCode,
+  updatePassword: User.prototype.updatePassword,
+};
 
 export type UserModelType = Model<UserDocument> & UserModelStaticType;

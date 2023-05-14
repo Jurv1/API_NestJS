@@ -33,4 +33,38 @@ export class AuthService {
       refresh_token: this.jwtService.sign(payload),
     };
   }
+
+  async confirmEmail(code: string): Promise<boolean> {
+    try {
+      const user = await this.userQ.getOneByConfirmationCode(code);
+      if (!user) return false;
+      if (user.emailConfirmation.isConfirmed) return false;
+      if (user.emailConfirmation.confirmationCode !== code) return false;
+      if (user.emailConfirmation.expirationDate < new Date()) return false;
+
+      return await this.usersRepository.updateEmailConfirmation(user._id);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+
+  async resendConfirmationEmail(email: string) {
+    const user = await this.userQ.getOneByLoginOrEmail(email);
+    if (!user || !user.emailConfirmation.confirmationCode) return false;
+    const newRegistrationCode = uuidv4();
+    try {
+      await emailManager.sendEmailConfirmationMessage(
+        user,
+        newRegistrationCode,
+      );
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+    return await this.usersRepository.updateConfirmationCode(
+      user._id,
+      newRegistrationCode,
+    );
+  }
 }

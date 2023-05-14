@@ -16,7 +16,10 @@ export class DevicesRepository {
     return device.save();
   }
 
-  async deleteAllExceptActive(userId: string, deviceId: string) {
+  async deleteAllExceptActive(
+    userId: string,
+    deviceId: string,
+  ): Promise<boolean> {
     const result = await this.deviceModel.deleteMany({
       userId,
       deviceId: { $ne: deviceId },
@@ -25,13 +28,13 @@ export class DevicesRepository {
     return !!result;
   }
 
-  async deleteOneDeviceById(id: string) {
+  async deleteOneDeviceById(id: string): Promise<boolean> {
     const result = await this.deviceModel.deleteOne({ deviceId: id });
 
     return result.deletedCount === 1;
   }
 
-  async updateLastActivity(payload: any) {
+  async updateLastActivity(payload: any): Promise<boolean> {
     if (!payload.iat) {
       return null;
     }
