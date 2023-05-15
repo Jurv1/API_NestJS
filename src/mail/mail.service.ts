@@ -38,7 +38,7 @@ export class MailService {
       to: email,
       // from: '"Support Team" <support@example.com>', // override default from
       subject: subject,
-      template: './confirmation', // `.hbs` extension is appended automatically
+      template: './recovery', // `.hbs` extension is appended automatically
       context: {
         // ✏️ filling curly brackets with content
         login: login,

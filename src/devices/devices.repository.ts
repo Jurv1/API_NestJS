@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import {
+  Device,
   DeviceDocument,
   DeviceModelType,
 } from './schemas/devices.database.schema';
 import { DeviceCreateDto } from './dto/device-create.dto';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class DevicesRepository {
-  constructor(private readonly deviceModel: DeviceModelType) {}
+  constructor(
+    @InjectModel(Device.name) private readonly deviceModel: DeviceModelType,
+  ) {}
   async createNewDevice(deviceCreateDto: DeviceCreateDto): Promise<any> {
     const device: DeviceDocument = await this.deviceModel.createDevice(
       deviceCreateDto,

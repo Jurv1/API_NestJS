@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DevicesRepository } from './devices.repository';
+import { UserLoginDataDto } from '../auth/dto/user-login-data.dto';
 
 @Injectable()
 export class DevicesService {
@@ -12,13 +13,17 @@ export class DevicesService {
     return await this.deviceRepository.deleteOneDeviceById(id);
   }
 
-  async createNewDevice(ip: string, title: string, payload: any) {
+  async createNewDevice(
+    userDto: UserLoginDataDto,
+    deviceId: string,
+    iat: number,
+  ) {
     const deviceTmp = {
-      ip: ip,
-      title: title,
-      lastActiveDate: new Date(payload.iat * 1000).toISOString(),
-      deviceId: payload.deviceId,
-      userId: payload.userId,
+      ip: userDto.deviceIp,
+      title: userDto.device,
+      lastActiveDate: new Date(iat * 1000).toISOString(),
+      deviceId: deviceId,
+      userId: userDto.userId,
     };
     await this.deviceRepository.createNewDevice(deviceTmp);
   }

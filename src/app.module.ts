@@ -1,3 +1,6 @@
+import { ConfigModule } from '@nestjs/config';
+export const configModule = ConfigModule.forRoot();
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,7 +14,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Blog, BlogSchema } from './blogs/schemas/blogs.database.schema';
 import { Post, PostSchema } from './posts/schemas/posts.database.schema';
 import { User, UserSchema } from './users/schemas/users.database.schema';
-import { ConfigModule } from '@nestjs/config';
 import { BlogsRepository } from './blogs/blogs.repository';
 import { BlogQ } from './blogs/blogs.query.repository';
 import { PostsRepository } from './posts/posts.repository';
@@ -24,12 +26,18 @@ import {
   DBComment,
 } from './comments/schemas/comments.database.schema';
 import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
+import { DevicesService } from './devices/devices.service';
+import { DevicesRepository } from './devices/devices.repository';
+import {
+  Device,
+  DeviceSchema,
+} from './devices/schemas/devices.database.schema';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    configModule,
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
@@ -37,7 +45,9 @@ import { AuthModule } from './auth/auth.module';
       { name: DBComment.name, schema: CommentSchema },
     ]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
     AuthModule,
+    MailModule,
   ],
   controllers: [
     AppController,
@@ -58,6 +68,8 @@ import { AuthModule } from './auth/auth.module';
     UsersRepository,
     UserQ,
     CommentQ,
+    DevicesService,
+    DevicesRepository,
   ],
 })
 export class AppModule {}

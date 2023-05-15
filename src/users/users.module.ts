@@ -5,13 +5,15 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UserQ } from './users.query.repository';
 import { UsersRepository } from './users.repository';
+import { MailService } from '../mail/mail.service';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UserQ, UsersRepository],
-  exports: [UsersService, UserQ, UsersRepository],
+  providers: [UsersService, UserQ, UsersRepository, MailService],
+  exports: [UsersService, UserQ, UsersRepository, MailService],
 })
 export class UsersModule {}

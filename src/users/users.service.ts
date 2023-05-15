@@ -34,21 +34,23 @@ export class UsersService {
     };
 
     const result: UserDocument = await this.usersRepository.createOne(userDto);
+    const savedUser: UserDocument = await result.save();
     if (!confirmed) {
       try {
-        if (result)
+        if (savedUser) {
           await this.mailService.sendUserConfirmation(
             result.accountData.email,
             'Please, to continue work with our service confirm your email',
             result.accountData.login,
             result.emailConfirmation.confirmationCode,
           );
+        }
       } catch (err) {
         console.log(err);
         return null;
       }
     }
-    return result;
+    return savedUser;
   }
 
   async findUserByLogin(login: string): Promise<UserDocument | null> {

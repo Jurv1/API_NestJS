@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CommentQ } from '../comments/comments.query.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from './schemas/posts.database.schema';
+import {
+  Post,
+  PostDocument,
+  PostModelType,
+} from './schemas/posts.database.schema';
 import { Model, SortOrder } from 'mongoose';
 import {
   CommentDocument,
@@ -12,7 +16,7 @@ import {
 export class PostQ {
   constructor(
     protected commentQ: CommentQ,
-    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Post.name) private postModel: PostModelType,
     @InjectModel(DBComment.name) private commentModel: Model<CommentDocument>,
   ) {}
   async getAllPosts(

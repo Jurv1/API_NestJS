@@ -19,6 +19,7 @@ import { UserGetMeDataDto } from './dto/user-get-me-data.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DevicesService } from '../devices/devices.service';
 import { UsersService } from '../users/users.service';
+import { Errors } from '../utils/handle.error';
 
 @Controller('auth')
 export class AuthController {
@@ -42,11 +43,15 @@ export class AuthController {
 
     const deviceId = uuidv4();
 
-    await this.deviceService.createNewDevice();
-
     const tokens = await this.authService.login(user);
+
+    await this.deviceService.createNewDevice(currentUserData, deviceId);
+
     res
-      .cookie('refreshToken', tokens.refresh_token, {})
+      .cookie('refreshToken', tokens.refresh_token, {
+        httpOnly: true,
+        secure: true,
+      })
       .header('Authorization', tokens.access_token)
       .send({
         accessToken: tokens.access_token,
@@ -64,19 +69,20 @@ export class AuthController {
     };
   }
 
+  @Post('registration')
   async registerMe(@Body() body) {
     const { login, password, email } = body;
 
-    const user = await this.userService.createOneUser(
+    const user: UserDocument = await this.userService.createOneUser(
       login,
       email,
       password,
       false,
     );
     if (user) {
-      res.sendStatus(204);
+      return;
     } else {
-      res.status(400).json({
+      throw new Errors.BAD_REQUEST({
         errorsMessages: {
           message: 's',
           field: 'login',
@@ -85,24 +91,27 @@ export class AuthController {
     }
   }
 
+  @Post('password-recovery')
   async recoverMyPassword(@Body('email') email: string) {
     await this.userService.makePasswordRecoveryMail(email);
 
-    res.status(204).send('Message sent');
+    return;
   }
 
+  @Post('new-password')
   async makeNewPassword(@Body() body) {
     const { newPassword, recoveryCode } = body;
 
     await this.userService.updateNewPassword(newPassword, recoveryCode);
 
-    res.sendStatus(204);
+    return;
   }
 
+  @Post('registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
     const result = await this.authService.confirmEmail(code);
     if (!result) {
-      res.status(400).json({
+      throw new Errors.BAD_REQUEST({
         errorsMessages: [
           {
             message: 'Something went wrong',
@@ -110,63 +119,63 @@ export class AuthController {
           },
         ],
       });
-      return;
     }
 
-    res.sendStatus(204);
+    return;
   }
 
+  @Post('registration-email-resending')
   async resendRegistrationConfirming(@Body('email') email: string) {
     const result = await this.authService.resendConfirmationEmail(email);
     if (!result) {
-      res.sendStatus(400);
-      return;
+      return new Errors.BAD_REQUEST();
     }
 
-    res.sendStatus(204);
+    return;
   }
 
-  async refreshMyToken(req: Request, res: Response) {
-    const refreshToken = req.cookies.refreshToken;
-
-    const userId = await this.jwtService.getUserIdByToken(refreshToken);
-
-    if (userId) {
-      const user = await this.userQ.getOneUserById(userId.toString());
-      const payload = await this.jwtService.getPayload(refreshToken);
-      const accessToken = await this.jwtService.createJWT(
-        user!,
-        payload.deviceId,
-        '10s',
-      );
-      const newRefreshToken = await this.jwtService.createJWT(
-        user!,
-        payload.deviceId,
-        '20s',
-      );
-      const newRefreshTokenPayload = await this.jwtService.getPayload(
-        newRefreshToken,
-      );
-      await this.devicesRepository.updateLastActivity(newRefreshTokenPayload);
-
-      res
-        .cookie('refreshToken', newRefreshToken, {
-          httpOnly: true,
-          secure: true,
-        })
-        .header('Authorization', accessToken)
-        .status(200)
-        .json({ accessToken: accessToken });
-    } else return res.sendStatus(401);
-  }
-
-  async logOut(req: Request, res: Response) {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) return res.sendStatus(401);
-
-    const payload = await this.jwtService.getPayload(refreshToken);
-    await this.deviceService.deleteOneDeviceById(payload.deviceId);
-
-    return res.sendStatus(204);
-  }
+  // @Post('refresh-token')
+  // async refreshMyToken(@Response() res) {
+  //   const refreshToken = req.cookies.refreshToken;
+  //
+  //   const userId = await this.jwtService.getUserIdByToken(refreshToken);
+  //
+  //   if (userId) {
+  //     const user = await this.userQ.getOneUserById(userId.toString());
+  //     const payload = await this.jwtService.getPayload(refreshToken);
+  //     const accessToken = await this.jwtService.createJWT(
+  //       user!,
+  //       payload.deviceId,
+  //       '10s',
+  //     );
+  //     const newRefreshToken = await this.jwtService.createJWT(
+  //       user!,
+  //       payload.deviceId,
+  //       '20s',
+  //     );
+  //     const newRefreshTokenPayload = await this.jwtService.getPayload(
+  //       newRefreshToken,
+  //     );
+  //     await this.devicesRepository.updateLastActivity(newRefreshTokenPayload);
+  //
+  //     res
+  //       .cookie('refreshToken', newRefreshToken, {
+  //         httpOnly: true,
+  //         secure: true,
+  //       })
+  //       .header('Authorization', accessToken)
+  //       .json({ accessToken: accessToken });
+  //   } else return res.sendStatus(401);
+  // }
+  //
+  // @Post('logout')
+  // async logOut(req: Request, res: Response) {
+  //   const refreshToken = req.cookies.refreshToken;
+  //   if (!refreshToken) return res.sendStatus(401);
+  //
+  //   const payload = await this.jwtService.getPayload(refreshToken);
+  //   await this.deviceService.deleteOneDeviceById(payload.deviceId);
+  //
+  //   return;
+  // }
 }

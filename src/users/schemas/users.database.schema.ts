@@ -52,6 +52,14 @@ export class User {
     this.accountData.password = passwordUpdateDto.passwordHash;
     this.accountData.passwordSalt = passwordUpdateDto.passwordSalt;
   }
+
+  updateEmailConfirmation(confirmation: boolean) {
+    this.emailConfirmation.isConfirmed = confirmation;
+  }
+
+  updateEmailConfirmationCode(code: string) {
+    this.emailConfirmation.confirmationCode = code;
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -72,6 +80,8 @@ UserSchema.statics = userStaticMethods;
 UserSchema.methods = {
   updateRecoveryCode: User.prototype.updateRecoveryCode,
   updatePassword: User.prototype.updatePassword,
+  updateEmailConfirmation: User.prototype.updateEmailConfirmation,
+  updateEmailConfirmationCode: User.prototype.updateEmailConfirmationCode,
 };
 
 export type UserModelType = Model<UserDocument> & UserModelStaticType;
