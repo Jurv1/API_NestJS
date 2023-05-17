@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserQ } from './users.query.repository';
@@ -16,11 +17,13 @@ import { UserBody } from './dto/user.body';
 import { UserQuery } from './dto/user.query';
 import { FilterQuery, SortOrder } from 'mongoose';
 import { UserDocument } from './schemas/users.database.schema';
+import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(protected userService: UsersService, protected userQ: UserQ) {}
 
+  @UseGuards(AdminAuthGuard)
   @Get()
   async getAll(@Query() query: UserQuery) {
     let {
@@ -92,6 +95,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @Post()
   async createOne(@Body() body: UserBody) {
     const { login, email, password } = body;
@@ -118,6 +122,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @HttpCode(204)
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {

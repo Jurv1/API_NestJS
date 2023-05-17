@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { queryValidator } from 'src/utils/sorting.func';
 import { makePagination } from '../utils/make.paggination';
@@ -19,6 +20,8 @@ import { PostBodyBlogId } from './dto/post.body.blogId';
 import { PostQuery } from './dto/post.query';
 import { PostDocument } from './schemas/posts.database.schema';
 import { PostBody } from './dto/post.body.without.blogId';
+import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
+import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
 
 @Controller('posts')
 export class PostController {
@@ -94,6 +97,7 @@ export class PostController {
     }
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post()
   async createOne(@Body() body: PostBody) {
     try {
@@ -130,6 +134,7 @@ export class PostController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @HttpCode(204)
   @Put(':id')
   async updateOne(@Param('id') id: string, @Body() body: PostBodyBlogId) {
@@ -152,6 +157,7 @@ export class PostController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @HttpCode(204)
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {

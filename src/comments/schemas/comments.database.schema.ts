@@ -16,6 +16,14 @@ export class DBComment {
   postId: string;
   @Prop()
   createdAt: string;
+
+  updateComment(content: string) {
+    this.content = content;
+  }
 }
 
 export const CommentSchema = SchemaFactory.createForClass(DBComment);
+
+CommentSchema.methods = {
+  updateComment: DBComment.prototype.updateComment,
+};

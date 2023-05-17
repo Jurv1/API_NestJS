@@ -16,7 +16,6 @@ import { UserDocument } from '../users/schemas/users.database.schema';
 import { CurrentUserData } from './current-user.data';
 import { UserLoginDataDto } from './dto/user-login-data.dto';
 import { UserGetMeDataDto } from './dto/user-get-me-data.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { DevicesService } from '../devices/devices.service';
 import { UsersService } from '../users/users.service';
 import { Errors } from '../utils/handle.error';
@@ -41,11 +40,11 @@ export class AuthController {
       currentUserData.userId,
     );
 
-    const deviceId = uuidv4();
-
     const tokens = await this.authService.login(user);
-
-    await this.deviceService.createNewDevice(currentUserData, deviceId);
+    await this.deviceService.createNewDevice(
+      currentUserData,
+      tokens.refresh_token,
+    );
 
     res
       .cookie('refreshToken', tokens.refresh_token, {

@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogService } from './blogs.service';
 import { BlogQ } from './blogs.query.repository';
@@ -22,6 +23,7 @@ import { PostQuery } from '../posts/dto/post.query';
 import { PostQ } from '../posts/posts.query.repository';
 import { BlogDocument } from './schemas/blogs.database.schema';
 import { PostBody } from '../posts/dto/post.body.without.blogId';
+import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
 
 @Controller('blogs')
 export class BlogController {
@@ -86,6 +88,7 @@ export class BlogController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @Post()
   async createOne(@Body() body: BlogBody) {
     const { name, description, websiteUrl } = body;
@@ -113,6 +116,7 @@ export class BlogController {
       throw new Errors.NOT_FOUND();
     }
   }
+  @UseGuards(AdminAuthGuard)
   @Post(':id/posts')
   async createOneByBlogId(@Param('id') id: string, @Body() body: PostBody) {
     const { title, shortDescription, content } = body;
@@ -149,6 +153,7 @@ export class BlogController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @HttpCode(204)
   @Put(':id')
   async updateOne(@Param('id') id: string, @Body() body: BlogBody) {
@@ -172,6 +177,7 @@ export class BlogController {
     }
   }
 
+  @UseGuards(AdminAuthGuard)
   @HttpCode(204)
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {

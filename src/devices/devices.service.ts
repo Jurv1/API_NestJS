@@ -13,16 +13,12 @@ export class DevicesService {
     return await this.deviceRepository.deleteOneDeviceById(id);
   }
 
-  async createNewDevice(
-    userDto: UserLoginDataDto,
-    deviceId: string,
-    iat: number,
-  ) {
+  async createNewDevice(userDto: UserLoginDataDto, refreshToken: any) {
     const deviceTmp = {
       ip: userDto.deviceIp,
       title: userDto.device,
-      lastActiveDate: new Date(iat * 1000).toISOString(),
-      deviceId: deviceId,
+      lastActiveDate: new Date(refreshToken.iat * 1000).toISOString(),
+      deviceId: refreshToken.deviceId,
       userId: userDto.userId,
     };
     await this.deviceRepository.createNewDevice(deviceTmp);

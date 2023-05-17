@@ -32,10 +32,15 @@ export class AuthService {
   }
 
   async login(user: UserDocument) {
-    const payload = { username: user.accountData.login, sub: user._id };
+    const accessPayload = { username: user.accountData.login, sub: user._id };
+    const refreshPayload = {
+      username: user.accountData.login,
+      sub: user._id,
+      deviceId: uuidv4(),
+    };
     return {
-      access_token: this.jwtService.sign(payload),
-      refresh_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(accessPayload),
+      refresh_token: this.jwtService.sign(refreshPayload),
     };
   }
 
