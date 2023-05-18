@@ -32,10 +32,13 @@ export class AuthService {
   }
 
   async login(user: UserDocument) {
-    const accessPayload = { username: user.accountData.login, sub: user._id };
+    const accessPayload = {
+      username: user.accountData.login,
+      userId: user._id,
+    };
     const refreshPayload = {
       username: user.accountData.login,
-      sub: user._id,
+      userId: user._id,
       deviceId: uuidv4(),
     };
     return {
@@ -79,5 +82,44 @@ export class AuthService {
       return false;
     }
     await user.updateEmailConfirmationCode(newRegistrationCode);
+  }
+
+  async getDeviceIdFromRefresh(token: any) {
+    const decodedToken: any = await this.jwtService.decode(token);
+    return decodedToken.deviceId;
+  }
+
+  async getUserIdByToken(token: any) {
+    const decodedToken: any = await this.jwtService.decode(token);
+    return decodedToken.userId;
+  }
+
+  async createAccessToken(userId: string, userLogin: string, time: string) {
+    const accessPayload = { username: userLogin, userId: userId };
+    return this.jwtService.sign(accessPayload, {
+      expiresIn: time,
+    });
+  }
+
+  async createRefreshToken(
+    userId: string,
+    userLogin: string,
+    deviceId: string,
+    time: string,
+  ) {
+    const refreshPayload = {
+      username: userLogin,
+      userId: userId,
+      deviceId: deviceId,
+    };
+
+    return this.jwtService.sign(refreshPayload, {
+      expiresIn: time,
+    });
+  }
+
+  async getIatFromToken(token: any) {
+    const decodedToken: any = this.jwtService.decode(token);
+    return decodedToken.iat;
   }
 }

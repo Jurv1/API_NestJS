@@ -5,8 +5,8 @@ export const CurrentUserIdAndLogin = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
     const userData: UserIdAndLogin = {
-      userId: request.user.id,
-      userLogin: request.user.accountData.login,
+      userId: request.user.userId,
+      userLogin: request.user.username,
     };
     return userData;
   },

@@ -34,6 +34,11 @@ import {
   Device,
   DeviceSchema,
 } from './devices/schemas/devices.database.schema';
+import { LikesRepository } from './likes/likes.repository';
+import { Like, LikeSchema } from './likes/schemas/like.database.schema';
+import { JwtService } from '@nestjs/jwt';
+import { DeviceQ } from './devices/devices.query.repository';
+import { DeviceController } from './devices/device.controller';
 
 @Module({
   imports: [
@@ -46,6 +51,7 @@ import {
     ]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
+    MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
     AuthModule,
     MailModule,
   ],
@@ -55,6 +61,7 @@ import {
     PostController,
     UsersController,
     AuthController,
+    DeviceController,
   ],
   providers: [
     AppService,
@@ -70,6 +77,9 @@ import {
     CommentQ,
     DevicesService,
     DevicesRepository,
+    LikesRepository,
+    JwtService,
+    DeviceQ,
   ],
 })
 export class AppModule {}

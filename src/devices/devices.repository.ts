@@ -12,13 +12,6 @@ export class DevicesRepository {
   constructor(
     @InjectModel(Device.name) private readonly deviceModel: DeviceModelType,
   ) {}
-  async createNewDevice(deviceCreateDto: DeviceCreateDto): Promise<any> {
-    const device: DeviceDocument = await this.deviceModel.createDevice(
-      deviceCreateDto,
-      this.deviceModel,
-    );
-    return device.save();
-  }
 
   async deleteAllExceptActive(
     userId: string,
@@ -38,18 +31,4 @@ export class DevicesRepository {
     return result.deletedCount === 1;
   }
 
-  async updateLastActivity(payload: any): Promise<boolean> {
-    if (!payload.iat) {
-      return null;
-    }
-    const result = await this.deviceModel.updateOne(
-      { deviceId: payload.deviceId },
-      {
-        $set: {
-          lastActiveDate: new Date(payload.iat * 1000).toISOString(),
-        },
-      },
-    );
-    return result.modifiedCount === 1;
-  }
 }

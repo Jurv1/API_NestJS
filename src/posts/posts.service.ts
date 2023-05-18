@@ -6,6 +6,8 @@ import { PostQ } from './posts.query.repository';
 import { postUpdateBody } from './dto/post.update.body';
 import { PostDocument } from './schemas/posts.database.schema';
 import { Errors } from '../utils/handle.error';
+import { CommentDocument } from '../comments/schemas/comments.database.schema';
+import { CommentCreatingDto } from '../comments/dto/comment.creating.dto';
 
 @Injectable()
 export class PostService {
@@ -68,5 +70,30 @@ export class PostService {
 
   async deleteOnePost(id: string): Promise<boolean> {
     return await this.postsRepository.deleteOne(id);
+  }
+
+  async createOneCommentByPostId(
+    postId: string,
+    content: string,
+    userId: string,
+    userLogin: string,
+  ): Promise<CommentDocument | null> {
+    const foundedEl = await this.postQ.getOnePost(postId);
+    if (foundedEl) {
+      const newCommentTmp: CommentCreatingDto = {
+        content: content,
+        commentatorInfo: {
+          userId: userId,
+          userLogin: userLogin,
+        },
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: 'None',
+        },
+        postId: postId,
+      };
+      return await this.postsRepository.createOneCommentByPostId(newCommentTmp);
+    } else return null;
   }
 }

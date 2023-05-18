@@ -19,6 +19,9 @@ import { UserGetMeDataDto } from './dto/user-get-me-data.dto';
 import { DevicesService } from '../devices/devices.service';
 import { UsersService } from '../users/users.service';
 import { Errors } from '../utils/handle.error';
+import { CurrentRefreshToken } from './current-refresh-token';
+import { DeviceQ } from '../devices/devices.query.repository';
+import { DeviceDocument } from '../devices/schemas/devices.database.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +30,7 @@ export class AuthController {
     private readonly userQ: UserQ,
     private readonly userService: UsersService,
     private readonly deviceService: DevicesService,
+    private readonly deviceQ: DeviceQ,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -47,16 +51,14 @@ export class AuthController {
     );
 
     res
-      .cookie('refreshToken', tokens.refresh_token, {
-        httpOnly: true,
-        secure: true,
-      })
+      .cookie('refreshToken', tokens.refresh_token, {})
       .header('Authorization', tokens.access_token)
       .send({
         accessToken: tokens.access_token,
       });
   }
-
+  //httpOnly: true,
+  //         secure: true,
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
@@ -133,48 +135,54 @@ export class AuthController {
     return;
   }
 
-  // @Post('refresh-token')
-  // async refreshMyToken(@Response() res) {
-  //   const refreshToken = req.cookies.refreshToken;
-  //
-  //   const userId = await this.jwtService.getUserIdByToken(refreshToken);
-  //
-  //   if (userId) {
-  //     const user = await this.userQ.getOneUserById(userId.toString());
-  //     const payload = await this.jwtService.getPayload(refreshToken);
-  //     const accessToken = await this.jwtService.createJWT(
-  //       user!,
-  //       payload.deviceId,
-  //       '10s',
-  //     );
-  //     const newRefreshToken = await this.jwtService.createJWT(
-  //       user!,
-  //       payload.deviceId,
-  //       '20s',
-  //     );
-  //     const newRefreshTokenPayload = await this.jwtService.getPayload(
-  //       newRefreshToken,
-  //     );
-  //     await this.devicesRepository.updateLastActivity(newRefreshTokenPayload);
-  //
-  //     res
-  //       .cookie('refreshToken', newRefreshToken, {
-  //         httpOnly: true,
-  //         secure: true,
-  //       })
-  //       .header('Authorization', accessToken)
-  //       .json({ accessToken: accessToken });
-  //   } else return res.sendStatus(401);
-  // }
-  //
-  // @Post('logout')
-  // async logOut(req: Request, res: Response) {
-  //   const refreshToken = req.cookies.refreshToken;
-  //   if (!refreshToken) return res.sendStatus(401);
-  //
-  //   const payload = await this.jwtService.getPayload(refreshToken);
-  //   await this.deviceService.deleteOneDeviceById(payload.deviceId);
-  //
-  //   return;
-  // }
+  @Post('refresh-token')
+  async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
+    const userId = await this.authService.getUserIdByToken(refreshToken);
+
+    if (userId) {
+      const user: UserDocument = await this.userQ.getOneUserById(
+        userId.toString(),
+      );
+      const deviceId = await this.authService.getDeviceIdFromRefresh(
+        refreshToken,
+      );
+      const accessToken = await this.authService.createAccessToken(
+        userId,
+        user.accountData.login,
+        '10s',
+      );
+      const newRefreshToken = await this.authService.createRefreshToken(
+        userId,
+        user.accountData.login,
+        deviceId,
+        '20s',
+      );
+      const iatFromToken: number = await this.authService.getIatFromToken(
+        newRefreshToken,
+      );
+      const device: DeviceDocument = await this.deviceQ.getOneDeviceById(
+        deviceId,
+      );
+
+      await device.updateLastActiveDate(iatFromToken);
+
+      res
+        .cookie('refreshToken', newRefreshToken, {
+          httpOnly: true,
+          secure: true,
+        })
+        .header('Authorization', accessToken)
+        .json({ accessToken: accessToken });
+    } else return res.sendStatus(401);
+  }
+
+  @Post('logout')
+  async logOut(@CurrentRefreshToken() refresh: string) {
+    if (!refresh) return new Errors.UNAUTHORIZED();
+
+    const payload = await this.authService.getDeviceIdFromRefresh(refresh);
+    await this.deviceService.deleteOneDeviceById(payload.deviceId);
+
+    return;
+  }
 }

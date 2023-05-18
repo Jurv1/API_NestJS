@@ -22,10 +22,19 @@ import { PostDocument } from './schemas/posts.database.schema';
 import { PostBody } from './dto/post.body.without.blogId';
 import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
+import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
+import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
+import { LikesRepository } from '../likes/likes.repository';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CommentDocument } from '../comments/schemas/comments.database.schema';
 
 @Controller('posts')
 export class PostController {
-  constructor(protected postService: PostService, protected postQ: PostQ) {}
+  constructor(
+    private readonly postService: PostService,
+    protected postQ: PostQ,
+    private readonly likesRepo: LikesRepository,
+  ) {}
 
   @Get()
   async getAll(@Query() query: PostQuery) {
@@ -169,5 +178,128 @@ export class PostController {
       console.log(err);
       throw new Errors.NOT_FOUND();
     }
+  }
+
+  @Post(':id/comments')
+  async createOneCommentByPostId(
+    @Param(':id') postId: string,
+    @Body() body,
+    @CurrentUserIdAndLogin() user: UserIdAndLogin,
+  ) {
+    const content = body.content;
+    const userId = user.userId;
+    const userLogin = user.userLogin;
+
+    try {
+      const result: CommentDocument =
+        await this.postService.createOneCommentByPostId(
+          postId,
+          content,
+          userId,
+          userLogin,
+        );
+      result
+        ? res.status(201).send(mapComment(result))
+        : res.status(404).json({
+            errorsMessages: [
+              {
+                message: 'No such post',
+                field: 'postId',
+              },
+            ],
+          });
+    } catch (err) {
+      console.log(err);
+      return new Errors.NOT_FOUND();
+    }
+  }
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/like-status')
+  async likePost(
+    @Param('id') id: string,
+    @Body() body,
+    @CurrentUserIdAndLogin() user: UserIdAndLogin,
+  ) {
+    const likeStatus = body.likeStatus;
+    const userId = user.userId;
+    const userLogin = user.userLogin;
+
+    try {
+      const userStatus = await this.likesRepo.getUserStatusForComment(
+        userId,
+        id,
+      );
+      if (likeStatus === 'None') {
+        const result = await this.likesRepo.deleteLikeDislike(
+          userId,
+          id,
+          userStatus?.userStatus,
+        );
+        if (result) {
+          return;
+        }
+        return new Errors.NOT_FOUND();
+      }
+      if (likeStatus === 'Like') {
+        if (userStatus?.userStatus === 'Dislike') {
+          //remove dislike and create like
+          await this.likesRepo.deleteLikeDislike(
+            userId,
+            id,
+            userStatus.userStatus,
+          );
+          return;
+        } else if (userStatus?.userStatus === 'Like') {
+          return;
+        } else {
+          const result = await this.likesRepo.likePostOrComment(
+            id,
+            likeStatus,
+            userId,
+            userLogin,
+          );
+          if (result) {
+            return;
+          }
+          return new Errors.NOT_FOUND();
+        }
+      }
+      if (likeStatus === 'Dislike') {
+        if (userStatus?.userStatus === 'Like') {
+          await this.likesRepo.deleteLikeDislike(
+            userId,
+            id,
+            userStatus.userStatus,
+          );
+          const result = await this.likesRepo.likePostOrComment(
+            id,
+            likeStatus,
+            userId,
+            userLogin,
+          );
+          if (result) {
+            return;
+          }
+          return new Errors.NOT_FOUND();
+          //remove like and create dislike
+        } else if (userStatus?.userStatus === 'Dislike') {
+          return;
+        } else {
+          //create Dislike
+          const result = await this.likesRepo.likePostOrComment(
+            id,
+            likeStatus,
+            userId,
+            userLogin,
+          );
+          if (result) {
+            return;
+          }
+          return new Errors.NOT_FOUND();
+        }
+      }
+
+      return new Errors.NOT_FOUND();
+    } catch (err) {}
   }
 }

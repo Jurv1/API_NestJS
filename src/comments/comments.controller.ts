@@ -78,7 +78,7 @@ export class CommentController {
         const result = await this.commentService.deleteLikeDislike(
           userId,
           id,
-          userStatus!.userStatus,
+          userStatus?.userStatus,
         );
         if (result) {
           return;

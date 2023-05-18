@@ -15,7 +15,7 @@ export class Device {
   @Prop()
   lastActiveDate: string;
 
-  @Prop({ required: true })
+  @Prop()
   deviceId: string;
 
   @Prop({ required: true })
@@ -34,6 +34,10 @@ export class Device {
     };
     return new deviceModel(createdDevice);
   }
+
+  updateLastActiveDate(iat: number) {
+    this.lastActiveDate = new Date(iat * 1000).toISOString();
+  }
 }
 
 export const DeviceSchema = SchemaFactory.createForClass(Device);
@@ -47,6 +51,10 @@ export type DeviceModelStaticType = {
 
 const deviceStaticMethods: DeviceModelStaticType = {
   createDevice: Device.createPost,
+};
+
+DeviceSchema.methods = {
+  updateLastActiveDate: Device.prototype.updateLastActiveDate,
 };
 
 DeviceSchema.statics = deviceStaticMethods;
