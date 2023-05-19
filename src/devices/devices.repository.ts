@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Device,
-  DeviceDocument,
-  DeviceModelType,
-} from './schemas/devices.database.schema';
-import { DeviceCreateDto } from './dto/device-create.dto';
+import { Device, DeviceModelType } from './schemas/devices.database.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
@@ -30,5 +25,4 @@ export class DevicesRepository {
 
     return result.deletedCount === 1;
   }
-
 }

@@ -24,7 +24,14 @@ export class DeviceController {
         );
 
         if (allDevices) {
-          return allDevices;
+          return allDevices.map((el) => {
+            return {
+              ip: el.ip,
+              title: el.title,
+              lastActiveDate: el.lastActiveDate,
+              deviceId: el._id.toString(),
+            };
+          });
         }
       }
       return new Errors.NOT_FOUND();

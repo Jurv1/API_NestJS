@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { DeviceModelType } from './schemas/devices.database.schema';
+import { Device, DeviceModelType } from './schemas/devices.database.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { DBComment } from '../comments/schemas/comments.database.schema';
 
 @Injectable()
 export class DeviceQ {
   constructor(
-    @InjectModel(DBComment.name) private readonly deviceModel: DeviceModelType,
+    @InjectModel(Device.name) private readonly deviceModel: DeviceModelType,
   ) {}
   async getAllDevicesByUserId(userId: string) {
-    return this.deviceModel.find({}).lean();
+    return this.deviceModel.find({ userId: userId }).lean();
   }
 
   async getOneDeviceById(deviceId: string) {
