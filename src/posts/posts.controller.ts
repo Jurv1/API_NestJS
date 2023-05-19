@@ -76,11 +76,11 @@ export class PostController {
             dislikesCount: allDislikes,
             myStatus: 'None',
             newestLikes: await lastThreeLikes.map((like) => {
-              {
-                addedAt: like.addedAt;
-                userId: like.userId;
-                login: like.userLogin;
-              }
+              return {
+                addedAt: like.addedAt,
+                userId: like.userId,
+                login: like.userLogin,
+              };
             }),
           },
           createdAt: result.createdAt,
