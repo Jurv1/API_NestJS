@@ -34,10 +34,9 @@ export class UsersService {
     };
 
     const result: UserDocument = await this.usersRepository.createOne(userDto);
-    const savedUser: UserDocument = await result.save();
     if (!confirmed) {
       try {
-        if (savedUser) {
+        if (result) {
           await this.mailService.sendUserConfirmation(
             result.accountData.email,
             'Please, to continue work with our service confirm your email',
@@ -50,7 +49,7 @@ export class UsersService {
         return null;
       }
     }
-    return savedUser;
+    return result;
   }
 
   async findUserByLogin(login: string): Promise<UserDocument | null> {

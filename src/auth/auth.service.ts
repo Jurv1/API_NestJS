@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { UserQ } from '../users/users.query.repository';
 import { MailService } from '../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
+import { jwtConstants } from '../config/consts';
 
 @Injectable()
 export class AuthService {
@@ -42,8 +43,12 @@ export class AuthService {
       deviceId: uuidv4(),
     };
     return {
-      access_token: this.jwtService.sign(accessPayload),
-      refresh_token: this.jwtService.sign(refreshPayload),
+      access_token: this.jwtService.sign(accessPayload, {
+        expiresIn: jwtConstants.tokenTime5m,
+      }),
+      refresh_token: this.jwtService.sign(refreshPayload, {
+        expiresIn: jwtConstants.tokenTime5m,
+      }),
     };
   }
 
@@ -59,7 +64,7 @@ export class AuthService {
 
       await user.updateEmailConfirmation(true);
 
-      return;
+      return true;
     } catch (err) {
       console.log(err);
       return false;

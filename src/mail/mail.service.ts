@@ -11,7 +11,7 @@ export class MailService {
     login: string,
     confirmationCode: string,
   ) {
-    const url = `example.com/auth/confirm?token=${confirmationCode}`;
+    const url = `example.com/auth/confirm?code=${confirmationCode}`;
 
     await this.mailerService.sendMail({
       to: email,
@@ -32,7 +32,7 @@ export class MailService {
     login: string,
     code: string,
   ) {
-    const url = `example.com/auth/confirm?token=${code}`;
+    const url = `example.com/auth/confirm?recoveryCode=${code}`;
 
     await this.mailerService.sendMail({
       to: email,

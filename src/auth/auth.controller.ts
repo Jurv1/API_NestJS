@@ -22,6 +22,7 @@ import { Errors } from '../utils/handle.error';
 import { CurrentRefreshToken } from './current-refresh-token';
 import { DeviceQ } from '../devices/devices.query.repository';
 import { DeviceDocument } from '../devices/schemas/devices.database.schema';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +34,8 @@ export class AuthController {
     private readonly deviceQ: DeviceQ,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard, ThrottlerGuard)
+  @Throttle(5, 10)
   @HttpCode(200)
   @Post('login')
   async login(
@@ -70,6 +72,8 @@ export class AuthController {
     };
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('registration')
   async registerMe(@Body() body) {
     const { login, password, email } = body;
@@ -92,6 +96,8 @@ export class AuthController {
     }
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('password-recovery')
   async recoverMyPassword(@Body('email') email: string) {
     await this.userService.makePasswordRecoveryMail(email);
@@ -99,6 +105,8 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('new-password')
   async makeNewPassword(@Body() body) {
     const { newPassword, recoveryCode } = body;
@@ -108,23 +116,32 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
-    const result = await this.authService.confirmEmail(code);
-    if (!result) {
-      throw new Errors.BAD_REQUEST({
-        errorsMessages: [
-          {
-            message: 'Something went wrong',
-            field: 'code',
-          },
-        ],
-      });
-    }
+    try {
+      const result = await this.authService.confirmEmail(code);
+      if (!result) {
+        throw new Errors.BAD_REQUEST({
+          errorsMessages: [
+            {
+              message: 'Something went wrong',
+              field: 'code',
+            },
+          ],
+        });
+      }
 
-    return;
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Errors.BAD_REQUEST();
+    }
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('registration-email-resending')
   async resendRegistrationConfirming(@Body('email') email: string) {
     const result = await this.authService.resendConfirmationEmail(email);
@@ -135,6 +152,8 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('refresh-token')
   async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
     const userId = await this.authService.getUserIdByToken(refreshToken);
@@ -176,6 +195,8 @@ export class AuthController {
     } else return res.sendStatus(401);
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 10)
   @Post('logout')
   async logOut(@CurrentRefreshToken() refresh: string) {
     if (!refresh) return new Errors.UNAUTHORIZED();
