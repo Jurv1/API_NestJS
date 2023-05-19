@@ -73,4 +73,12 @@ export class LikesRepository {
 
     return allDislikes;
   }
+
+  async findLatestThreeLikes(commentId: string) {
+    return await this.likeModel
+      .find({ $and: [{ commentPostId: commentId }, { userStatus: 'Like' }] })
+      .sort({ addedAt: -1 })
+      .limit(3)
+      .lean();
+  }
 }

@@ -6,8 +6,13 @@ import { PostQ } from './posts.query.repository';
 import { postUpdateBody } from './dto/post.update.body';
 import { PostDocument } from './schemas/posts.database.schema';
 import { Errors } from '../utils/handle.error';
-import { CommentDocument } from '../comments/schemas/comments.database.schema';
+import {
+  CommentDocument,
+  CommentModelType,
+  DBComment,
+} from '../comments/schemas/comments.database.schema';
 import { CommentCreatingDto } from '../comments/dto/comment.creating.dto';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class PostService {
@@ -15,6 +20,8 @@ export class PostService {
     protected readonly blogQ: BlogQ,
     protected readonly postsRepository: PostsRepository,
     protected readonly postQ: PostQ,
+    @InjectModel(DBComment.name)
+    private readonly commentModel: CommentModelType,
   ) {}
   async createOnePost(
     title: string,
@@ -93,7 +100,12 @@ export class PostService {
         },
         postId: postId,
       };
-      return await this.postsRepository.createOneCommentByPostId(newCommentTmp);
+      const comment: CommentDocument = await this.commentModel.createComment(
+        newCommentTmp,
+        this.commentModel,
+      );
+      await comment.save();
+      return comment;
     } else return null;
   }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { LikesRepository } from '../likes/likes.repository';
 import { CommentService } from './comments.service';
 import { CommentQ } from './comments.query.repository';
@@ -7,6 +15,7 @@ import { CurrentUserId } from '../auth/current-user.param.decorator';
 import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommentDocument } from './schemas/comments.database.schema';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('comments')
 export class CommentController {
@@ -15,6 +24,8 @@ export class CommentController {
     protected commentService: CommentService,
     protected likesRepo: LikesRepository,
   ) {}
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getOneById(@Param('id') id: string, @CurrentUserId() userId: string) {
     try {
@@ -31,6 +42,7 @@ export class CommentController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('id')
   async updateOneById(@Param('id') id: string, @Body() body) {
     const content = body.content;
@@ -47,6 +59,7 @@ export class CommentController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteOneById(@Param('id') id: string) {
     try {
@@ -59,6 +72,7 @@ export class CommentController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   async likeComment(
     @Param('id') id: string,
@@ -81,7 +95,7 @@ export class CommentController {
           userStatus?.userStatus,
         );
         if (result) {
-          return;
+          return 200;
         }
         return new Errors.NOT_FOUND();
       }
@@ -95,7 +109,7 @@ export class CommentController {
           );
           return;
         } else if (userStatus?.userStatus === 'Like') {
-          return;
+          return 200;
         } else {
           const result = await this.likesRepo.likePostOrComment(
             id,
@@ -104,7 +118,7 @@ export class CommentController {
             userLogin,
           );
           if (result) {
-            return;
+            return 200;
           }
           return new Errors.NOT_FOUND();
         }
@@ -123,12 +137,12 @@ export class CommentController {
             userLogin,
           );
           if (result) {
-            return;
+            return 200;
           }
           return new Errors.NOT_FOUND();
           //remove like and create dislike
         } else if (userStatus?.userStatus === 'Dislike') {
-          return;
+          return 200;
         } else {
           //create Dislike
           const result = await this.likesRepo.likePostOrComment(
@@ -138,13 +152,13 @@ export class CommentController {
             userLogin,
           );
           if (result) {
-            return;
+            return 200;
           }
           return new Errors.NOT_FOUND();
         }
       }
 
-      return new Errors.NOT_FOUND();
+      //return new Errors.NOT_FOUND();
     } catch (err) {}
   }
 }

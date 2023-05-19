@@ -39,6 +39,9 @@ import { Like, LikeSchema } from './likes/schemas/like.database.schema';
 import { JwtService } from '@nestjs/jwt';
 import { DeviceQ } from './devices/devices.query.repository';
 import { DeviceController } from './devices/device.controller';
+import { CommentController } from './comments/comments.controller';
+import { CommentRepository } from './comments/comments.repository';
+import { CommentService } from './comments/comments.service';
 
 @Module({
   imports: [
@@ -59,6 +62,7 @@ import { DeviceController } from './devices/device.controller';
     AppController,
     BlogController,
     PostController,
+    CommentController,
     UsersController,
     AuthController,
     DeviceController,
@@ -80,6 +84,8 @@ import { DeviceController } from './devices/device.controller';
     LikesRepository,
     JwtService,
     DeviceQ,
+    CommentRepository,
+    CommentService,
   ],
 })
 export class AppModule {}

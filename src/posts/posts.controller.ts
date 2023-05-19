@@ -56,7 +56,13 @@ export class PostController {
   @Get(':id')
   async getOne(@Param('id') id: string) {
     try {
-      const result = await this.postQ.getOnePost(id);
+      const result: PostDocument = await this.postQ.getOnePost(id);
+      const allLikes = await this.likesRepo.countAllLikesForPostOrComment(id);
+      const allDislikes = await this.likesRepo.countAllDislikesForPostOrComment(
+        id,
+      );
+      const lastThreeLikes = await this.likesRepo.findLatestThreeLikes(id);
+
       if (result) {
         return {
           id: result.id.toString(),
@@ -66,10 +72,16 @@ export class PostController {
           blogId: result.blogId,
           blogName: result.blogName,
           extendedLikesInfo: {
-            likesCount: 0,
-            dislikesCount: 0,
+            likesCount: allLikes,
+            dislikesCount: allDislikes,
             myStatus: 'None',
-            newestLikes: [],
+            newestLikes: await lastThreeLikes.map((like) => {
+              {
+                addedAt: like.addedAt;
+                userId: like.userId;
+                login: like.userLogin;
+              }
+            }),
           },
           createdAt: result.createdAt,
         };
@@ -180,9 +192,10 @@ export class PostController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/comments')
   async createOneCommentByPostId(
-    @Param(':id') postId: string,
+    @Param('id') postId: string,
     @Body() body,
     @CurrentUserIdAndLogin() user: UserIdAndLogin,
   ) {
@@ -198,16 +211,32 @@ export class PostController {
           userId,
           userLogin,
         );
-      result
-        ? res.status(201).send(mapComment(result))
-        : res.status(404).json({
-            errorsMessages: [
-              {
-                message: 'No such post',
-                field: 'postId',
-              },
-            ],
-          });
+
+      if (result) {
+        return {
+          id: result.id,
+          content: result.content,
+          commentatorInfo: {
+            userId: result.commentatorInfo.userId,
+            userLogin: result.commentatorInfo.userLogin,
+          },
+          createdAt: result.createdAt,
+          likesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None',
+          },
+        };
+      }
+
+      return new Errors.NOT_FOUND({
+        errorsMessages: [
+          {
+            message: 'No such post',
+            field: 'postId',
+          },
+        ],
+      });
     } catch (err) {
       console.log(err);
       return new Errors.NOT_FOUND();
