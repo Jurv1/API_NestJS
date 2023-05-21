@@ -5,6 +5,7 @@ import { EmailConfirmation } from './email.confirmation.schema';
 import { PasswordRecovery } from './password.recovery.schema';
 import { UserCreationDto } from '../dto/user.creation.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { add } from 'date-fns';
 import { PasswordRecoveryDto } from '../dto/password-recovery.dto';
 import { UpdatePasswordDto } from '../dto/update.password.dto';
 
@@ -32,7 +33,7 @@ export class User {
       },
       emailConfirmation: {
         confirmationCode: uuidv4(),
-        expirationDate: new Date(),
+        expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
         isConfirmed: userDto.isConfirmed,
       },
       passRecovery: {

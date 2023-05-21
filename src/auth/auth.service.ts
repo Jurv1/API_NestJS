@@ -75,6 +75,7 @@ export class AuthService {
     const user: UserDocument = await this.userQ.getOneByLoginOrEmail(email);
     if (!user || !user.emailConfirmation.confirmationCode) return false;
     const newRegistrationCode = uuidv4();
+    await user.updateEmailConfirmationCode(newRegistrationCode);
     try {
       await this.mailService.sendUserConfirmation(
         user.accountData.email,
