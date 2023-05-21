@@ -16,6 +16,7 @@ import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommentDocument } from './schemas/comments.database.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ContentDto } from './dto/content.dto';
 
 @Controller('comments')
 export class CommentController {
@@ -44,7 +45,7 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Put('id')
-  async updateOneById(@Param('id') id: string, @Body() body) {
+  async updateOneById(@Param('id') id: string, @Body() body: ContentDto) {
     const content = body.content;
     try {
       const comment: CommentDocument = await this.commentQ.getOneComment(id);

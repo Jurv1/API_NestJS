@@ -27,6 +27,7 @@ import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { LikesRepository } from '../likes/likes.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommentDocument } from '../comments/schemas/comments.database.schema';
+import { ContentDto } from '../comments/dto/content.dto';
 
 @Controller('posts')
 export class PostController {
@@ -196,7 +197,7 @@ export class PostController {
   @Post(':id/comments')
   async createOneCommentByPostId(
     @Param('id') postId: string,
-    @Body() body,
+    @Body() body: ContentDto,
     @CurrentUserIdAndLogin() user: UserIdAndLogin,
   ) {
     const content = body.content;

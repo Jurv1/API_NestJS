@@ -23,6 +23,9 @@ import { CurrentRefreshToken } from './current-refresh-token';
 import { DeviceQ } from '../devices/devices.query.repository';
 import { DeviceDocument } from '../devices/schemas/devices.database.schema';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { UserBody } from '../users/dto/user.body';
+import { EmailDto } from './dto/email.dto';
+import { NewPasswordDto } from './dto/new.password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -75,7 +78,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @Post('registration')
-  async registerMe(@Body() body) {
+  async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
     const user: UserDocument = await this.userService.createOneUser(
@@ -99,8 +102,8 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @Post('password-recovery')
-  async recoverMyPassword(@Body('email') email: string) {
-    await this.userService.makePasswordRecoveryMail(email);
+  async recoverMyPassword(@Body() body: EmailDto) {
+    await this.userService.makePasswordRecoveryMail(body.email);
 
     return;
   }
@@ -108,7 +111,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @Post('new-password')
-  async makeNewPassword(@Body() body) {
+  async makeNewPassword(@Body() body: NewPasswordDto) {
     const { newPassword, recoveryCode } = body;
 
     await this.userService.updateNewPassword(newPassword, recoveryCode);
@@ -143,8 +146,8 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @Post('registration-email-resending')
-  async resendRegistrationConfirming(@Body('email') email: string) {
-    const result = await this.authService.resendConfirmationEmail(email);
+  async resendRegistrationConfirming(@Body() body: EmailDto) {
+    const result = await this.authService.resendConfirmationEmail(body.email);
     if (!result) {
       return new Errors.BAD_REQUEST();
     }
