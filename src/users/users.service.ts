@@ -35,18 +35,13 @@ export class UsersService {
 
     const result: UserDocument = await this.usersRepository.createOne(userDto);
     if (!confirmed) {
-      try {
-        if (result) {
-          await this.mailService.sendUserConfirmation(
-            result.accountData.email,
-            'Please, to continue work with our service confirm your email',
-            result.accountData.login,
-            result.emailConfirmation.confirmationCode,
-          );
-        }
-      } catch (err) {
-        console.log(err);
-        return null;
+      if (result) {
+        await this.mailService.sendUserConfirmation(
+          result.accountData.email,
+          'Please, to continue work with our service confirm your email',
+          result.accountData.login,
+          result.emailConfirmation.confirmationCode,
+        );
       }
     }
     return result;

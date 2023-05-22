@@ -45,42 +45,34 @@ export class AuthController {
     @CurrentUserData() currentUserData: UserLoginDataDto,
     @Response() res,
   ) {
-    try {
-      const user: UserDocument = await this.userQ.getOneUserById(
-        currentUserData.userId,
-      );
+    const user: UserDocument = await this.userQ.getOneUserById(
+      currentUserData.userId,
+    );
 
-      const tokens = await this.authService.login(user);
-      await this.deviceService.createNewDevice(
-        currentUserData,
-        tokens.refresh_token,
-      );
+    const tokens = await this.authService.login(user);
+    await this.deviceService.createNewDevice(
+      currentUserData,
+      tokens.refresh_token,
+    );
 
-      res
-        .cookie('refreshToken', tokens.refresh_token, {})
-        .header('Authorization', tokens.access_token)
-        .send({
-          accessToken: tokens.access_token,
-        });
-    } catch (err) {
-      console.log(err);
-    }
+    res
+      .cookie('refreshToken', tokens.refresh_token, {})
+      .header('Authorization', tokens.access_token)
+      .send({
+        accessToken: tokens.access_token,
+      });
   }
   //httpOnly: true,
   //         secure: true,
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
-    try {
-      const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
-      return {
-        email: user.accountData.email,
-        login: user.accountData.login,
-        userId: currentUserId,
-      };
-    } catch (err) {
-      console.log(err);
-    }
+    const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
+    return {
+      email: user.accountData.email,
+      login: user.accountData.login,
+      userId: currentUserId,
+    };
   }
 
   @UseGuards(ThrottlerGuard)
