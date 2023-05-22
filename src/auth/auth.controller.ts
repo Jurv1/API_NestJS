@@ -82,21 +82,25 @@ export class AuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    const user: UserDocument = await this.userService.createOneUser(
-      login,
-      email,
-      password,
-      false,
-    );
-    if (user) {
-      return { message: 'all good' };
-    } else {
-      throw new Errors.BAD_REQUEST({
-        errorsMessages: {
-          message: 's',
-          field: 'login',
-        },
-      });
+    try {
+      const user: UserDocument = await this.userService.createOneUser(
+        login,
+        email,
+        password,
+        false,
+      );
+      if (user) {
+        return { message: 'all good' };
+      } else {
+        throw new Errors.BAD_REQUEST({
+          errorsMessages: {
+            message: 's',
+            field: 'login',
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
