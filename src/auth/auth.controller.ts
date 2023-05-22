@@ -89,7 +89,7 @@ export class AuthController {
       false,
     );
     if (user) {
-      return;
+      return { message: 'all good' };
     } else {
       throw new Errors.BAD_REQUEST({
         errorsMessages: {
@@ -130,7 +130,7 @@ export class AuthController {
       if (!result) {
         throw new Errors.BAD_REQUEST();
       } else {
-        return;
+        return { message: 'all good' };
       }
     } catch (err) {
       console.log(err);
@@ -156,7 +156,7 @@ export class AuthController {
         return new Errors.BAD_REQUEST();
       }
 
-      return;
+      return { message: 'all good' };
     } catch (err) {
       console.log(err);
       throw new Errors.BAD_REQUEST();
