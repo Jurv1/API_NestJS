@@ -21,7 +21,7 @@ export class ErrorExceptionFilter implements ExceptionFilter {
 
       const responseBody: any = exception.getResponse();
 
-      responseBody.message.map((el) => {
+      responseBody.errorsMessages.map((el) => {
         errorsResponse.errorsMessages.push(el);
       });
 
@@ -63,7 +63,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
       const responseBody: any = exception.getResponse();
 
-      responseBody.message.map((el) => {
+      responseBody.errorsMessages.map((el) => {
         errorsResponse.errorsMessages.push(el);
       });
 

@@ -121,30 +121,32 @@ export class AuthController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
+  @HttpCode(204)
   @Post('registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
     try {
       const result = await this.authService.confirmEmail(code);
       if (!result) {
-        throw new Errors.BAD_REQUEST({
-          errorsMessages: [
-            {
-              message: 'Something went wrong',
-              field: 'code',
-            },
-          ],
-        });
+        throw new Errors.BAD_REQUEST();
+      } else {
+        return;
       }
-
-      return;
     } catch (err) {
       console.log(err);
-      return new Errors.BAD_REQUEST();
+      throw new Errors.BAD_REQUEST({
+        errorsMessages: [
+          {
+            message: 'Something went wrong',
+            field: 'code',
+          },
+        ],
+      });
     }
   }
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
+  @HttpCode(204)
   @Post('registration-email-resending')
   async resendRegistrationConfirming(@Body() body: EmailDto) {
     try {
