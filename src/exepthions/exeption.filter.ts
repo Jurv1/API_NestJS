@@ -21,9 +21,15 @@ export class ErrorExceptionFilter implements ExceptionFilter {
 
       const responseBody: any = exception.getResponse();
 
-      responseBody.errorsMessages.map((el) => {
-        errorsResponse.errorsMessages.push(el);
-      });
+      if (responseBody.errorsMessages) {
+        responseBody.errorsMessages.map((el) => {
+          errorsResponse.errorsMessages.push(el);
+        });
+      } else if (responseBody.message) {
+        responseBody.message.map((el) => {
+          errorsResponse.errorsMessages.push(el);
+        });
+      }
 
       response.status(status).json(errorsResponse);
     } else {
@@ -63,9 +69,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
       const responseBody: any = exception.getResponse();
 
-      responseBody.errorsMessages.map((el) => {
-        errorsResponse.errorsMessages.push(el);
-      });
+      if (responseBody.errorsMessages) {
+        responseBody.errorsMessages.map((el) => {
+          errorsResponse.errorsMessages.push(el);
+        });
+      } else if (responseBody.message) {
+        responseBody.message.map((el) => {
+          errorsResponse.errorsMessages.push(el);
+        });
+      }
 
       response.status(status).json(errorsResponse);
     } else {

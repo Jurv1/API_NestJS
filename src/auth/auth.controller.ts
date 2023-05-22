@@ -77,6 +77,7 @@ export class AuthController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
+  @HttpCode(204)
   @Post('registration')
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
