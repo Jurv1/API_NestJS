@@ -40,7 +40,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard, ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(200)
-  @Post('login')
+  @Post('/login')
   async login(
     @CurrentUserData() currentUserData: UserLoginDataDto,
     @Response() res,
@@ -65,7 +65,7 @@ export class AuthController {
   //httpOnly: true,
   //         secure: true,
   @UseGuards(JwtAuthGuard)
-  @Get('me')
+  @Get('/me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
     const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
     return {
@@ -78,7 +78,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
-  @Post('registration')
+  @Post('/registration')
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
@@ -102,7 +102,7 @@ export class AuthController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
-  @Post('password-recovery')
+  @Post('/password-recovery')
   async recoverMyPassword(@Body() body: EmailDto) {
     await this.userService.makePasswordRecoveryMail(body.email);
 
@@ -111,7 +111,7 @@ export class AuthController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
-  @Post('new-password')
+  @Post('/new-password')
   async makeNewPassword(@Body() body: NewPasswordDto) {
     const { newPassword, recoveryCode } = body;
 
@@ -123,7 +123,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
-  @Post('registration-confirmation')
+  @Post('/registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
     try {
       const result = await this.authService.confirmEmail(code);
@@ -148,7 +148,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
-  @Post('registration-email-resending')
+  @Post('/registration-email-resending')
   async resendRegistrationConfirming(@Body() body: EmailDto) {
     try {
       const result = await this.authService.resendConfirmationEmail(body.email);
@@ -165,7 +165,7 @@ export class AuthController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
-  @Post('refresh-token')
+  @Post('/refresh-token')
   async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
     const userId = await this.authService.getUserIdByToken(refreshToken);
 
@@ -208,7 +208,7 @@ export class AuthController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
-  @Post('logout')
+  @Post('/logout')
   async logOut(@CurrentRefreshToken() refresh: string) {
     if (!refresh) return new Errors.UNAUTHORIZED();
 
