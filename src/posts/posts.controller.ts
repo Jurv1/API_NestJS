@@ -20,7 +20,6 @@ import { PostBodyBlogId } from './dto/post.body.blogId';
 import { PostQuery } from './dto/post.query';
 import { PostDocument } from './schemas/posts.database.schema';
 import { PostBody } from './dto/post.body.without.blogId';
-import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
 import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
@@ -28,6 +27,7 @@ import { LikesRepository } from '../likes/likes.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommentDocument } from '../comments/schemas/comments.database.schema';
 import { ContentDto } from '../comments/dto/content.dto';
+import { LikeBody } from '../likes/dto/like.body';
 
 @Controller('posts')
 export class PostController {
@@ -119,7 +119,7 @@ export class PostController {
     }
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(AdminAuthGuard)
   @Post()
   async createOne(@Body() body: PostBody) {
     try {
@@ -247,7 +247,7 @@ export class PostController {
   @Put(':id/like-status')
   async likePost(
     @Param('id') id: string,
-    @Body() body,
+    @Body() body: LikeBody,
     @CurrentUserIdAndLogin() user: UserIdAndLogin,
   ) {
     const likeStatus = body.likeStatus;

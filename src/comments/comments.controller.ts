@@ -17,6 +17,7 @@ import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommentDocument } from './schemas/comments.database.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ContentDto } from './dto/content.dto';
+import { LikeBody } from '../likes/dto/like.body';
 
 @Controller('comments')
 export class CommentController {
@@ -77,10 +78,10 @@ export class CommentController {
   @Put(':id/like-status')
   async likeComment(
     @Param('id') id: string,
-    @Body() body,
+    @Body() body: LikeBody,
     @CurrentUserIdAndLogin() user: UserIdAndLogin,
   ) {
-    const likeStatus = body.likeStatus;
+    const likeStatus: string = body.likeStatus;
     const userId: string = user.userId;
     const userLogin: string = user.userLogin;
 

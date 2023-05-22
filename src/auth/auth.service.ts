@@ -63,6 +63,7 @@ export class AuthService {
       if (user.emailConfirmation.expirationDate < new Date()) return false;
 
       await user.updateEmailConfirmation(true);
+      await user.save();
 
       return true;
     } catch (err) {
@@ -76,6 +77,7 @@ export class AuthService {
     if (!user || !user.emailConfirmation.confirmationCode) return false;
     const newRegistrationCode = uuidv4();
     await user.updateEmailConfirmationCode(newRegistrationCode);
+    await user.save();
     try {
       await this.mailService.sendUserConfirmation(
         user.accountData.email,
@@ -88,6 +90,7 @@ export class AuthService {
       return false;
     }
     await user.updateEmailConfirmationCode(newRegistrationCode);
+    return true;
   }
 
   async getDeviceIdFromRefresh(token: any) {

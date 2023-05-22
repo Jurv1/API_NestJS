@@ -139,7 +139,7 @@ export class AuthController {
       return;
     } catch (err) {
       console.log(err);
-      throw new Errors.BAD_REQUEST();
+      return new Errors.BAD_REQUEST();
     }
   }
 
@@ -147,12 +147,17 @@ export class AuthController {
   @Throttle(5, 10)
   @Post('registration-email-resending')
   async resendRegistrationConfirming(@Body() body: EmailDto) {
-    const result = await this.authService.resendConfirmationEmail(body.email);
-    if (!result) {
-      return new Errors.BAD_REQUEST();
-    }
+    try {
+      const result = await this.authService.resendConfirmationEmail(body.email);
+      if (!result) {
+        return new Errors.BAD_REQUEST();
+      }
 
-    return;
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Errors.BAD_REQUEST();
+    }
   }
 
   @UseGuards(ThrottlerGuard)

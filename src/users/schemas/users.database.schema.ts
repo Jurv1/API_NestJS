@@ -60,6 +60,10 @@ export class User {
 
   updateEmailConfirmationCode(code: string) {
     this.emailConfirmation.confirmationCode = code;
+    this.emailConfirmation.expirationDate = add(new Date(), {
+      hours: 1,
+      minutes: 30,
+    });
   }
 }
 
