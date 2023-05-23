@@ -82,25 +82,34 @@ export class AuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    try {
-      const user: UserDocument = await this.userService.createOneUser(
-        login,
-        email,
-        password,
-        false,
-      );
-      if (user) {
-        return { message: 'all good' };
-      } else {
-        throw new Errors.BAD_REQUEST({
-          errorsMessages: {
-            message: 's',
-            field: 'login',
+    const isUserExists: UserDocument = await this.userQ.getOneUserByLogin(
+      login,
+    );
+    if (isUserExists) {
+      throw new Errors.BAD_REQUEST({
+        errorsMessages: [
+          {
+            message: 'Something went wrong',
+            field: 'email',
           },
-        });
-      }
-    } catch (err) {
-      console.log(err);
+        ],
+      });
+    }
+    const user: UserDocument = await this.userService.createOneUser(
+      login,
+      email,
+      password,
+      false,
+    );
+    if (user) {
+      return { message: 'all good' };
+    } else {
+      throw new Errors.BAD_REQUEST({
+        errorsMessages: {
+          message: 's',
+          field: 'email',
+        },
+      });
     }
   }
 
@@ -132,7 +141,14 @@ export class AuthController {
     try {
       const result = await this.authService.confirmEmail(code);
       if (!result) {
-        throw new Errors.BAD_REQUEST();
+        throw new Errors.BAD_REQUEST({
+          errorsMessages: [
+            {
+              message: 'Something went wrong',
+              field: 'code',
+            },
+          ],
+        });
       } else {
         return { message: 'all good' };
       }
@@ -142,7 +158,7 @@ export class AuthController {
         errorsMessages: [
           {
             message: 'Something went wrong',
-            field: 'code',
+            field: 'email',
           },
         ],
       });
@@ -157,13 +173,27 @@ export class AuthController {
     try {
       const result = await this.authService.resendConfirmationEmail(body.email);
       if (!result) {
-        return new Errors.BAD_REQUEST();
+        throw new Errors.BAD_REQUEST({
+          errorsMessages: [
+            {
+              message: 'Something went wrong',
+              field: 'email',
+            },
+          ],
+        });
       }
 
       return { message: 'all good' };
     } catch (err) {
       console.log(err);
-      throw new Errors.BAD_REQUEST();
+      throw new Errors.BAD_REQUEST({
+        errorsMessages: [
+          {
+            message: 'Something went wrong',
+            field: 'email',
+          },
+        ],
+      });
     }
   }
 
