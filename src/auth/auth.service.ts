@@ -74,7 +74,7 @@ export class AuthService {
 
   async resendConfirmationEmail(email: string) {
     const user: UserDocument = await this.userQ.getOneByLoginOrEmail(email);
-    if (!user || user.emailConfirmation.confirmationCode) return false;
+    if (!user || user.emailConfirmation.isConfirmed) return false;
     const newRegistrationCode = uuidv4();
     await user.updateEmailConfirmationCode(newRegistrationCode);
     await user.save();
