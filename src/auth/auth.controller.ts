@@ -104,7 +104,7 @@ export class AuthController {
         errorsMessages: [
           {
             message: 'Something went wrong',
-            field: 'login',
+            field: 'email',
           },
         ],
       });
