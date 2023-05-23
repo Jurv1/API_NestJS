@@ -82,19 +82,34 @@ export class AuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    const isUserExists: UserDocument = await this.userQ.getOneByLoginOrEmail(
+    const isLoginExists: UserDocument = await this.userQ.getOneByLoginOrEmail(
       login,
     );
-    if (isUserExists) {
+    if (isLoginExists) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
           {
             message: 'Something went wrong',
-            field: 'email',
+            field: 'login',
           },
         ],
       });
     }
+
+    const isEmailExists: UserDocument = await this.userQ.getOneByLoginOrEmail(
+      email,
+    );
+    if (isEmailExists) {
+      throw new Errors.BAD_REQUEST({
+        errorsMessages: [
+          {
+            message: 'Something went wrong',
+            field: 'login',
+          },
+        ],
+      });
+    }
+
     const user: UserDocument = await this.userService.createOneUser(
       login,
       email,
