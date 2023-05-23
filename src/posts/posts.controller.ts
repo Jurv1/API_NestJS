@@ -28,6 +28,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommentDocument } from '../comments/schemas/comments.database.schema';
 import { ContentDto } from '../comments/dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
+import { CurrentUserAccessToken } from '../auth/current-user.access.token';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('posts')
 export class PostController {
@@ -35,10 +37,14 @@ export class PostController {
     private readonly postService: PostService,
     protected postQ: PostQ,
     private readonly likesRepo: LikesRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Get()
-  async getAll(@Query() query: PostQuery) {
+  async getAll(
+    @Query() query: PostQuery,
+    @CurrentUserAccessToken() token: string,
+  ) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
@@ -46,8 +52,14 @@ export class PostController {
     const filter = filterQueryValid(searchNameTerm);
     const pagination = makePagination(pageNumber, pageSize);
 
+    let userId = null;
+
     try {
-      return await this.postQ.getAllPosts(filter, sort, pagination);
+      const payload: any | null = (await this.jwtService.decode(token)) || null;
+      if (payload) {
+        userId = payload.userId;
+      }
+      return await this.postQ.getAllPosts(filter, sort, pagination, userId);
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -55,15 +67,31 @@ export class PostController {
   }
 
   @Get(':id')
-  async getOne(@Param('id') id: string) {
+  async getOne(
+    @Param('id') id: string,
+    @CurrentUserAccessToken() token: string,
+  ) {
+    let userId = null;
     try {
+      const payload: any | null = (await this.jwtService.decode(token)) || null;
+      if (payload) {
+        userId = payload.userId;
+      }
+
       const result: PostDocument = await this.postQ.getOnePost(id);
       const allLikes = await this.likesRepo.countAllLikesForPostOrComment(id);
       const allDislikes = await this.likesRepo.countAllDislikesForPostOrComment(
         id,
       );
       const lastThreeLikes = await this.likesRepo.findLatestThreeLikes(id);
-
+      let userStatus;
+      if (userId) {
+        const like = await this.likesRepo.getUserStatusForComment(
+          userId.toString(),
+          id.toString(),
+        );
+        userStatus = like?.userStatus;
+      }
       if (result) {
         return {
           id: result.id.toString(),
@@ -75,7 +103,7 @@ export class PostController {
           extendedLikesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,
-            myStatus: 'None',
+            myStatus: userStatus || 'None',
             newestLikes: await lastThreeLikes.map((like) => {
               return {
                 addedAt: like.addedAt,
@@ -244,6 +272,7 @@ export class PostController {
     }
   }
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   @Put(':id/like-status')
   async likePost(
     @Param('id') id: string,
@@ -268,7 +297,7 @@ export class PostController {
         if (result) {
           return;
         }
-        return new Errors.NOT_FOUND();
+        throw new Errors.NOT_FOUND();
       }
       if (likeStatus === 'Like') {
         if (userStatus?.userStatus === 'Dislike') {

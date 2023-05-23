@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Put,
   UseGuards,
@@ -11,13 +12,14 @@ import { LikesRepository } from '../likes/likes.repository';
 import { CommentService } from './comments.service';
 import { CommentQ } from './comments.query.repository';
 import { Errors } from '../utils/handle.error';
-import { CurrentUserId } from '../auth/current-user.param.decorator';
 import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommentDocument } from './schemas/comments.database.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ContentDto } from './dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
+import { CurrentUserAccessToken } from '../auth/current-user.access.token';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('comments')
 export class CommentController {
@@ -25,12 +27,20 @@ export class CommentController {
     protected commentQ: CommentQ,
     protected commentService: CommentService,
     protected likesRepo: LikesRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getOneById(@Param('id') id: string, @CurrentUserId() userId: string) {
+  async getOneById(
+    @Param('id') id: string,
+    @CurrentUserAccessToken() token: string,
+  ) {
+    let userId = null;
     try {
+      const payload: any | null = (await this.jwtService.decode(token)) || null;
+      if (payload) {
+        userId = payload.userId;
+      }
       const result = await this.commentQ.getOneComment(id, userId);
 
       if (result) {
@@ -75,6 +85,7 @@ export class CommentController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   @Put(':id/like-status')
   async likeComment(
     @Param('id') id: string,
