@@ -62,15 +62,6 @@ export class UserQ {
     });
   }
 
-  async getOneByLoginOrEmailReg(
-    login: string,
-    email: string,
-  ): Promise<UserDocument | null> {
-    return this.userModel.findOne({
-      $or: [{ 'accountData.login': login }, { 'accountData.email': email }],
-    });
-  }
-
   async getOneUserById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id);
   }

@@ -82,9 +82,8 @@ export class AuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    const isUserExists: UserDocument = await this.userQ.getOneByLoginOrEmailReg(
+    const isUserExists: UserDocument = await this.userQ.getOneByLoginOrEmail(
       login,
-      email,
     );
     if (isUserExists) {
       throw new Errors.BAD_REQUEST({
@@ -108,7 +107,7 @@ export class AuthController {
       throw new Errors.BAD_REQUEST({
         errorsMessages: {
           message: 's',
-          field: 'email',
+          field: 'login',
         },
       });
     }
