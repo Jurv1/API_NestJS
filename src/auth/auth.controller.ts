@@ -56,14 +56,15 @@ export class AuthController {
     );
 
     res
-      .cookie('refreshToken', tokens.refresh_token, {})
+      .cookie('refreshToken', tokens.refresh_token, {
+        httpOnly: true,
+        secure: true,
+      })
       .header('Authorization', tokens.access_token)
       .send({
         accessToken: tokens.access_token,
       });
   }
-  //httpOnly: true,
-  //         secure: true,
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
