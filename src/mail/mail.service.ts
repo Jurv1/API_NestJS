@@ -15,7 +15,7 @@ export class MailService {
 
     await this.mailerService.sendMail({
       to: email,
-      // from: '"Support Team" <support@example.com>', // override default from
+      from: '"Support Team" <bushmanhik2@gmail.com>', // override default from
       subject: subject,
       template: './confirmation', // `.hbs` extension is appended automatically
       context: {
@@ -36,7 +36,7 @@ export class MailService {
 
     await this.mailerService.sendMail({
       to: email,
-      // from: '"Support Team" <support@example.com>', // override default from
+      from: '"Support Team" <bushmanhik2@gmail.com>', // override default from
       subject: subject,
       template: './recovery', // `.hbs` extension is appended automatically
       context: {
