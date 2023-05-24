@@ -75,7 +75,7 @@ export class LikesRepository {
   }
 
   async findLatestThreeLikes(commentId: string) {
-    return await this.likeModel
+    return this.likeModel
       .find({ $and: [{ commentPostId: commentId }, { userStatus: 'Like' }] })
       .sort({ addedAt: -1 })
       .limit(3)

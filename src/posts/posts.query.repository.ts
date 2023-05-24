@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CommentQ } from '../comments/comments.query.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   Post,
@@ -12,15 +11,17 @@ import {
   DBComment,
 } from '../comments/schemas/comments.database.schema';
 import { LikesRepository } from '../likes/likes.repository';
-import { LikeDocument } from '../likes/schemas/like.database.schema';
+import { PostMapper } from '../utils/mappers/post.mapper';
+import { CommentMapper } from '../utils/mappers/comment.mapper';
 
 @Injectable()
 export class PostQ {
   constructor(
-    protected commentQ: CommentQ,
     @InjectModel(Post.name) private postModel: PostModelType,
     @InjectModel(DBComment.name) private commentModel: Model<CommentDocument>,
     private readonly likesRepo: LikesRepository,
+    private readonly postMapper: PostMapper,
+    private readonly commentMapper: CommentMapper,
   ) {}
   async getAllPosts(
     filter: Document,
@@ -48,52 +49,7 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: await Promise.all(
-        allPosts.map(async (el) => {
-          const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
-            el._id.toString(),
-          );
-          const allDislikes =
-            await this.likesRepo.countAllDislikesForPostOrComment(
-              el._id.toString(),
-            );
-          let userStatus = 'None';
-          if (userId) {
-            const like: LikeDocument =
-              await this.likesRepo.getUserStatusForComment(
-                userId,
-                el._id.toString(),
-              );
-            userStatus = like.userStatus;
-          }
-
-          const lastThreeLikes = await this.likesRepo.findLatestThreeLikes(
-            el._id.toString(),
-          );
-
-          return {
-            id: el._id.toString(),
-            title: el.title,
-            shortDescription: el.shortDescription,
-            content: el.content,
-            blogId: el.blogId,
-            blogName: el.blogName,
-            extendedLikesInfo: {
-              likesCount: allLikes,
-              dislikesCount: allDislikes,
-              myStatus: userStatus,
-              newestLikes: await lastThreeLikes.map((like) => {
-                return {
-                  addedAt: like.addedAt,
-                  userId: like.userId,
-                  login: like.userLogin,
-                };
-              }),
-            },
-            createdAt: el.createdAt,
-          };
-        }),
-      ),
+      items: await this.postMapper.mapPosts(allPosts, userId),
     };
   }
 
@@ -126,52 +82,7 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDoc,
-      items: await Promise.all(
-        allPosts.map(async (el) => {
-          const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
-            el._id.toString(),
-          );
-          const allDislikes =
-            await this.likesRepo.countAllDislikesForPostOrComment(
-              el._id.toString(),
-            );
-          let userStatus = 'None';
-          if (userId) {
-            const like: LikeDocument =
-              await this.likesRepo.getUserStatusForComment(
-                userId,
-                el._id.toString(),
-              );
-            userStatus = like.userStatus;
-          }
-
-          const lastThreeLikes = await this.likesRepo.findLatestThreeLikes(
-            el._id.toString(),
-          );
-
-          return {
-            id: el._id.toString(),
-            title: el.title,
-            shortDescription: el.shortDescription,
-            content: el.content,
-            blogId: el.blogId,
-            blogName: el.blogName,
-            extendedLikesInfo: {
-              likesCount: allLikes,
-              dislikesCount: allDislikes,
-              myStatus: userStatus,
-              newestLikes: lastThreeLikes.map((like) => {
-                {
-                  addedAt: like.addedAt;
-                  userId: like.userId;
-                  login: like.userLogin;
-                }
-              }),
-            },
-            createdAt: el.createdAt,
-          };
-        }),
-      ),
+      items: await this.postMapper.mapPosts(allPosts, userId),
     };
   }
 
@@ -199,41 +110,7 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDoc,
-      items: await Promise.all(
-        allComments.map(async (el) => {
-          const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
-            el._id.toString(),
-          );
-          const allDislikes =
-            await this.likesRepo.countAllDislikesForPostOrComment(
-              el._id.toString(),
-            );
-
-          let userStatus = 'None';
-          if (userId) {
-            const like: LikeDocument =
-              await this.likesRepo.getUserStatusForComment(
-                userId,
-                el._id.toString(),
-              );
-            userStatus = like.userStatus;
-          }
-          return {
-            content: el.content,
-            commentatorInfo: {
-              userId: 'string',
-              userLogin: 'string',
-            },
-            likesInfo: {
-              likesCount: allLikes,
-              dislikesCount: allDislikes,
-              myStatus: userStatus,
-            },
-            postId: el.postId,
-            createdAt: el.createdAt,
-          };
-        }),
-      ),
+      items: await this.commentMapper.mapComments(allComments, userId),
     };
   }
 }

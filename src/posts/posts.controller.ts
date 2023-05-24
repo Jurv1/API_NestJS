@@ -30,6 +30,7 @@ import { ContentDto } from '../comments/dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
 import { CurrentUserAccessToken } from '../auth/current-user.access.token';
 import { JwtService } from '@nestjs/jwt';
+import { PostMapper } from '../utils/mappers/post.mapper';
 
 @Controller('posts')
 export class PostController {
@@ -38,6 +39,7 @@ export class PostController {
     protected postQ: PostQ,
     private readonly likesRepo: LikesRepository,
     private readonly jwtService: JwtService,
+    private readonly postMapper: PostMapper,
   ) {}
 
   @Get()
@@ -79,41 +81,8 @@ export class PostController {
       }
 
       const result: PostDocument = await this.postQ.getOnePost(id);
-      const allLikes = await this.likesRepo.countAllLikesForPostOrComment(id);
-      const allDislikes = await this.likesRepo.countAllDislikesForPostOrComment(
-        id,
-      );
-      const lastThreeLikes = await this.likesRepo.findLatestThreeLikes(id);
-      let userStatus;
-      if (userId) {
-        const like = await this.likesRepo.getUserStatusForComment(
-          userId.toString(),
-          id.toString(),
-        );
-        userStatus = like?.userStatus;
-      }
       if (result) {
-        return {
-          id: result.id.toString(),
-          title: result.title,
-          shortDescription: result.shortDescription,
-          content: result.content,
-          blogId: result.blogId,
-          blogName: result.blogName,
-          extendedLikesInfo: {
-            likesCount: allLikes,
-            dislikesCount: allDislikes,
-            myStatus: userStatus || 'None',
-            newestLikes: await lastThreeLikes.map((like) => {
-              return {
-                addedAt: like.addedAt,
-                userId: like.userId,
-                login: like.userLogin,
-              };
-            }),
-          },
-          createdAt: result.createdAt,
-        };
+        return await this.postMapper.mapPost(result);
       } else {
         return new Errors.NOT_FOUND();
       }
@@ -127,17 +96,25 @@ export class PostController {
   async getAllCommentsByPostId(
     @Query() query: PostQuery,
     @Param('id') id: string,
+    @CurrentUserAccessToken() token: string,
   ) {
     const { sortBy, sortDirection, pageNumber, pageSize } = query;
 
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
 
+    let userId = null;
+
     try {
+      const payload: any | null = (await this.jwtService.decode(token)) || null;
+      if (payload) {
+        userId = payload.userId;
+      }
       const allComments = await this.postQ.getAllCommentsByPostId(
         id,
         sort,
         pagination,
+        userId,
       );
       if (allComments) return allComments;
       return new Errors.NOT_FOUND();

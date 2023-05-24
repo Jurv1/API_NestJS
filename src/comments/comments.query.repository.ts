@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CommentDocument, DBComment } from './schemas/comments.database.schema';
+import {
+  CommentDocument,
+  CommentModelType,
+  DBComment,
+} from './schemas/comments.database.schema';
 import { LikesRepository } from '../likes/likes.repository';
 
 @Injectable()
 export class CommentQ {
   constructor(
-    @InjectModel(DBComment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(DBComment.name) private commentModel: CommentModelType,
     private readonly likesRepo: LikesRepository,
   ) {}
   async getOneComment(id: string, userId?: string): Promise<any | null> {

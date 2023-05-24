@@ -20,6 +20,7 @@ import { ContentDto } from './dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
 import { CurrentUserAccessToken } from '../auth/current-user.access.token';
 import { JwtService } from '@nestjs/jwt';
+import { CommentMapper } from '../utils/mappers/comment.mapper';
 
 @Controller('comments')
 export class CommentController {
@@ -64,6 +65,7 @@ export class CommentController {
         throw new Errors.NOT_FOUND();
       }
       await comment.updateComment(content);
+      await comment.save();
       return;
     } catch (err) {
       console.log(err);
