@@ -20,16 +20,17 @@ import { ContentDto } from './dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
 import { CurrentUserAccessToken } from '../auth/current-user.access.token';
 import { JwtService } from '@nestjs/jwt';
-import { CommentMapper } from '../utils/mappers/comment.mapper';
 
 @Controller('comments')
 export class CommentController {
   constructor(
-    protected commentQ: CommentQ,
-    protected commentService: CommentService,
-    protected likesRepo: LikesRepository,
+    private readonly commentQ: CommentQ,
+    private readonly commentService: CommentService,
+    private readonly likesRepo: LikesRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.commentQ = undefined;
+  }
 
   @Get(':id')
   async getOneById(
@@ -110,9 +111,9 @@ export class CommentController {
           userStatus?.userStatus,
         );
         if (result) {
-          return 200;
+          return;
         }
-        return new Errors.NOT_FOUND();
+        throw new Errors.NOT_FOUND();
       }
       if (likeStatus === 'Like') {
         if (userStatus?.userStatus === 'Dislike') {
@@ -124,7 +125,7 @@ export class CommentController {
           );
           return;
         } else if (userStatus?.userStatus === 'Like') {
-          return 200;
+          return;
         } else {
           const result = await this.likesRepo.likePostOrComment(
             id,
@@ -133,9 +134,9 @@ export class CommentController {
             userLogin,
           );
           if (result) {
-            return 200;
+            return;
           }
-          return new Errors.NOT_FOUND();
+          throw new Errors.NOT_FOUND();
         }
       }
       if (likeStatus === 'Dislike') {
@@ -152,12 +153,12 @@ export class CommentController {
             userLogin,
           );
           if (result) {
-            return 200;
+            return;
           }
-          return new Errors.NOT_FOUND();
+          throw new Errors.NOT_FOUND();
           //remove like and create dislike
         } else if (userStatus?.userStatus === 'Dislike') {
-          return 200;
+          return;
         } else {
           //create Dislike
           const result = await this.likesRepo.likePostOrComment(
@@ -167,13 +168,16 @@ export class CommentController {
             userLogin,
           );
           if (result) {
-            return 200;
+            return;
           }
-          return new Errors.NOT_FOUND();
+          throw new Errors.NOT_FOUND();
         }
       }
 
       //return new Errors.NOT_FOUND();
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+      throw new Errors.BAD_REQUEST();
+    }
   }
 }

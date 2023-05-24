@@ -64,7 +64,7 @@ export class PostController {
       return await this.postQ.getAllPosts(filter, sort, pagination, userId);
     } catch (err) {
       console.log(err);
-      throw new Errors.NOT_FOUND();
+      throw new Errors.BAD_REQUEST();
     }
   }
 
@@ -82,7 +82,7 @@ export class PostController {
 
       const result: PostDocument = await this.postQ.getOnePost(id);
       if (result) {
-        return await this.postMapper.mapPost(result);
+        return await this.postMapper.mapPost(result, userId);
       } else {
         return new Errors.NOT_FOUND();
       }
@@ -261,6 +261,10 @@ export class PostController {
     const userLogin = user.userLogin;
 
     try {
+      const post = await this.postQ.getOnePost(id);
+      if (!post) {
+        throw new Errors.NOT_FOUND();
+      }
       const userStatus = await this.likesRepo.getUserStatusForComment(
         userId,
         id,
@@ -331,11 +335,14 @@ export class PostController {
           if (result) {
             return;
           }
-          return new Errors.NOT_FOUND();
+          throw new Errors.NOT_FOUND();
         }
       }
 
-      return new Errors.NOT_FOUND();
-    } catch (err) {}
+      throw new Errors.NOT_FOUND();
+    } catch (err) {
+      console.log(err);
+      throw new Errors.NOT_FOUND();
+    }
   }
 }

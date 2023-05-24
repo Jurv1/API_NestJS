@@ -6,7 +6,9 @@ import { mapLikes } from './like.mapper';
 import { NewestLike } from '../../posts/schemas/likes.schemas/newest.likes';
 
 export class PostMapper {
-  constructor(private readonly likesRepo: LikesRepository) {}
+  constructor(private readonly likesRepo: LikesRepository) {
+    this.likesRepo = likesRepo;
+  }
 
   async mapPost(obj: PostDocument, userId?: string): Promise<PostViewModel> {
     let like: LikeDocument | null;

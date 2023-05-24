@@ -81,6 +81,8 @@ import { CommentMapper } from './utils/mappers/comment.mapper';
     UsersRepository,
     UserQ,
     CommentQ,
+    PostMapper,
+    CommentMapper,
     DevicesService,
     DevicesRepository,
     LikesRepository,
@@ -88,8 +90,6 @@ import { CommentMapper } from './utils/mappers/comment.mapper';
     DeviceQ,
     CommentRepository,
     CommentService,
-    PostMapper,
-    CommentMapper,
   ],
 })
 export class AppModule {}

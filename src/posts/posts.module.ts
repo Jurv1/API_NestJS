@@ -11,7 +11,6 @@ import {
   CommentSchema,
   DBComment,
 } from '../comments/schemas/comments.database.schema';
-import { BlogsModule } from '../blogs/blogs.module';
 
 @Module({
   imports: [

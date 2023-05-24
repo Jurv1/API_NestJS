@@ -4,7 +4,9 @@ import { CommentDocument } from '../../comments/schemas/comments.database.schema
 import { CommentViewModel } from '../../comments/schemas/comment-view.model';
 
 export class CommentMapper {
-  constructor(private readonly likesRepo: LikesRepository) {}
+  constructor(private readonly likesRepo: LikesRepository) {
+    this.likesRepo = likesRepo;
+  }
 
   mapComment(obj: CommentDocument): CommentViewModel {
     return {
