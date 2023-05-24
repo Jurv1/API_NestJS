@@ -42,6 +42,8 @@ import { DeviceController } from './devices/device.controller';
 import { CommentController } from './comments/comments.controller';
 import { CommentRepository } from './comments/comments.repository';
 import { CommentService } from './comments/comments.service';
+import { PostMapper } from './utils/mappers/post.mapper';
+import { CommentMapper } from './utils/mappers/comment.mapper';
 
 @Module({
   imports: [
@@ -86,6 +88,8 @@ import { CommentService } from './comments/comments.service';
     DeviceQ,
     CommentRepository,
     CommentService,
+    PostMapper,
+    CommentMapper,
   ],
 })
 export class AppModule {}
