@@ -4,11 +4,12 @@ import { LikesRepository } from '../../likes/likes.repository';
 import { LikeDocument } from '../../likes/schemas/like.database.schema';
 import { mapLikes } from './like.mapper';
 import { NewestLike } from '../../posts/schemas/likes.schemas/newest.likes';
+import { Inject } from '@nestjs/common';
 
 export class PostMapper {
-  constructor(private readonly likesRepo: LikesRepository) {
-    this.likesRepo = likesRepo;
-  }
+  constructor(
+    @Inject(LikesRepository) protected readonly likesRepo: LikesRepository,
+  ) {}
 
   async mapPost(obj: PostDocument, userId?: string): Promise<PostViewModel> {
     let like: LikeDocument | null;

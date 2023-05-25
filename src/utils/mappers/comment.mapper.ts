@@ -2,11 +2,12 @@ import { LikesRepository } from '../../likes/likes.repository';
 import { LikeDocument } from '../../likes/schemas/like.database.schema';
 import { CommentDocument } from '../../comments/schemas/comments.database.schema';
 import { CommentViewModel } from '../../comments/schemas/comment-view.model';
+import { Inject } from '@nestjs/common';
 
 export class CommentMapper {
-  constructor(private readonly likesRepo: LikesRepository) {
-    this.likesRepo = likesRepo;
-  }
+  constructor(
+    @Inject(LikesRepository) private readonly likesRepo: LikesRepository,
+  ) {}
 
   mapComment(obj: CommentDocument): CommentViewModel {
     return {
