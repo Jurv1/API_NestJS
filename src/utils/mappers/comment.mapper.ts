@@ -9,16 +9,35 @@ export class CommentMapper {
     @Inject(LikesRepository) private readonly likesRepo: LikesRepository,
   ) {}
 
-  mapComment(obj: CommentDocument): CommentViewModel {
+  async mapComment(
+    obj: CommentDocument,
+    userId?: string | null,
+  ): Promise<CommentViewModel> {
+    let like: LikeDocument | null;
+    let userStatus: string | undefined = 'None';
+    const commentId = obj._id.toString();
+    const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
+      commentId,
+    );
+    const allDislikes = await this.likesRepo.countAllDislikesForPostOrComment(
+      commentId,
+    );
+    if (userId) {
+      like = await this.likesRepo.getUserStatusForComment(
+        userId.toString(),
+        commentId,
+      );
+      userStatus = like?.userStatus;
+    }
     return {
       id: obj._id.toString(),
       content: obj.content,
       commentatorInfo: obj.commentatorInfo,
       createdAt: obj.createdAt,
       likesInfo: {
-        likesCount: obj.likesInfo.likesCount,
-        dislikesCount: obj.likesInfo.dislikesCount,
-        myStatus: obj.likesInfo.myStatus,
+        likesCount: allLikes,
+        dislikesCount: allDislikes,
+        myStatus: userStatus || 'None',
       },
     };
   }

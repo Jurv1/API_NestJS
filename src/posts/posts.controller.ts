@@ -117,7 +117,7 @@ export class PostController {
         userId,
       );
       if (allComments) return allComments;
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();

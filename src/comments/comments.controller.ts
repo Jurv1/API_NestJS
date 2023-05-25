@@ -20,6 +20,7 @@ import { ContentDto } from './dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
 import { CurrentUserAccessToken } from '../auth/current-user.access.token';
 import { JwtService } from '@nestjs/jwt';
+import { CommentMapper } from '../utils/mappers/comment.mapper';
 
 @Controller('comments')
 export class CommentController {
@@ -28,9 +29,8 @@ export class CommentController {
     private readonly commentService: CommentService,
     private readonly likesRepo: LikesRepository,
     private readonly jwtService: JwtService,
-  ) {
-    this.commentQ = undefined;
-  }
+    private readonly commentMapper: CommentMapper,
+  ) {}
 
   @Get(':id')
   async getOneById(
@@ -43,10 +43,10 @@ export class CommentController {
       if (payload) {
         userId = payload.userId;
       }
-      const result = await this.commentQ.getOneComment(id, userId);
+      const result = await this.commentQ.getOneComment(id);
 
       if (result) {
-        return result;
+        return await this.commentMapper.mapComment(result, userId);
       } else {
         throw new Errors.NOT_FOUND();
       }
@@ -57,6 +57,7 @@ export class CommentController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   @Put('id')
   async updateOneById(@Param('id') id: string, @Body() body: ContentDto) {
     const content = body.content;
