@@ -126,7 +126,7 @@ export class PostController {
 
   @UseGuards(AdminAuthGuard)
   @Post()
-  async createOne(@Body() body: PostBody) {
+  async createOne(@Body() body: PostBodyBlogId) {
     try {
       const { title, shortDescription, content, blogId } = body;
       const result: PostDocument | null = await this.postService.createOnePost(
