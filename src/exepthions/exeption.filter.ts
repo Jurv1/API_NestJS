@@ -55,17 +55,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
         errorsMessages: [],
       };
 
-      if (status === 404) {
-        response.status(404).json({
-          errorsMessages: [
-            {
-              message: 'No such blog',
-              field: 'blogId',
-            },
-          ],
-        });
-        return;
-      }
+      // if (status === 404) {
+      //   response.status(404).json({
+      //     errorsMessages: [
+      //       {
+      //         message: 'No such blog',
+      //         field: 'blogId',
+      //       },
+      //     ],
+      //   });
+      //   return;
+      // }
 
       const responseBody: any = exception.getResponse();
 

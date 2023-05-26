@@ -44,6 +44,7 @@ import { CommentRepository } from './comments/comments.repository';
 import { CommentService } from './comments/comments.service';
 import { PostMapper } from './utils/mappers/post.mapper';
 import { CommentMapper } from './utils/mappers/comment.mapper';
+import { IsBlogExists } from './utils/custom.validation.decorators/is.blog.exists';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { CommentMapper } from './utils/mappers/comment.mapper';
     DeviceQ,
     CommentRepository,
     CommentService,
+    IsBlogExists,
   ],
 })
 export class AppModule {}
