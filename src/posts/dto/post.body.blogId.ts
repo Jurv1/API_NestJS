@@ -23,10 +23,4 @@ export class PostBodyBlogId {
 
   @IsBlogExist()
   blogId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Transform(({ value }) => value?.trim())
-  @Length(1, 15)
-  blogName: string;
 }

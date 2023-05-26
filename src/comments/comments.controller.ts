@@ -101,6 +101,10 @@ export class CommentController {
     const userLogin: string = user.userLogin;
 
     try {
+      const comment = await this.commentQ.getOneComment(id);
+      if (!comment) {
+        throw new Errors.NOT_FOUND();
+      }
       const userStatus = await this.likesRepo.getUserStatusForComment(
         userId,
         id,
