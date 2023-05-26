@@ -32,7 +32,10 @@ export class CommentMapper {
     return {
       id: obj._id.toString(),
       content: obj.content,
-      commentatorInfo: obj.commentatorInfo,
+      commentatorInfo: {
+        userId: obj.commentatorInfo.userId,
+        userLogin: obj.commentatorInfo.userLogin,
+      },
       createdAt: obj.createdAt,
       likesInfo: {
         likesCount: allLikes,
