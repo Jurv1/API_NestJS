@@ -51,9 +51,12 @@ export class PostController {
     const pagination = makePagination(pageNumber, pageSize);
 
     let userId = null;
+    let token;
 
     try {
-      const token = req.headers.authorization.split(' ')[1];
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+      }
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;
@@ -68,8 +71,11 @@ export class PostController {
   @Get(':id')
   async getOne(@Param('id') id: string, @Req() req: any) {
     let userId = null;
+    let token;
     try {
-      const token = req.headers.authorization.split(' ')[1];
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+      }
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;
@@ -99,9 +105,12 @@ export class PostController {
     const pagination = makePagination(pageNumber, pageSize);
 
     let userId = null;
+    let token;
 
     try {
-      const token = req.headers.authorization.split(' ')[1];
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+      }
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;

@@ -19,9 +19,9 @@ import { CommentDocument } from './schemas/comments.database.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ContentDto } from './dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
-import { CurrentUserAccessToken } from '../auth/current-user.access.token';
 import { JwtService } from '@nestjs/jwt';
 import { CommentMapper } from '../utils/mappers/comment.mapper';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('comments')
 export class CommentController {
@@ -36,8 +36,11 @@ export class CommentController {
   @Get(':id')
   async getOneById(@Param('id') id: string, @Req() req: any) {
     let userId = null;
+    let token;
     try {
-      const token = req.headers.authorization.split(' ')[1];
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+      }
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;
@@ -57,6 +60,7 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
+  @Throttle(5, 10)
   @Put(':id')
   async updateOneById(@Param('id') id: string, @Body() body: ContentDto) {
     const content = body.content;
