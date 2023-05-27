@@ -71,6 +71,7 @@ export class CommentController {
     if (!comment) {
       throw new Errors.NOT_FOUND();
     }
+
     if (comment.commentatorInfo.userId !== userId) {
       throw new Errors.FORBIDDEN();
     }
