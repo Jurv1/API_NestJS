@@ -203,7 +203,9 @@ export class PostController {
   ) {
     const content = body.content;
     const userId = user.userId;
+    console.log(userId);
     const userLogin = user.userLogin;
+    console.log(userLogin);
 
     try {
       const result: CommentDocument =

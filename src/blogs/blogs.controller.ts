@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { BlogService } from './blogs.service';
@@ -24,6 +25,7 @@ import { PostQ } from '../posts/posts.query.repository';
 import { BlogDocument } from './schemas/blogs.database.schema';
 import { PostBody } from '../posts/dto/post.body.without.blogId';
 import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('blogs')
 export class BlogController {
@@ -32,6 +34,7 @@ export class BlogController {
     protected blogQ: BlogQ,
     protected postService: PostService,
     protected postQ: PostQ,
+    private readonly jwtService: JwtService,
   ) {}
   @Get()
   async getAll(@Query() query?: BlogQueryParams) {
@@ -72,16 +75,26 @@ export class BlogController {
   }
 
   @Get(':id/posts')
-  async getPostsByBlogId(@Param('id') id: string, @Query() query: PostQuery) {
+  async getPostsByBlogId(
+    @Param('id') id: string,
+    @Query() query: PostQuery,
+    @Req() req: any,
+  ) {
     const { sortBy, sortDirection, pageNumber, pageSize } = query;
 
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
+    let userId = null;
 
     try {
       const blog = await this.blogQ.getOneBlog(id);
       if (!blog) throw new Errors.NOT_FOUND();
-      return await this.postQ.getAllPostsByBlogId(id, sort, pagination);
+      const token = req.headers.authorization.split(' ')[1];
+      const payload: any | null = (await this.jwtService.decode(token)) || null;
+      if (payload) {
+        userId = payload.userId;
+      }
+      return await this.postQ.getAllPostsByBlogId(id, sort, pagination, userId);
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
