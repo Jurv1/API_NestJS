@@ -67,21 +67,16 @@ export class CommentController {
     @CurrentUserId() userId: string,
   ) {
     const content = body.content;
-    try {
-      const comment: CommentDocument = await this.commentQ.getOneComment(id);
-      if (!comment) {
-        throw new Errors.NOT_FOUND();
-      }
-      if (comment.commentatorInfo.userId !== userId) {
-        throw new Errors.FORBIDDEN();
-      }
-      await comment.updateComment(content);
-      await comment.save();
-      return;
-    } catch (err) {
-      console.log(err);
+    const comment: CommentDocument = await this.commentQ.getOneComment(id);
+    if (comment.commentatorInfo.userId !== userId) {
+      throw new Errors.FORBIDDEN();
+    }
+    if (!comment) {
       throw new Errors.NOT_FOUND();
     }
+    await comment.updateComment(content);
+    await comment.save();
+    return;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -91,18 +86,13 @@ export class CommentController {
     @Param('id') id: string,
     @CurrentUserId() userId: string,
   ) {
-    try {
-      const comment: CommentDocument = await this.commentQ.getOneComment(id);
-      if (comment.commentatorInfo.userId !== userId) {
-        throw new Errors.FORBIDDEN();
-      }
-      const result = await this.commentService.deleteOneCommentById(id);
-      if (!result) throw new Errors.NOT_FOUND();
-      return;
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
+    const comment: CommentDocument = await this.commentQ.getOneComment(id);
+    if (comment.commentatorInfo.userId !== userId) {
+      throw new Errors.FORBIDDEN();
     }
+    const result = await this.commentService.deleteOneCommentById(id);
+    if (!result) throw new Errors.NOT_FOUND();
+    return;
   }
 
   @UseGuards(JwtAuthGuard)

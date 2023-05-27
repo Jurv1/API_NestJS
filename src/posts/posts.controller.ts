@@ -121,7 +121,7 @@ export class PostController {
         pagination,
         userId,
       );
-      if (allComments) return allComments;
+      if (allComments.items.length !== 0) return allComments;
       throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
@@ -242,7 +242,7 @@ export class PostController {
         };
       }
 
-      return new Errors.NOT_FOUND({
+      throw new Errors.NOT_FOUND({
         errorsMessages: [
           {
             message: 'No such post',
