@@ -57,7 +57,7 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
-  @Put('id')
+  @Put(':id')
   async updateOneById(@Param('id') id: string, @Body() body: ContentDto) {
     const content = body.content;
     try {
