@@ -72,8 +72,8 @@ export class CommentMapper {
           id: commentId,
           content: el.content,
           commentatorInfo: {
-            userId: el.userId,
-            userLogin: el.userLogin,
+            userId: el.commentatorInfo.userId,
+            userLogin: el.commentatorInfo.userLogin,
           },
           createdAt: el.createdAt,
           likesInfo: {

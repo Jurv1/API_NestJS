@@ -21,7 +21,7 @@ import { ContentDto } from './dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
 import { JwtService } from '@nestjs/jwt';
 import { CommentMapper } from '../utils/mappers/comment.mapper';
-import { Throttle } from '@nestjs/throttler';
+import { CurrentUserId } from '../auth/current-user.param.decorator';
 
 @Controller('comments')
 export class CommentController {
@@ -60,14 +60,20 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
-  @Throttle(5, 10)
   @Put(':id')
-  async updateOneById(@Param('id') id: string, @Body() body: ContentDto) {
+  async updateOneById(
+    @Param('id') id: string,
+    @Body() body: ContentDto,
+    @CurrentUserId() userId: string,
+  ) {
     const content = body.content;
     try {
       const comment: CommentDocument = await this.commentQ.getOneComment(id);
       if (!comment) {
         throw new Errors.NOT_FOUND();
+      }
+      if (comment.commentatorInfo.userId !== userId) {
+        throw new Errors.FORBIDDEN();
       }
       await comment.updateComment(content);
       await comment.save();
@@ -81,8 +87,15 @@ export class CommentController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Delete(':id')
-  async deleteOneById(@Param('id') id: string) {
+  async deleteOneById(
+    @Param('id') id: string,
+    @CurrentUserId() userId: string,
+  ) {
     try {
+      const comment: CommentDocument = await this.commentQ.getOneComment(id);
+      if (comment.commentatorInfo.userId !== userId) {
+        throw new Errors.FORBIDDEN();
+      }
       const result = await this.commentService.deleteOneCommentById(id);
       if (!result) throw new Errors.NOT_FOUND();
       return;
@@ -183,10 +196,10 @@ export class CommentController {
         }
       }
 
-      //return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
-      throw new Errors.BAD_REQUEST();
+      throw new Errors.NOT_FOUND();
     }
   }
 }

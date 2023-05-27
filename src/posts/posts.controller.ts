@@ -85,7 +85,7 @@ export class PostController {
       if (result) {
         return await this.postMapper.mapPost(result, userId);
       } else {
-        return new Errors.NOT_FOUND();
+        throw new Errors.NOT_FOUND();
       }
     } catch (err) {
       console.log(err);
