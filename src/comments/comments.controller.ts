@@ -68,11 +68,11 @@ export class CommentController {
   ) {
     const content = body.content;
     const comment: CommentDocument = await this.commentQ.getOneComment(id);
-    if (comment.commentatorInfo.userId !== userId) {
-      throw new Errors.FORBIDDEN();
-    }
     if (!comment) {
       throw new Errors.NOT_FOUND();
+    }
+    if (comment.commentatorInfo.userId !== userId) {
+      throw new Errors.FORBIDDEN();
     }
     await comment.updateComment(content);
     await comment.save();
@@ -87,6 +87,9 @@ export class CommentController {
     @CurrentUserId() userId: string,
   ) {
     const comment: CommentDocument = await this.commentQ.getOneComment(id);
+    if (!comment) {
+      throw new Errors.NOT_FOUND();
+    }
     if (comment.commentatorInfo.userId !== userId) {
       throw new Errors.FORBIDDEN();
     }
