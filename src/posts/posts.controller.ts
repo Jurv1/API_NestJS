@@ -241,18 +241,10 @@ export class PostController {
           },
         };
       }
-
-      throw new Errors.NOT_FOUND({
-        errorsMessages: [
-          {
-            message: 'No such post',
-            field: 'postId',
-          },
-        ],
-      });
+      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     }
   }
   @UseGuards(JwtAuthGuard)
