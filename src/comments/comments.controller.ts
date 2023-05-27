@@ -76,6 +76,7 @@ export class CommentController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   @Delete(':id')
   async deleteOneById(@Param('id') id: string) {
     try {
