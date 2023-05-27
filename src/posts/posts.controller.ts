@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { queryValidator } from 'src/utils/sorting.func';
@@ -19,7 +20,6 @@ import { Errors } from '../utils/handle.error';
 import { PostBodyBlogId } from './dto/post.body.blogId';
 import { PostQuery } from './dto/post.query';
 import { PostDocument } from './schemas/posts.database.schema';
-import { PostBody } from './dto/post.body.without.blogId';
 import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
 import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
@@ -28,7 +28,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommentDocument } from '../comments/schemas/comments.database.schema';
 import { ContentDto } from '../comments/dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
-import { CurrentUserAccessToken } from '../auth/current-user.access.token';
 import { JwtService } from '@nestjs/jwt';
 import { PostMapper } from '../utils/mappers/post.mapper';
 
@@ -43,10 +42,7 @@ export class PostController {
   ) {}
 
   @Get()
-  async getAll(
-    @Query() query: PostQuery,
-    @CurrentUserAccessToken() token: string,
-  ) {
+  async getAll(@Query() query: PostQuery, @Req() req: any) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
@@ -57,6 +53,7 @@ export class PostController {
     let userId = null;
 
     try {
+      const token = req.headers.authorization.split(' ')[1];
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;
@@ -69,12 +66,10 @@ export class PostController {
   }
 
   @Get(':id')
-  async getOne(
-    @Param('id') id: string,
-    @CurrentUserAccessToken() token: string,
-  ) {
+  async getOne(@Param('id') id: string, @Req() req: any) {
     let userId = null;
     try {
+      const token = req.headers.authorization.split(' ')[1];
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;
@@ -96,7 +91,7 @@ export class PostController {
   async getAllCommentsByPostId(
     @Query() query: PostQuery,
     @Param('id') id: string,
-    @CurrentUserAccessToken() token: string,
+    @Req() req: any,
   ) {
     const { sortBy, sortDirection, pageNumber, pageSize } = query;
 
@@ -106,6 +101,7 @@ export class PostController {
     let userId = null;
 
     try {
+      const token = req.headers.authorization.split(' ')[1];
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;

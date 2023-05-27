@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { LikesRepository } from '../likes/likes.repository';
@@ -33,12 +34,10 @@ export class CommentController {
   ) {}
 
   @Get(':id')
-  async getOneById(
-    @Param('id') id: string,
-    @CurrentUserAccessToken() token: string,
-  ) {
+  async getOneById(@Param('id') id: string, @Req() req: any) {
     let userId = null;
     try {
+      const token = req.headers.authorization.split(' ')[1];
       const payload: any | null = (await this.jwtService.decode(token)) || null;
       if (payload) {
         userId = payload.userId;
