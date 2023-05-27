@@ -44,10 +44,10 @@ export class AuthService {
     };
     return {
       access_token: this.jwtService.sign(accessPayload, {
-        expiresIn: jwtConstants.tokenTime5m,
+        expiresIn: jwtConstants.accessTokenTime10s,
       }),
       refresh_token: this.jwtService.sign(refreshPayload, {
-        expiresIn: jwtConstants.tokenTime5m,
+        expiresIn: jwtConstants.refreshTokenTime20s,
       }),
     };
   }
