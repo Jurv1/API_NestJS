@@ -131,4 +131,8 @@ export class AuthService {
     const decodedToken: any = this.jwtService.decode(token);
     return decodedToken.iat;
   }
+
+  async verifyToken(token: string) {
+    return await this.jwtService.verifyAsync(token);
+  }
 }

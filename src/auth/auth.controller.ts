@@ -37,8 +37,7 @@ export class AuthController {
     private readonly deviceQ: DeviceQ,
   ) {}
 
-  @UseGuards(LocalAuthGuard, ThrottlerGuard)
-  //@Throttle(5, 10)
+  @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post('/login')
   async login(
@@ -57,8 +56,8 @@ export class AuthController {
 
     res
       .cookie('refreshToken', tokens.refresh_token, {
-        httpOnly: true,
-        secure: true,
+        // httpOnly: true,
+        // secure: true,
       })
       .header('Authorization', tokens.access_token)
       .send({
@@ -76,8 +75,6 @@ export class AuthController {
     };
   }
 
-  @UseGuards(ThrottlerGuard)
-  //@Throttle(5, 10)
   @HttpCode(204)
   @Post('/registration')
   async registerMe(@Body() body: UserBody) {
@@ -129,8 +126,6 @@ export class AuthController {
     }
   }
 
-  @UseGuards(ThrottlerGuard)
-  //@Throttle(5, 10)
   @Post('/password-recovery')
   async recoverMyPassword(@Body() body: EmailDto) {
     await this.userService.makePasswordRecoveryMail(body.email);
@@ -138,8 +133,6 @@ export class AuthController {
     return;
   }
 
-  @UseGuards(ThrottlerGuard)
-  @Throttle(5, 10)
   @Post('/new-password')
   async makeNewPassword(@Body() body: NewPasswordDto) {
     const { newPassword, recoveryCode } = body;
@@ -149,8 +142,6 @@ export class AuthController {
     return;
   }
 
-  @UseGuards(ThrottlerGuard)
-  //@Throttle(5, 10)
   @HttpCode(204)
   @Post('/registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
@@ -181,8 +172,6 @@ export class AuthController {
     }
   }
 
-  @UseGuards(ThrottlerGuard)
-  //@Throttle(5, 10)
   @HttpCode(204)
   @Post('/registration-email-resending')
   async resendRegistrationConfirming(@Body() body: EmailDto) {
@@ -213,12 +202,18 @@ export class AuthController {
     }
   }
 
-  @UseGuards(ThrottlerGuard)
-  //@Throttle(5, 10)
+  @HttpCode(200)
   @Post('/refresh-token')
   async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
+    if (!refreshToken) {
+      throw new Errors.UNAUTHORIZED();
+    }
+    const isTokenValid = await this.authService.verifyToken(refreshToken);
+    if (!isTokenValid) {
+      throw new Errors.UNAUTHORIZED();
+    }
+    console.log(refreshToken);
     const userId = await this.authService.getUserIdByToken(refreshToken);
-
     if (userId) {
       const user: UserDocument = await this.userQ.getOneUserById(
         userId.toString(),

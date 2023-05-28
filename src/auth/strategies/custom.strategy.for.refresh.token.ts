@@ -14,5 +14,8 @@ export class CustomStrategyForRefreshToken extends PassportStrategy(
       secretOrKey: process.env.SECRET,
     });
   }
-  async validate(refreshToken: any) {}
+
+  async validate(refreshToken: any) {
+    return true;
+  }
 }
