@@ -26,7 +26,7 @@ import { UserBody } from '../users/dto/user.body';
 import { EmailDto } from './dto/email.dto';
 import { NewPasswordDto } from './dto/new.password.dto';
 import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.token';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +38,7 @@ export class AuthController {
     private readonly deviceQ: DeviceQ,
   ) {}
 
+  @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
@@ -77,6 +78,7 @@ export class AuthController {
     };
   }
 
+  @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
   @Post('/registration')
@@ -145,6 +147,7 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
   @Post('/registration-confirmation')
@@ -176,6 +179,7 @@ export class AuthController {
     }
   }
 
+  @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
   @Post('/registration-email-resending')
