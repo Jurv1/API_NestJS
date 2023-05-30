@@ -1,9 +1,11 @@
-import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
 import { DeviceQ } from './devices.query.repository';
 import { DevicesService } from './devices.service';
 import { JwtService } from '@nestjs/jwt';
 import { CurrentRefreshToken } from '../auth/current-refresh-token';
 import { Errors } from '../utils/handle.error';
+import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
+import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
 
 @Controller('devices')
 export class DeviceController {
@@ -13,6 +15,7 @@ export class DeviceController {
     protected jwtService: JwtService,
   ) {}
 
+  @UseGuards(CustomGuardForRefreshToken)
   @Get()
   async getAll(@CurrentRefreshToken() refresh) {
     const payload: any = await this.jwtService.decode(refresh);
@@ -34,10 +37,10 @@ export class DeviceController {
           });
         }
       }
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     }
   }
 
@@ -53,24 +56,26 @@ export class DeviceController {
           deviceId,
         );
         if (isDeleted) return;
-        return new Errors.NOT_FOUND();
+        throw new Errors.NOT_FOUND();
       }
     } catch (err) {
       console.log(err);
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     }
   }
 
+  @UseGuards(CustomGuardForRefreshToken)
+  @UseGuards(GuardForSameUser)
   @Delete(':id')
   async deleteDeviceById(@Param('id') deviceId: string) {
     try {
       const isDeleted = await this.deviceService.deleteOneDeviceById(deviceId);
 
       if (isDeleted) return;
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
-      return new Errors.NOT_FOUND();
+      throw new Errors.NOT_FOUND();
     }
   }
 }
