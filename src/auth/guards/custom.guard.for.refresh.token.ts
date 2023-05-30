@@ -18,21 +18,20 @@ export class CustomGuardForRefreshToken implements CanActivate {
     try {
       const request = context.switchToHttp().getRequest();
       const refreshToken: string = request.cookies.refreshToken;
-      //if (!refreshToken) throw new Errors.UNAUTHORIZED();
-      const isValid = await this.authService.verifyToken(refreshToken);
-      //if (!isValid) throw new Errors.UNAUTHORIZED();
-      const tokenPayload = await this.authService.getUserIdByToken(
+      if (!refreshToken) throw new Errors.UNAUTHORIZED();
+      await this.authService.verifyToken(refreshToken);
+      const tokenPayload: any = await this.authService.getTokenPayload(
         refreshToken,
       );
-      //if (!tokenPayload) throw new Errors.UNAUTHORIZED();
+      if (!tokenPayload) throw new Errors.UNAUTHORIZED();
       const user: UserDocument = await this.userQ.getOneUserById(
         tokenPayload.userId,
       );
-      //if (!user) throw new Errors.UNAUTHORIZED();
+      if (!user) throw new Errors.UNAUTHORIZED();
       const activeDevice = await this.deviceQ.getOneDeviceById(
         tokenPayload.deviceId,
       );
-      //if (!activeDevice) throw new Errors.UNAUTHORIZED();
+      if (!activeDevice) return false;
       return true;
     } catch (err) {
       console.log(err);

@@ -1,4 +1,11 @@
-import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { DeviceQ } from './devices.query.repository';
 import { DevicesService } from './devices.service';
 import { JwtService } from '@nestjs/jwt';
@@ -66,6 +73,7 @@ export class DeviceController {
 
   @UseGuards(CustomGuardForRefreshToken)
   @UseGuards(GuardForSameUser)
+  @HttpCode(204)
   @Delete(':id')
   async deleteDeviceById(@Param('id') deviceId: string) {
     try {

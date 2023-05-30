@@ -93,14 +93,18 @@ export class AuthService {
     return true;
   }
 
-  async getDeviceIdFromRefresh(token: any) {
+  async getDeviceIdFromRefresh(token: string) {
     const decodedToken: any = await this.jwtService.decode(token);
     return decodedToken.deviceId;
   }
 
-  async getUserIdByToken(token: any) {
+  async getUserIdByToken(token: string) {
     const decodedToken: any = await this.jwtService.decode(token);
     return decodedToken.userId;
+  }
+
+  async getTokenPayload(token: string) {
+    return this.jwtService.decode(token);
   }
 
   async createAccessToken(userId: string, userLogin: string, time: string) {
