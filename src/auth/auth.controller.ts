@@ -42,7 +42,7 @@ export class AuthController {
   @Throttle(5, 10)
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
-  @Post('/login')
+  @Post('login')
   async login(
     @CurrentUserData() currentUserData: UserLoginDataDto,
     @Response() res,
@@ -68,7 +68,7 @@ export class AuthController {
       });
   }
   @UseGuards(JwtAuthGuard)
-  @Get('/me')
+  @Get('me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
     const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
     return {
@@ -81,7 +81,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
-  @Post('/registration')
+  @Post('registration')
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
@@ -131,7 +131,7 @@ export class AuthController {
     }
   }
 
-  @Post('/password-recovery')
+  @Post('password-recovery')
   async recoverMyPassword(@Body() body: EmailDto) {
     await this.userService.makePasswordRecoveryMail(body.email);
 
@@ -150,7 +150,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
-  @Post('/registration-confirmation')
+  @Post('registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
     try {
       const result = await this.authService.confirmEmail(code);
@@ -182,7 +182,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
   @HttpCode(204)
-  @Post('/registration-email-resending')
+  @Post('registration-email-resending')
   async resendRegistrationConfirming(@Body() body: EmailDto) {
     try {
       const result = await this.authService.resendConfirmationEmail(body.email);
@@ -213,7 +213,7 @@ export class AuthController {
 
   @UseGuards(CustomGuardForRefreshToken)
   @HttpCode(200)
-  @Post('/refresh-token')
+  @Post('refresh-token')
   async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
     const isTokenValid = await this.authService.verifyToken(refreshToken);
     if (!isTokenValid) {
@@ -261,7 +261,7 @@ export class AuthController {
   //@UseGuards(ThrottlerGuard)
   //@Throttle(5, 10)
   @UseGuards(CustomGuardForRefreshToken)
-  @Post('/logout')
+  @Post('logout')
   async logOut(@CurrentRefreshToken() refresh: string) {
     if (!refresh) return new Errors.UNAUTHORIZED();
 
