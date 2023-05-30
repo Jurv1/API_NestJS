@@ -132,7 +132,7 @@ export class AuthService {
     return decodedToken.iat;
   }
 
-  async verifyToken(token: string) {
+  async verifyToken(token: string): Promise<any> {
     return await this.jwtService.verifyAsync(token);
   }
 }

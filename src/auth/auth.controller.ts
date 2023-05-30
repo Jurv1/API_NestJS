@@ -22,10 +22,10 @@ import { Errors } from '../utils/handle.error';
 import { CurrentRefreshToken } from './current-refresh-token';
 import { DeviceQ } from '../devices/devices.query.repository';
 import { DeviceDocument } from '../devices/schemas/devices.database.schema';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { UserBody } from '../users/dto/user.body';
 import { EmailDto } from './dto/email.dto';
 import { NewPasswordDto } from './dto/new.password.dto';
+import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.token';
 
 @Controller('auth')
 export class AuthController {
@@ -202,12 +202,10 @@ export class AuthController {
     }
   }
 
+  @UseGuards(CustomGuardForRefreshToken)
   @HttpCode(200)
   @Post('/refresh-token')
   async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
-    if (!refreshToken) {
-      throw new Errors.UNAUTHORIZED();
-    }
     const isTokenValid = await this.authService.verifyToken(refreshToken);
     if (!isTokenValid) {
       throw new Errors.UNAUTHORIZED();
@@ -251,8 +249,9 @@ export class AuthController {
     } else return res.sendStatus(401);
   }
 
-  @UseGuards(ThrottlerGuard)
+  //@UseGuards(ThrottlerGuard)
   //@Throttle(5, 10)
+  @UseGuards(CustomGuardForRefreshToken)
   @Post('/logout')
   async logOut(@CurrentRefreshToken() refresh: string) {
     if (!refresh) return new Errors.UNAUTHORIZED();
