@@ -219,6 +219,7 @@ export class AuthController {
     if (!isTokenValid) {
       throw new Errors.UNAUTHORIZED();
     }
+    await this.authService.addRefreshToBlackList(refreshToken);
     console.log(refreshToken);
     const userId = await this.authService.getUserIdByToken(refreshToken);
     if (userId) {
