@@ -18,6 +18,7 @@ export class GuardForSameUser implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const refreshToken: string = request.cookies.refreshToken;
+    if (!refreshToken) throw new Errors.UNAUTHORIZED();
     const tokenPayload: any = await this.authService.getTokenPayload(
       refreshToken,
     );
@@ -25,12 +26,14 @@ export class GuardForSameUser implements CanActivate {
       tokenPayload.userId,
     );
     if (!user) throw new Errors.FORBIDDEN();
-    const device: DeviceDocument =
-      await this.deviceQ.getOneDeviceByUserIdAndDeviceId(
-        tokenPayload.userId,
-        request.params.id,
-      );
-    if (!device) throw new Errors.FORBIDDEN();
+    const device = await this.deviceQ.getOneDeviceById(request.params.id);
+    if (!device) throw new Errors.NOT_FOUND();
+    // const device: DeviceDocument =
+    //   await this.deviceQ.getOneDeviceByUserIdAndDeviceId(
+    //     tokenPayload.userId,
+    //     request.params.id,
+    //   );
+    if (!device.userId !== user.id) throw new Errors.FORBIDDEN();
     return true;
   }
 }
