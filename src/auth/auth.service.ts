@@ -7,6 +7,12 @@ import { UserQ } from '../users/users.query.repository';
 import { MailService } from '../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../config/consts';
+import { InjectModel } from '@nestjs/mongoose';
+import {
+  RefreshTokenBlacklist,
+  RefreshTokenBlackListModel,
+  TokenBlackListDocument,
+} from '../devices/schemas/refresh-token.blacklist';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +21,8 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly userQ: UserQ,
     private readonly mailService: MailService,
+    @InjectModel(RefreshTokenBlacklist.name)
+    private readonly refreshModel: RefreshTokenBlackListModel,
   ) {}
   async validateUser(login: string, password: string) {
     const user: UserDocument = await this.userService.findUserByLogin(login);
@@ -138,5 +146,13 @@ export class AuthService {
 
   async verifyToken(token: string): Promise<any> {
     return await this.jwtService.verifyAsync(token);
+  }
+
+  async addRefreshToBlackList(token: string) {
+    await this.refreshModel.insertMany({ refresh: token });
+  }
+
+  async isRefreshInBlackList(token: string): Promise<TokenBlackListDocument> {
+    return this.refreshModel.findOne({ refresh: token });
   }
 }

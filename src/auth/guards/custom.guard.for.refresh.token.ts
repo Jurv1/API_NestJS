@@ -20,6 +20,10 @@ export class CustomGuardForRefreshToken implements CanActivate {
       const refreshToken: string = request.cookies.refreshToken;
       if (!refreshToken) throw new Errors.UNAUTHORIZED();
       await this.authService.verifyToken(refreshToken);
+      const isBlackedListed = await this.authService.isRefreshInBlackList(
+        refreshToken,
+      );
+      if (isBlackedListed) throw new Errors.UNAUTHORIZED();
       const tokenPayload: any = await this.authService.getTokenPayload(
         refreshToken,
       );

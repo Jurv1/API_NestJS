@@ -45,6 +45,10 @@ import { CommentService } from './comments/comments.service';
 import { PostMapper } from './utils/mappers/post.mapper';
 import { CommentMapper } from './utils/mappers/comment.mapper';
 import { IsBlogExists } from './utils/custom.validation.decorators/is.blog.exists';
+import {
+  RefreshTokenBlacklist,
+  RefreshTokenBlackListSchema,
+} from './devices/schemas/refresh-token.blacklist';
 
 @Module({
   imports: [
@@ -58,6 +62,9 @@ import { IsBlogExists } from './utils/custom.validation.decorators/is.blog.exist
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
     MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
+    MongooseModule.forFeature([
+      { name: RefreshTokenBlacklist.name, schema: RefreshTokenBlackListSchema },
+    ]),
     AuthModule,
     MailModule,
   ],

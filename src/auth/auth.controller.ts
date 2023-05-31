@@ -267,7 +267,7 @@ export class AuthController {
 
     const payload = await this.authService.getDeviceIdFromRefresh(refresh);
     await this.deviceService.deleteOneDeviceById(payload.deviceId);
-
+    await this.authService.addRefreshToBlackList(refresh);
     return;
   }
 }
