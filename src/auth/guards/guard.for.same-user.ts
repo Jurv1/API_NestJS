@@ -27,8 +27,8 @@ export class GuardForSameUser implements CanActivate {
     if (!user) throw new Errors.FORBIDDEN();
     const device: DeviceDocument =
       await this.deviceQ.getOneDeviceByUserIdAndDeviceId(
-        user._id.toString(),
-        tokenPayload.deviceId,
+        tokenPayload.userId,
+        request.params.id,
       );
     if (!device) throw new Errors.FORBIDDEN();
     return true;
