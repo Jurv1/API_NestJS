@@ -13,6 +13,7 @@ import { CurrentRefreshToken } from '../auth/current-refresh-token';
 import { Errors } from '../utils/handle.error';
 import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
 import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
+import * as http from 'http';
 
 @Controller('security/devices')
 export class DeviceController {
@@ -39,7 +40,7 @@ export class DeviceController {
               ip: el.ip,
               title: el.title,
               lastActiveDate: el.lastActiveDate,
-              deviceId: el._id.toString(),
+              deviceId: el.deviceId,
             };
           });
         }
@@ -51,6 +52,7 @@ export class DeviceController {
     }
   }
 
+  @HttpCode(204)
   @Delete()
   async deleteAllExceptActive(@CurrentRefreshToken() refresh) {
     const payload: any = await this.jwtService.decode(refresh);

@@ -255,7 +255,7 @@ export class AuthController {
           secure: true,
         })
         .header('Authorization', accessToken)
-        .json({ accessToken: accessToken });
+        .send({ accessToken: accessToken });
     } else return res.sendStatus(401);
   }
 
