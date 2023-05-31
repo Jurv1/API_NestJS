@@ -14,10 +14,13 @@ import { Errors } from '../utils/handle.error';
 import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
 import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
 import * as http from 'http';
+import { DeviceDocument } from './schemas/devices.database.schema';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('security/devices')
 export class DeviceController {
   constructor(
+    private readonly authService: AuthService,
     private readonly deviceQ: DeviceQ,
     protected deviceService: DevicesService,
     protected jwtService: JwtService,
@@ -52,10 +55,11 @@ export class DeviceController {
     }
   }
 
+  @UseGuards(CustomGuardForRefreshToken)
   @HttpCode(204)
   @Delete()
   async deleteAllExceptActive(@CurrentRefreshToken() refresh) {
-    const payload: any = await this.jwtService.decode(refresh);
+    const payload: any = await this.jwtService.verifyAsync(refresh);
     const { userId, deviceId } = payload;
 
     try {

@@ -59,8 +59,8 @@ export class AuthController {
 
     res
       .cookie('refreshToken', tokens.refresh_token, {
-        httpOnly: true,
-        secure: true,
+        // httpOnly: true,
+        // secure: true,
       })
       .header('Authorization', tokens.access_token)
       .send({
