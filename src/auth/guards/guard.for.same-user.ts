@@ -18,7 +18,9 @@ export class GuardForSameUser implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const refreshToken: string = request.cookies.refreshToken;
-    const tokenPayload = await this.authService.getUserIdByToken(refreshToken);
+    const tokenPayload: any = await this.authService.getTokenPayload(
+      refreshToken,
+    );
     const user: UserDocument = await this.userQ.getOneUserById(
       tokenPayload.userId,
     );
