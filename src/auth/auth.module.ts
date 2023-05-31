@@ -11,6 +11,11 @@ import { MailService } from '../mail/mail.service';
 import { MailModule } from '../mail/mail.module';
 import { jwtConstants } from '../config/consts';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  RefreshTokenBlacklist,
+  RefreshTokenBlackListSchema,
+} from '../devices/schemas/refresh-token.blacklist';
 
 console.log(process.env.SECRET);
 @Module({
@@ -25,6 +30,9 @@ console.log(process.env.SECRET);
       },
     }),
     MailModule,
+    MongooseModule.forFeature([
+      { name: RefreshTokenBlacklist.name, schema: RefreshTokenBlackListSchema },
+    ]),
   ],
   providers: [
     AuthService,
