@@ -26,14 +26,16 @@ export class GuardForSameUser implements CanActivate {
       tokenPayload.userId,
     );
     if (!user) throw new Errors.FORBIDDEN();
-    const device = await this.deviceQ.getOneDeviceById(request.params.id);
+    const device: DeviceDocument = await this.deviceQ.getOneDeviceById(
+      request.params.id,
+    );
     if (!device) throw new Errors.NOT_FOUND();
     // const device: DeviceDocument =
     //   await this.deviceQ.getOneDeviceByUserIdAndDeviceId(
     //     tokenPayload.userId,
     //     request.params.id,
     //   );
-    if (!device.userId !== user.id) throw new Errors.FORBIDDEN();
+    if (device.userId !== user.id) throw new Errors.FORBIDDEN();
     return true;
   }
 }

@@ -36,6 +36,11 @@ export class DeviceController {
         const allDevices = await this.deviceQ.getAllDevicesByUserId(
           payload.userId,
         );
+        const device: DeviceDocument = await this.deviceQ.getOneDeviceById(
+          payload.deviceId,
+        );
+        await device.updateLastActiveDate(new Date().getTime());
+        await device.save();
 
         if (allDevices) {
           return allDevices.map((el) => {
