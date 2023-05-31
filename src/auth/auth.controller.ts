@@ -59,8 +59,8 @@ export class AuthController {
 
     res
       .cookie('refreshToken', tokens.refresh_token, {
-        httpOnly: true,
-        secure: true,
+        // httpOnly: true,
+        // secure: true,
       })
       .header('Authorization', tokens.access_token)
       .send({
@@ -262,12 +262,13 @@ export class AuthController {
   //@UseGuards(ThrottlerGuard)
   //@Throttle(5, 10)
   @UseGuards(CustomGuardForRefreshToken)
+  @HttpCode(204)
   @Post('logout')
   async logOut(@CurrentRefreshToken() refresh: string) {
     if (!refresh) return new Errors.UNAUTHORIZED();
 
-    const payload = await this.authService.getDeviceIdFromRefresh(refresh);
-    await this.deviceService.deleteOneDeviceById(payload.deviceId);
+    const deviceId = await this.authService.getDeviceIdFromRefresh(refresh);
+    await this.deviceService.deleteOneDeviceById(deviceId);
     await this.authService.addRefreshToBlackList(refresh);
     return;
   }

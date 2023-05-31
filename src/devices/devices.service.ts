@@ -22,10 +22,8 @@ export class DevicesService {
   }
 
   async deleteOneDeviceById(token: any) {
-    const decodedRefresh: any = await this.jwtService.decode(token);
-    return await this.deviceRepository.deleteOneDeviceById(
-      decodedRefresh.deviceId,
-    );
+    //const decodedRefresh: any = await this.jwtService.decode(token);
+    return await this.deviceRepository.deleteOneDeviceById(token);
   }
 
   async createNewDevice(userDto: UserLoginDataDto, refreshToken: any) {
