@@ -59,10 +59,9 @@ export class DeviceController {
   @HttpCode(204)
   @Delete()
   async deleteAllExceptActive(@CurrentRefreshToken() refresh) {
-    const payload: any = await this.jwtService.verifyAsync(refresh);
-    const { userId, deviceId } = payload;
-
     try {
+      const payload: any = await this.authService.verifyToken(refresh);
+      const { userId, deviceId } = payload;
       if (userId && deviceId) {
         const isDeleted = await this.deviceService.deleteAllDevicesExceptActive(
           userId,

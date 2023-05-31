@@ -36,7 +36,7 @@ import {
 } from './devices/schemas/devices.database.schema';
 import { LikesRepository } from './likes/likes.repository';
 import { Like, LikeSchema } from './likes/schemas/like.database.schema';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { DeviceQ } from './devices/devices.query.repository';
 import { DeviceController } from './devices/device.controller';
 import { CommentController } from './comments/comments.controller';
@@ -49,6 +49,7 @@ import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,
 } from './devices/schemas/refresh-token.blacklist';
+import { jwtConstants } from './config/consts';
 
 @Module({
   imports: [
