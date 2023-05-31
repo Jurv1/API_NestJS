@@ -14,7 +14,7 @@ import { Errors } from '../utils/handle.error';
 import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
 import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
 
-@Controller('devices')
+@Controller('security/devices')
 export class DeviceController {
   constructor(
     private readonly deviceQ: DeviceQ,
