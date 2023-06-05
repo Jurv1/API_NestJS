@@ -20,7 +20,7 @@ export class PostMapper {
       postId,
     );
     if (userId) {
-      like = await this.likesRepo.getUserStatusForComment(
+      like = await this.likesRepo.getUserStatusForCommentOrPost(
         userId.toString(),
         postId,
       );
@@ -63,7 +63,7 @@ export class PostMapper {
           postId,
         );
         if (userId) {
-          like = await this.likesRepo.getUserStatusForComment(
+          like = await this.likesRepo.getUserStatusForCommentOrPost(
             userId.toString(),
             postId,
           );

@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Errors } from '../../utils/handle.error';
+import { Errors } from '../../../../utils/handle.error';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
-import { UserQ } from '../../users/users.query.repository';
-import { UserDocument } from '../../users/schemas/users.database.schema';
-import { DeviceQ } from '../../devices/devices.query.repository';
+import { UserQ } from '../../../../users/users.query.repository';
+import { UserDocument } from '../../../../users/schemas/users.database.schema';
+import { DeviceQ } from '../../../../devices/devices.query.repository';
 
 @Injectable()
 export class CustomGuardForRefreshToken implements CanActivate {

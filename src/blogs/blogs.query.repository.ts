@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from './schemas/blogs.database.schema';
 import { Model, SortOrder } from 'mongoose';
+import { BlogWithPaginationDto } from './dto/blog.with.pagination.dto';
 
 @Injectable()
 export class BlogQ {
@@ -31,16 +32,7 @@ export class BlogQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: allBlogs.map((el) => {
-        return {
-          id: el._id.toString(),
-          name: el.name,
-          description: el.description,
-          websiteUrl: el.websiteUrl,
-          isMembership: el.isMembership,
-          createdAt: el.createdAt,
-        };
-      }),
+      items: allBlogs,
     };
   }
 

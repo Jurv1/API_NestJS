@@ -6,13 +6,14 @@ import {
   BlogModelType,
 } from './schemas/blogs.database.schema';
 import { BlogBody } from './dto/blog.body';
+import { BlogCreationDto } from './dto/blog.creation.dto';
 
 @Injectable()
 export class BlogsRepository {
   constructor(
     @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
   ) {}
-  async createOne(blogDto: BlogBody): Promise<any | null> {
+  async createOne(blogDto: BlogCreationDto): Promise<any | null> {
     const createdBlog: BlogDocument = await this.blogModel.createBlog(
       blogDto,
       this.blogModel,

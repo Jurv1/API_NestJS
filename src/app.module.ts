@@ -1,5 +1,5 @@
-import { ConfigModule } from '@nestjs/config';
-export const configModule = ConfigModule.forRoot();
+//confModule should be first
+import { configModule } from './config/config.module';
 
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -25,8 +25,8 @@ import {
   CommentSchema,
   DBComment,
 } from './comments/schemas/comments.database.schema';
-import { AuthController } from './auth/auth.controller';
-import { AuthModule } from './auth/auth.module';
+import { AuthController } from './api/public/auth/auth.controller';
+import { AuthModule } from './api/public/auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { DevicesService } from './devices/devices.service';
 import { DevicesRepository } from './devices/devices.repository';
@@ -36,10 +36,9 @@ import {
 } from './devices/schemas/devices.database.schema';
 import { LikesRepository } from './likes/likes.repository';
 import { Like, LikeSchema } from './likes/schemas/like.database.schema';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { DeviceQ } from './devices/devices.query.repository';
 import { DeviceController } from './devices/device.controller';
-import { CommentController } from './comments/comments.controller';
 import { CommentRepository } from './comments/comments.repository';
 import { CommentService } from './comments/comments.service';
 import { PostMapper } from './utils/mappers/post.mapper';
@@ -49,7 +48,9 @@ import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,
 } from './devices/schemas/refresh-token.blacklist';
-import { jwtConstants } from './config/consts';
+import { PublicCommentController } from './api/public/comments.public/comments.public.controller';
+import { CqrsModule } from '@nestjs/cqrs';
+import { publicUseCases } from './api/public/public.use-cases';
 
 @Module({
   imports: [
@@ -68,12 +69,14 @@ import { jwtConstants } from './config/consts';
     ]),
     AuthModule,
     MailModule,
+    CqrsModule,
+    ...publicUseCases,
   ],
   controllers: [
     AppController,
     BlogController,
     PostController,
-    CommentController,
+    PublicCommentController,
     UsersController,
     AuthController,
     DeviceController,

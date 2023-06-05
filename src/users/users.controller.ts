@@ -17,7 +17,7 @@ import { UserBody } from './dto/user.body';
 import { UserQuery } from './dto/user.query';
 import { FilterQuery, SortOrder } from 'mongoose';
 import { UserDocument } from './schemas/users.database.schema';
-import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
+import { AdminAuthGuard } from '../api/public/auth/guards/admin-auth.guard';
 
 @Controller('users')
 export class UsersController {

@@ -3,7 +3,7 @@ import { BlogQ } from '../blogs/blogs.query.repository';
 import { PostsRepository } from './posts.repository';
 import { BlogDocument } from '../blogs/schemas/blogs.database.schema';
 import { PostQ } from './posts.query.repository';
-import { postUpdateBody } from './dto/post.update.body';
+import { PostUpdateBody } from './dto/post.update.body';
 import { PostDocument } from './schemas/posts.database.schema';
 import { Errors } from '../utils/handle.error';
 import {
@@ -13,6 +13,8 @@ import {
 } from '../comments/schemas/comments.database.schema';
 import { CommentCreatingDto } from '../comments/dto/comment.creating.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import { UserIdAndLogin } from '../api/public/auth/dto/user-id.and.login';
+import { PostCreationDto } from './dto/post.creation.dto';
 
 @Injectable()
 export class PostService {
@@ -28,15 +30,20 @@ export class PostService {
     shortDescription: string,
     content: string,
     blogId: string,
+    userData: UserIdAndLogin,
   ): Promise<PostDocument | null> {
     const foundedEl: BlogDocument = await this.blogQ.getOneBlog(blogId);
 
     if (foundedEl) {
       const blogName: string = foundedEl.name;
-      const postDto = {
+      const postDto: PostCreationDto = {
         title: title,
         shortDescription: shortDescription,
         content: content,
+        ownerInfo: {
+          userId: userData.userId,
+          userLogin: userData.userLogin,
+        },
         blogId: blogId,
         blogName: blogName,
       };
@@ -63,7 +70,7 @@ export class PostService {
     const foundedPost: PostDocument = await this.postQ.getOnePost(id);
 
     if (!foundedPost) return false;
-    const postUpdateBody: postUpdateBody = {
+    const postUpdateBody: PostUpdateBody = {
       title: title,
       shortDescription: shortDescription,
       content: content,

@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import process from 'process';
-import { cookieGetter } from '../../utils/cookie.getter';
+import { cookieGetter } from '../../../../utils/cookie.getter';
 
 export class CustomStrategyForRefreshToken extends PassportStrategy(
   Strategy,

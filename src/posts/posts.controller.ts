@@ -20,11 +20,11 @@ import { Errors } from '../utils/handle.error';
 import { PostBodyBlogId } from './dto/post.body.blogId';
 import { PostQuery } from './dto/post.query';
 import { PostDocument } from './schemas/posts.database.schema';
-import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
-import { CurrentUserIdAndLogin } from '../auth/current-user.id.and.login';
-import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
+import { AdminAuthGuard } from '../api/public/auth/guards/admin-auth.guard';
+import { CurrentUserIdAndLogin } from '../api/public/auth/decorators/current-user.id.and.login';
+import { UserIdAndLogin } from '../api/public/auth/dto/user-id.and.login';
 import { LikesRepository } from '../likes/likes.repository';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../api/public/auth/guards/jwt-auth.guard';
 import { CommentDocument } from '../comments/schemas/comments.database.schema';
 import { ContentDto } from '../comments/dto/content.dto';
 import { LikeBody } from '../likes/dto/like.body';
@@ -264,7 +264,7 @@ export class PostController {
       if (!post) {
         throw new Errors.NOT_FOUND();
       }
-      const userStatus = await this.likesRepo.getUserStatusForComment(
+      const userStatus = await this.likesRepo.getUserStatusForCommentOrPost(
         userId,
         id,
       );

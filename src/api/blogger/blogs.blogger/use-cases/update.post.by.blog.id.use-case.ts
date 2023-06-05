@@ -1,0 +1,38 @@
+import { ICommandHandler } from '@nestjs/cqrs';
+import { PostQ } from '../../../../posts/posts.query.repository';
+import { BlogQ } from '../../../../blogs/blogs.query.repository';
+import { PostDocument } from '../../../../posts/schemas/posts.database.schema';
+import { Errors } from '../../../../utils/handle.error';
+import { PostUpdateBody } from '../../../../posts/dto/post.update.body';
+
+export class UpdatePostByBlogIdCommand {
+  constructor(
+    public blogId: string,
+    public postId: string,
+    public title: string,
+    public shortDescription: string,
+    public content: string,
+    public userId: string,
+  ) {}
+}
+export class UpdatePostByBlogIdUseCase
+  implements ICommandHandler<UpdatePostByBlogIdCommand>
+{
+  constructor(private readonly postQ: PostQ, private readonly blogQ: BlogQ) {}
+  async execute(command: UpdatePostByBlogIdCommand) {
+    const post: PostDocument = await this.postQ.getOnePostByPostAndBlogIds(
+      command.postId,
+      command.blogId,
+    );
+    if (!post) throw new Errors.NOT_FOUND();
+    if (post.ownerInfo.userId !== command.userId) throw new Errors.FORBIDDEN();
+    const updatePostDto: PostUpdateBody = {
+      title: command.title,
+      shortDescription: command.shortDescription,
+      content: command.content,
+    };
+    await post.updatePost(updatePostDto);
+    await post.save();
+    return;
+  }
+}

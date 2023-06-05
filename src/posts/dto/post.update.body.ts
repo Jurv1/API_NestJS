@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { IsBlogExist } from '../../utils/custom.validation.decorators/is.blog.exists';
 
-export class postUpdateBody {
+export class PostUpdateBody {
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => value?.trim())

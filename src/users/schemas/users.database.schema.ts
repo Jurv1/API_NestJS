@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 import { PasswordRecoveryDto } from '../dto/password-recovery.dto';
 import { UpdatePasswordDto } from '../dto/update.password.dto';
+import { BanInfo } from './ban.info.schema';
 
 export type UserDocument = HydratedDocument<User>;
 @Schema()
@@ -18,7 +19,8 @@ export class User {
   emailConfirmation: EmailConfirmation;
   @Prop({ required: true })
   passRecovery: PasswordRecovery;
-
+  @Prop()
+  banInfo: BanInfo;
   static createUser(
     userDto: UserCreationDto,
     UserModel: UserModelType,
@@ -39,6 +41,11 @@ export class User {
       passRecovery: {
         recoveryCode: null,
         expirationDate: null,
+      },
+      banInfo: {
+        isBanned: false,
+        banDate: null,
+        banReason: null,
       },
     };
     return new UserModel(createdUser);

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DevicesRepository } from './devices.repository';
-import { UserLoginDataDto } from '../auth/dto/user-login-data.dto';
+import { UserLoginDataDto } from '../api/public/auth/dto/user-login-data.dto';
 import {
   Device,
   DeviceDocument,

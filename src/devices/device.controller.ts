@@ -9,13 +9,13 @@ import {
 import { DeviceQ } from './devices.query.repository';
 import { DevicesService } from './devices.service';
 import { JwtService } from '@nestjs/jwt';
-import { CurrentRefreshToken } from '../auth/current-refresh-token';
+import { CurrentRefreshToken } from '../api/public/auth/decorators/current-refresh-token';
 import { Errors } from '../utils/handle.error';
-import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
-import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
+import { CustomGuardForRefreshToken } from '../api/public/auth/guards/custom.guard.for.refresh.token';
+import { GuardForSameUser } from '../api/public/auth/guards/guard.for.same-user';
 import * as http from 'http';
 import { DeviceDocument } from './schemas/devices.database.schema';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../api/public/auth/auth.service';
 
 @Controller('security/devices')
 export class DeviceController {

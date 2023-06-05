@@ -23,7 +23,7 @@ export class CommentMapper {
       commentId,
     );
     if (userId) {
-      like = await this.likesRepo.getUserStatusForComment(
+      like = await this.likesRepo.getUserStatusForCommentOrPost(
         userId.toString(),
         commentId,
       );
@@ -61,7 +61,7 @@ export class CommentMapper {
         const allDislikes =
           await this.likesRepo.countAllDislikesForPostOrComment(commentId);
         if (userId) {
-          like = await this.likesRepo.getUserStatusForComment(
+          like = await this.likesRepo.getUserStatusForCommentOrPost(
             userId.toString(),
             commentId,
           );

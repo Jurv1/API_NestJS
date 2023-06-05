@@ -24,7 +24,7 @@ import { PostQuery } from '../posts/dto/post.query';
 import { PostQ } from '../posts/posts.query.repository';
 import { BlogDocument } from './schemas/blogs.database.schema';
 import { PostBody } from '../posts/dto/post.body.without.blogId';
-import { AdminAuthGuard } from '../auth/guards/admin-auth.guard';
+import { AdminAuthGuard } from '../api/public/auth/guards/admin-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('blogs')

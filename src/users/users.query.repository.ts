@@ -36,14 +36,7 @@ export class UserQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: allUsers.map((el) => {
-        return {
-          id: el._id.toString(),
-          login: el.accountData.login,
-          email: el.accountData.email,
-          createdAt: el.accountData.createdAt,
-        };
-      }),
+      items: allUsers,
     };
   }
 

@@ -56,6 +56,14 @@ export class PostQ {
   async getOnePost(id: string): Promise<PostDocument | null> {
     return this.postModel.findOne({ _id: id });
   }
+  async getOnePostByPostAndBlogIds(
+    postId: string,
+    blogId: string,
+  ): Promise<PostDocument | null> {
+    return this.postModel.findOne({
+      $and: [{ _id: postId }, { blogId: blogId }],
+    });
+  }
   async getAllPostsByBlogId(
     id: string,
     sort: { [key: string]: SortOrder },

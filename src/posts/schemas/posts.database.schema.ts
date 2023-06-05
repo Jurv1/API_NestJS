@@ -4,6 +4,8 @@ import { HydratedDocument, Model } from 'mongoose';
 import { PostBodyBlogId } from '../dto/post.body.blogId';
 import { BlogDocument } from '../../blogs/schemas/blogs.database.schema';
 import { postUpdateBody } from '../dto/post.update.body';
+import { OwnerInfoDto } from '../../blogs/dto/owner.info.dto';
+import { PostCreationDto } from '../dto/post.creation.dto';
 
 //todo mapping for extended likes info
 export type PostDocument = HydratedDocument<Post>;
@@ -20,6 +22,8 @@ export class Post {
   @Prop()
   blogName: string;
   @Prop()
+  ownerInfo: OwnerInfoDto;
+  @Prop()
   extendedLikesInfo: ExtendedLike;
   @Prop()
   createdAt: string;
@@ -32,7 +36,7 @@ export class Post {
   }
 
   static createPostWithBlogId(
-    postDto: PostBodyBlogId,
+    postDto: PostCreationDto,
     foundedBlog: BlogDocument,
     postModel: PostModelType,
   ): PostDocument {
@@ -42,6 +46,10 @@ export class Post {
       content: postDto.content,
       blogId: postDto.blogId,
       blogName: foundedBlog.name,
+      ownerInfo: {
+        userId: postDto.ownerInfo.userId,
+        userLogin: postDto.ownerInfo.userLogin,
+      },
       extendedLikesInfo: {
         likesCount: 0,
         dislikesCount: 0,
@@ -57,7 +65,7 @@ export const PostSchema = SchemaFactory.createForClass(Post);
 
 export type PostModelStaticType = {
   createPostWithBlogId: (
-    postDto: PostBodyBlogId,
+    postDto: PostCreationDto,
     foundedBlog: BlogDocument,
     PostModel: PostModelType,
   ) => PostDocument;

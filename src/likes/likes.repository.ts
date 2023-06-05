@@ -29,7 +29,7 @@ export class LikesRepository {
     return result.deletedCount === 1;
   }
 
-  async getUserStatusForComment(
+  async getUserStatusForCommentOrPost(
     userId: string,
     commentId: string,
   ): Promise<LikeDocument | null> {
