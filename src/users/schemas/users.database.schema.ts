@@ -9,6 +9,7 @@ import { add } from 'date-fns';
 import { PasswordRecoveryDto } from '../dto/password-recovery.dto';
 import { UpdatePasswordDto } from '../dto/update.password.dto';
 import { BanInfo } from './ban.info.schema';
+import { BanBody } from '../dto/ban.body';
 
 export type UserDocument = HydratedDocument<User>;
 @Schema()
@@ -72,6 +73,12 @@ export class User {
       minutes: 30,
     });
   }
+
+  updateBanInfo(banInfo: BanBody) {
+    this.banInfo.isBanned = banInfo.isBanned;
+    this.banInfo.banReason = banInfo.banReason;
+    this.banInfo.banDate = new Date().toISOString();
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -94,6 +101,7 @@ UserSchema.methods = {
   updatePassword: User.prototype.updatePassword,
   updateEmailConfirmation: User.prototype.updateEmailConfirmation,
   updateEmailConfirmationCode: User.prototype.updateEmailConfirmationCode,
+  updateBanInfo: User.prototype.updateBanInfo,
 };
 
 export type UserModelType = Model<UserDocument> & UserModelStaticType;

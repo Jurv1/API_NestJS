@@ -25,4 +25,8 @@ export class DevicesRepository {
 
     return result.deletedCount === 1;
   }
+
+  async deleteAllDevices(userId: string) {
+    return await this.deviceModel.deleteMany({ userId: userId });
+  }
 }

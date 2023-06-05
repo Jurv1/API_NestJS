@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -23,6 +24,9 @@ import { CreateUserCommand } from './use-cases/create.user.use-case';
 import { UserViewDto } from '../../../users/dto/user.view.dto';
 import { UserWithPaginationDto } from '../../../users/dto/user.with.pagination.dto';
 import { UserMapper } from '../../../utils/mappers/user.mapper';
+import { DeleteUserBySuperAdminCommand } from './use-cases/delete.user.by.super.admin.use-case';
+import { BanBody } from '../../../users/dto/ban.body';
+import { BanUserBySuperAdminCommand } from './use-cases/ban.user.by.super.admin.use-case';
 
 @Controller('sa/users')
 export class SuperAdminUsersController {
@@ -101,6 +105,14 @@ export class SuperAdminUsersController {
   }
 
   @UseGuards(AdminAuthGuard)
+  @Put(':id/ban')
+  async banUser(@Param('id') id: string, @Body() body: BanBody) {
+    return await this.commandBus.execute(
+      new BanUserBySuperAdminCommand(id, body),
+    );
+  }
+
+  @UseGuards(AdminAuthGuard)
   @Post()
   async createOne(@Body() body: UserBody) {
     const { login, email, password } = body;
@@ -113,13 +125,6 @@ export class SuperAdminUsersController {
   @HttpCode(204)
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {
-    try {
-      const result = await this.userService.deleteOneUser(id);
-      if (result) return;
-      throw new Errors.NOT_FOUND();
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
-    }
+    return await this.commandBus.execute(new DeleteUserBySuperAdminCommand(id));
   }
 }
