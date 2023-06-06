@@ -25,6 +25,7 @@ import { UserMapper } from '../../../application/utils/mappers/user.mapper';
 import { DeleteUserBySuperAdminCommand } from './use-cases/delete.user.by.super.admin.use-case';
 import { BanBody } from '../../../application/dto/users/dto/ban.body';
 import { BanUnbanUserBySuperAdminCommand } from './use-cases/ban.unban.user.by.super.admin.use-case';
+import { filterForUsersSuperAdmin } from '../../../application/utils/filters/filter.for.users.super-admin';
 
 @Controller('sa/users')
 export class SuperAdminUsersController {
@@ -38,6 +39,8 @@ export class SuperAdminUsersController {
   @Get()
   async getAll(@Query() query: UserQuery) {
     let {
+      // eslint-disable-next-line prefer-const
+      banStatus,
       // eslint-disable-next-line prefer-const
       searchLoginTerm,
       // eslint-disable-next-line prefer-const
@@ -54,23 +57,11 @@ export class SuperAdminUsersController {
     if (typeof sortBy === 'undefined') {
       sortBy = 'createdAt';
     }
-    const filter: FilterQuery<UserDocument> = {};
-
-    if (searchLoginTerm || searchEmailTerm) {
-      filter.$or = [];
-
-      if (searchLoginTerm) {
-        filter.$or.push({
-          'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
-        });
-      }
-
-      if (searchEmailTerm) {
-        filter.$or.push({
-          'accountData.email': { $regex: searchEmailTerm, $options: 'i' },
-        });
-      }
-    }
+    const filter: FilterQuery<UserDocument> = filterForUsersSuperAdmin(
+      banStatus,
+      searchLoginTerm,
+      searchEmailTerm,
+    );
 
     const sortingObj: { [key: string]: SortOrder } = {
       [`accountData.${sortBy}`]: 'desc',

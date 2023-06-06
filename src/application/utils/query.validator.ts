@@ -18,6 +18,7 @@ export function filterQueryValid(
       ? console.log('No Email Term')
       : filter.$or.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
   }
-  filter.isUserBanned = { $ne: true };
+  filter.$and = [];
+  filter.$and.push({ isUserBanned: false });
   return filter;
 }

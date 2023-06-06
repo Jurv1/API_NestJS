@@ -16,7 +16,6 @@ import { IsBlogExists } from '../../application/utils/custom.validation.decorato
 import { BlogService } from '../../application/infrastructure/blogs/blogs.service';
 import { PostService } from '../../application/infrastructure/posts/posts.service';
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
-import { PostQ } from '../../application/infrastructure/posts/posts.query.repository';
 import { allReposForPosts } from './repositories/all.repos.for.posts';
 import { allPostsUseCases } from './use-cases/all.posts.use-cases';
 import {

@@ -10,6 +10,7 @@ export class UpdateBlogCommand {
     public name: string,
     public description: string,
     public websiteUrl: string,
+    public userId: string,
   ) {}
 }
 
@@ -23,6 +24,9 @@ export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
     const foundedBlog: BlogDocument = await this.blogQ.getOneBlog(
       command.blogId,
     );
+    if (!foundedBlog) throw new Errors.NOT_FOUND();
+    if (foundedBlog.ownerInfo.userId !== command.userId)
+      throw new Errors.FORBIDDEN();
     const result = await this.blogService.updateOneBlog(
       foundedBlog,
       command.name,

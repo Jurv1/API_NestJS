@@ -30,8 +30,11 @@ import { CurrentUserIdAndLogin } from '../../_public/auth/decorators/current-use
 import { UserIdAndLogin } from '../../_public/auth/dto/user-id.and.login';
 import { UpdatePostByBlogIdCommand } from './use-cases/update.post.by.blog.id.use-case';
 import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/delete.one.post.by.specific.blog.id.use-case';
+import { FilterQuery } from 'mongoose';
+import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { filterForBlogger } from '../../../application/utils/filters/filter.for.blogger';
 
-@Controller('_blogger/blogs')
+@Controller('blogger/blogs')
 export class BloggerBlogController {
   constructor(
     protected blogQ: BlogQ,
@@ -47,12 +50,15 @@ export class BloggerBlogController {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
-    const filter = filterQueryValid(searchNameTerm);
+    const filter: FilterQuery<BlogDocument> = filterForBlogger(
+      searchNameTerm,
+      userId,
+    );
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      return await this.blogQ.getAllBlogs(filter, sort, pagination);
+      return await this.blogQ.getAllBlogsForBlogger(filter, sort, pagination);
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -93,10 +99,14 @@ export class BloggerBlogController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Put(':id')
-  async updateOne(@Param('id') id: string, @Body() body: BlogBody) {
+  async updateOne(
+    @Param('id') id: string,
+    @CurrentUserId() userId: string,
+    @Body() body: BlogBody,
+  ) {
     const { name, description, websiteUrl } = body;
     return await this.commandBus.execute(
-      new UpdateBlogCommand(id, name, description, websiteUrl),
+      new UpdateBlogCommand(id, name, description, websiteUrl, userId),
     );
   }
 
@@ -138,7 +148,7 @@ export class BloggerBlogController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Delete(':id')
-  async deleteOne(@Param('id') id: string) {
-    return await this.commandBus.execute(new DeleteOneBlogCommand(id));
+  async deleteOne(@Param('id') id: string, @CurrentUserId() userId: string) {
+    return await this.commandBus.execute(new DeleteOneBlogCommand(id, userId));
   }
 }
