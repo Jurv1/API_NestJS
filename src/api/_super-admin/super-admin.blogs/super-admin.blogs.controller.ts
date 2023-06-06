@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
-import { AdminAuthGuard } from '../../public/auth/guards/admin-auth.guard';
+import { AdminAuthGuard } from '../../_public/auth/guards/admin-auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogToUserCommand } from './use-cases/bind.blog.to.user.use-case';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/blog.query.params';

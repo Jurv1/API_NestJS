@@ -29,7 +29,7 @@ import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.to
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
-export class AuthController {
+export class PublicAuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userQ: UserQ,

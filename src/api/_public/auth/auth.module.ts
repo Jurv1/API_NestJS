@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { UsersModule } from '../../../users/users.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -16,12 +15,18 @@ import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,
 } from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
+import { SuperAdminUsersController } from '../../_super-admin/super-admin.users/super-admin.users.controller';
+import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
+import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
+import {
+  User,
+  UserSchema,
+} from '../../../application/schemas/users/schemas/users.database.schema';
 
 console.log(process.env.SECRET);
 @Module({
   imports: [
     ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),
-    UsersModule,
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.jwtSecret,
@@ -33,6 +38,7 @@ console.log(process.env.SECRET);
     MongooseModule.forFeature([
       { name: RefreshTokenBlacklist.name, schema: RefreshTokenBlackListSchema },
     ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   providers: [
     AuthService,
@@ -41,6 +47,8 @@ console.log(process.env.SECRET);
     JwtStrategy,
     AdminStrategy,
     MailService,
+    UserQ,
+    UsersRepository,
   ],
   exports: [AuthService],
 })

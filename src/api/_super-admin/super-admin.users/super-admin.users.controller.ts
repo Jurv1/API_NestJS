@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../../../application/infrastructure/users/users.service';
 import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
-import { AdminAuthGuard } from '../../public/auth/guards/admin-auth.guard';
+import { AdminAuthGuard } from '../../_public/auth/guards/admin-auth.guard';
 import { UserQuery } from '../../../application/dto/users/dto/user.query';
 import { FilterQuery, SortOrder } from 'mongoose';
 import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
@@ -21,7 +21,6 @@ import { Errors } from '../../../application/utils/handle.error';
 import { UserBody } from '../../../application/dto/users/dto/user.body';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from './use-cases/create.user.use-case';
-import { UserViewDto } from '../../../application/dto/users/dto/user.view.dto';
 import { UserWithPaginationDto } from '../../../application/dto/users/dto/user.with.pagination.dto';
 import { UserMapper } from '../../../application/utils/mappers/user.mapper';
 import { DeleteUserBySuperAdminCommand } from './use-cases/delete.user.by.super.admin.use-case';
@@ -31,7 +30,6 @@ import { BanUnbanUserBySuperAdminCommand } from './use-cases/ban.unban.user.by.s
 @Controller('sa/users')
 export class SuperAdminUsersController {
   constructor(
-    protected userService: UsersService,
     protected userQ: UserQ,
     private readonly commandBus: CommandBus,
     private readonly userMapper: UserMapper,

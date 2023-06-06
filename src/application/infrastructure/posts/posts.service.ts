@@ -13,7 +13,7 @@ import {
 } from '../../schemas/comments/schemas/comments.database.schema';
 import { CommentCreatingDto } from '../../dto/comments/dto/comment.creating.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserIdAndLogin } from '../../../api/public/auth/dto/user-id.and.login';
+import { UserIdAndLogin } from '../../../api/_public/auth/dto/user-id.and.login';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
 
 @Injectable()

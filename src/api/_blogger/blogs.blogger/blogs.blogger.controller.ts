@@ -22,7 +22,7 @@ import { queryValidator } from '../../../application/utils/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
-import { AdminAuthGuard } from '../../public/auth/guards/admin-auth.guard';
+import { AdminAuthGuard } from '../../_public/auth/guards/admin-auth.guard';
 import { BlogBody } from '../../../application/dto/blogs/dto/blog.body';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { PostBody } from '../../../application/dto/posts/dto/post.body.without.blogId';
@@ -31,15 +31,15 @@ import { CreateBlogCommand } from './use-cases/create.blog.use-case';
 import { CreatePostForBlogCommand } from './use-cases/create.post.for.blog.use-case';
 import { UpdateBlogCommand } from './use-cases/update.blog.use-case';
 import { DeleteOneBlogCommand } from './use-cases/delete.one.blog.use-case';
-import { JwtAuthGuard } from '../../public/auth/guards/jwt-auth.guard';
-import { CurrentUserId } from '../../public/auth/decorators/current-user.param.decorator';
-import { CurrentUserIdAndLogin } from '../../public/auth/decorators/current-user.id.and.login';
-import { UserIdAndLogin } from '../../public/auth/dto/user-id.and.login';
+import { JwtAuthGuard } from '../../_public/auth/guards/jwt-auth.guard';
+import { CurrentUserId } from '../../_public/auth/decorators/current-user.param.decorator';
+import { CurrentUserIdAndLogin } from '../../_public/auth/decorators/current-user.id.and.login';
+import { UserIdAndLogin } from '../../_public/auth/dto/user-id.and.login';
 import { UpdatePostByBlogIdCommand } from './use-cases/update.post.by.blog.id.use-case';
 import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/delete.one.post.by.specific.blog.id.use-case';
 
-@Controller('blogger/blogs')
-export class BlogController {
+@Controller('_blogger/blogs')
+export class BloggerBlogController {
   constructor(
     protected blogQ: BlogQ,
     private readonly jwtService: JwtService,

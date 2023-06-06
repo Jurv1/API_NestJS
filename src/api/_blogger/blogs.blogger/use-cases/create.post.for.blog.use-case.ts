@@ -4,7 +4,7 @@ import { Errors } from '../../../../application/utils/handle.error';
 import { PostMapper } from '../../../../application/utils/mappers/post.mapper';
 import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
 import { PostViewModel } from '../../../../application/schemas/posts/schemas/post-view.model';
-import { UserIdAndLogin } from '../../../public/auth/dto/user-id.and.login';
+import { UserIdAndLogin } from '../../../_public/auth/dto/user-id.and.login';
 export class CreatePostForBlogCommand {
   constructor(
     public title: string,
