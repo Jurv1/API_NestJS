@@ -81,4 +81,14 @@ export class LikesRepository {
       .limit(3)
       .lean();
   }
+
+  async findAllLikesByUserIdAndSetBanStatus(
+    userId: string,
+    banStatus: boolean,
+  ) {
+    return this.likeModel.updateMany(
+      { userId: userId },
+      { $set: { isUserBanned: banStatus } },
+    );
+  }
 }

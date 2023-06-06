@@ -23,6 +23,9 @@ export class Blog {
   isMembership: boolean;
 
   @Prop()
+  isUserBanned: boolean;
+
+  @Prop()
   createdAt: string;
 
   updateBlog(dto: BlogBody) {
@@ -34,6 +37,10 @@ export class Blog {
   bindUser(userId: string, userLogin: string) {
     this.ownerInfo.userId = userId;
     this.ownerInfo.userLogin = userLogin;
+  }
+
+  updateBanInfo(banStatus: boolean) {
+    this.isUserBanned = banStatus;
   }
 
   static createBlog(
@@ -49,6 +56,7 @@ export class Blog {
         userLogin: blogDto.userLogin,
       },
       isMembership: false,
+      isUserBanned: false,
       createdAt: new Date().toISOString(),
     };
     return new BlogModel(createdBlog);
@@ -73,6 +81,7 @@ BlogSchema.statics = blogStaticMethods;
 BlogSchema.methods = {
   updateBlog: Blog.prototype.updateBlog,
   bindUser: Blog.prototype.bindUser,
+  updateBanInfo: Blog.prototype.updateBanInfo,
 };
 
 export type BlogModelType = Model<BlogDocument> & BlogModelStaticType;

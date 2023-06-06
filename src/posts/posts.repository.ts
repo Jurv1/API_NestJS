@@ -38,4 +38,11 @@ export class PostsRepository {
     });
     return result.deletedCount === 1;
   }
+
+  async updateBanStatusForPostByOwnerId(userId: string, banStatus: boolean) {
+    return this.postModel.updateMany(
+      { 'ownerInfo.userId': userId },
+      { $set: { isUserBanned: banStatus } },
+    );
+  }
 }

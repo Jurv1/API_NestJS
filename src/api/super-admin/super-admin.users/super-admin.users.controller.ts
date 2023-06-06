@@ -26,7 +26,7 @@ import { UserWithPaginationDto } from '../../../users/dto/user.with.pagination.d
 import { UserMapper } from '../../../utils/mappers/user.mapper';
 import { DeleteUserBySuperAdminCommand } from './use-cases/delete.user.by.super.admin.use-case';
 import { BanBody } from '../../../users/dto/ban.body';
-import { BanUserBySuperAdminCommand } from './use-cases/ban.user.by.super.admin.use-case';
+import { BanUnbanUserBySuperAdminCommand } from './use-cases/ban.unban.user.by.super.admin.use-case';
 
 @Controller('sa/users')
 export class SuperAdminUsersController {
@@ -108,7 +108,7 @@ export class SuperAdminUsersController {
   @Put(':id/ban')
   async banUser(@Param('id') id: string, @Body() body: BanBody) {
     return await this.commandBus.execute(
-      new BanUserBySuperAdminCommand(id, body),
+      new BanUnbanUserBySuperAdminCommand(id, body),
     );
   }
 

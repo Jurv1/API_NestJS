@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ExtendedLike } from './likes.schemas/extended.likes.schema';
 import { HydratedDocument, Model } from 'mongoose';
-import { PostBodyBlogId } from '../dto/post.body.blogId';
 import { BlogDocument } from '../../blogs/schemas/blogs.database.schema';
-import { postUpdateBody } from '../dto/post.update.body';
+import { PostUpdateBody } from '../dto/post.update.body';
 import { OwnerInfoDto } from '../../blogs/dto/owner.info.dto';
 import { PostCreationDto } from '../dto/post.creation.dto';
 
@@ -26,13 +25,18 @@ export class Post {
   @Prop()
   extendedLikesInfo: ExtendedLike;
   @Prop()
+  isUserBanned: boolean;
+  @Prop()
   createdAt: string;
 
-  updatePost(updatePostDto: postUpdateBody) {
+  updatePost(updatePostDto: PostUpdateBody) {
     this.title = updatePostDto.title;
     this.shortDescription = updatePostDto.shortDescription;
     this.content = updatePostDto.content;
     this.blogId = updatePostDto.blogId;
+  }
+  updateBanInfo(banStatus: boolean) {
+    this.isUserBanned = banStatus;
   }
 
   static createPostWithBlogId(
@@ -55,6 +59,7 @@ export class Post {
         dislikesCount: 0,
         myStatus: 'None',
       },
+      isUserBanned: false,
       createdAt: new Date().toISOString(),
     };
     return new postModel(createdPost);
@@ -79,6 +84,7 @@ PostSchema.statics = postStaticMethods;
 
 PostSchema.methods = {
   updatePost: Post.prototype.updatePost,
+  updateBanInfo: Post.prototype.updateBanInfo,
 };
 
 export type PostModelType = Model<PostDocument> & PostModelStaticType;

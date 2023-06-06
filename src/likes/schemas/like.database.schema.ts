@@ -14,14 +14,20 @@ export class Like {
   @Prop()
   commentPostId: string;
   @Prop()
+  isUserBanned: boolean;
+  @Prop()
   addedAt: string;
 
+  updateBanInfo(banStatus: boolean) {
+    this.isUserBanned = banStatus;
+  }
   static createLike(likeDto: LikeCreationDto, LikeModel: LikeModelType) {
     const createdLike = {
       userId: likeDto.userId,
       userLogin: likeDto.userLogin,
       userStatus: likeDto.userStatus,
       commentPostId: likeDto.commentPostId,
+      isUserBanned: false,
       addedAt: new Date().toISOString(),
     };
 
@@ -40,5 +46,9 @@ const likeStaticMethods: LikeModelStaticType = {
 };
 
 LikeSchema.statics = likeStaticMethods;
+
+LikeSchema.methods = {
+  updateBanStatus: Like.prototype.updateBanInfo,
+};
 
 export type LikeModelType = Model<Like> & LikeModelStaticType;
