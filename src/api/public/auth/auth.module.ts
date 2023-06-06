@@ -5,17 +5,17 @@ import { UsersModule } from '../../../users/users.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UsersService } from '../../../users/users.service';
+import { UsersService } from '../../../application/infrastructure/users/users.service';
 import { AdminStrategy } from './strategies/admin.strategy';
-import { MailService } from '../../../mail/mail.service';
-import { MailModule } from '../../../mail/mail.module';
-import { jwtConstants } from '../../../config/consts';
+import { MailService } from '../../../application/mail/mail.service';
+import { MailModule } from '../../../application/mail/mail.module';
+import { jwtConstants } from '../../../application/config/consts';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,
-} from '../../../devices/schemas/refresh-token.blacklist';
+} from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
 
 console.log(process.env.SECRET);
 @Module({

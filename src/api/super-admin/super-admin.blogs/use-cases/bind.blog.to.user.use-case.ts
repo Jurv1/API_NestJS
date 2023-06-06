@@ -1,9 +1,9 @@
 import { ICommandHandler } from '@nestjs/cqrs';
-import { UserQ } from '../../../../users/users.query.repository';
-import { BlogQ } from '../../../../blogs/blogs.query.repository';
-import { BlogDocument } from '../../../../blogs/schemas/blogs.database.schema';
-import { Errors } from '../../../../utils/handle.error';
-import { UserDocument } from '../../../../users/schemas/users.database.schema';
+import { UserQ } from '../../../../application/infrastructure/users/users.query.repository';
+import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { Errors } from '../../../../application/utils/handle.error';
+import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
 
 export class BindBlogToUserCommand {
   constructor(public blogId: string, public UserId: string) {}

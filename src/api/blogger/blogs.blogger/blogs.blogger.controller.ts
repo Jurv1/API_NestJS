@@ -11,21 +11,21 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { BlogService } from '../../../blogs/blogs.service';
-import { BlogQ } from '../../../blogs/blogs.query.repository';
-import { PostService } from '../../../posts/posts.service';
-import { PostQ } from '../../../posts/posts.query.repository';
+import { BlogService } from '../../../application/infrastructure/blogs/blogs.service';
+import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { PostService } from '../../../application/infrastructure/posts/posts.service';
+import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
-import { BlogQueryParams } from '../../../blogs/dto/blog.query.params';
-import { filterQueryValid } from '../../../utils/query.validator';
-import { queryValidator } from '../../../utils/sorting.func';
-import { makePagination } from '../../../utils/make.paggination';
-import { Errors } from '../../../utils/handle.error';
-import { PostQuery } from '../../../posts/dto/post.query';
+import { BlogQueryParams } from '../../../application/dto/blogs/dto/blog.query.params';
+import { filterQueryValid } from '../../../application/utils/query.validator';
+import { queryValidator } from '../../../application/utils/sorting.func';
+import { makePagination } from '../../../application/utils/make.paggination';
+import { Errors } from '../../../application/utils/handle.error';
+import { PostQuery } from '../../../application/dto/posts/dto/post.query';
 import { AdminAuthGuard } from '../../public/auth/guards/admin-auth.guard';
-import { BlogBody } from '../../../blogs/dto/blog.body';
-import { BlogDocument } from '../../../blogs/schemas/blogs.database.schema';
-import { PostBody } from '../../../posts/dto/post.body.without.blogId';
+import { BlogBody } from '../../../application/dto/blogs/dto/blog.body';
+import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { PostBody } from '../../../application/dto/posts/dto/post.body.without.blogId';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from './use-cases/create.blog.use-case';
 import { CreatePostForBlogCommand } from './use-cases/create.post.for.blog.use-case';

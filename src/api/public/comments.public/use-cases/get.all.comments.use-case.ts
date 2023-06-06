@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentMapper } from '../../../../utils/mappers/comment.mapper';
+import { CommentMapper } from '../../../../application/utils/mappers/comment.mapper';
 import { JwtService } from '@nestjs/jwt';
-import { CommentQ } from '../../../../comments/comments.query.repository';
-import { CommentDocument } from '../../../../comments/schemas/comments.database.schema';
-import { CommentViewModel } from '../../../../comments/schemas/comment-view.model';
-import { Errors } from '../../../../utils/handle.error';
+import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
+import { CommentViewModel } from '../../../../application/schemas/comments/schemas/comment-view.model';
+import { Errors } from '../../../../application/utils/handle.error';
 
 export class GetCommentByIdCommand {
   constructor(public commentId: string, public token: string) {}

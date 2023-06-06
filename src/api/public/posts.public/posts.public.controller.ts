@@ -10,20 +10,20 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { PostQ } from '../../../posts/posts.query.repository';
+import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
-import { PostMapper } from '../../../utils/mappers/post.mapper';
-import { PostQuery } from '../../../posts/dto/post.query';
-import { queryValidator } from '../../../utils/sorting.func';
-import { filterQueryValid } from '../../../utils/query.validator';
-import { makePagination } from '../../../utils/make.paggination';
-import { Errors } from '../../../utils/handle.error';
-import { PostDocument } from '../../../posts/schemas/posts.database.schema';
+import { PostMapper } from '../../../application/utils/mappers/post.mapper';
+import { PostQuery } from '../../../application/dto/posts/dto/post.query';
+import { queryValidator } from '../../../application/utils/sorting.func';
+import { filterQueryValid } from '../../../application/utils/query.validator';
+import { makePagination } from '../../../application/utils/make.paggination';
+import { Errors } from '../../../application/utils/handle.error';
+import { PostDocument } from '../../../application/schemas/posts/schemas/posts.database.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ContentDto } from '../../../comments/dto/content.dto';
+import { ContentDto } from '../../../application/dto/comments/dto/content.dto';
 import { CurrentUserIdAndLogin } from '../auth/decorators/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
-import { LikeBody } from '../../../likes/dto/like.body';
+import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateCommentForPostCommand } from './use-cases/create.comment.for.post.use-case';
 import { LikeCommentOrPostCommand } from '../comments.public/use-cases/like.comment.use-case';

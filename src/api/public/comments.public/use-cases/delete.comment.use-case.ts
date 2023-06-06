@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentQ } from '../../../../comments/comments.query.repository';
-import { CommentService } from '../../../../comments/comments.service';
-import { CommentDocument } from '../../../../comments/schemas/comments.database.schema';
-import { Errors } from '../../../../utils/handle.error';
+import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { CommentService } from '../../../../application/infrastructure/comments/comments.service';
+import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
+import { Errors } from '../../../../application/utils/handle.error';
 
 export class DeleteCommentCommand {
   constructor(public commentId: string, public userId: string) {}

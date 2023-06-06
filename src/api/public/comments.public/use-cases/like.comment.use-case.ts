@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostQ } from '../../../../posts/posts.query.repository';
-import { CommentQ } from '../../../../comments/comments.query.repository';
-import { LikesRepository } from '../../../../likes/likes.repository';
-import { CommentDocument } from '../../../../comments/schemas/comments.database.schema';
-import { PostDocument } from '../../../../posts/schemas/posts.database.schema';
-import { Errors } from '../../../../utils/handle.error';
+import { PostQ } from '../../../../application/infrastructure/posts/posts.query.repository';
+import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { LikesRepository } from '../../../../application/infrastructure/likes/likes.repository';
+import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
+import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
+import { Errors } from '../../../../application/utils/handle.error';
 
 export class LikeCommentOrPostCommand {
   constructor(

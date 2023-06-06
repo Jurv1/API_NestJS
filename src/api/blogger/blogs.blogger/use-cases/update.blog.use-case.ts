@@ -1,8 +1,8 @@
 import { ICommandHandler } from '@nestjs/cqrs';
-import { BlogQ } from '../../../../blogs/blogs.query.repository';
-import { BlogService } from '../../../../blogs/blogs.service';
-import { BlogDocument } from '../../../../blogs/schemas/blogs.database.schema';
-import { Errors } from '../../../../utils/handle.error';
+import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
+import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { Errors } from '../../../../application/utils/handle.error';
 
 export class UpdateBlogCommand {
   constructor(

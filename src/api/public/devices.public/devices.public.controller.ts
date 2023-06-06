@@ -7,12 +7,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
-import { DeviceQ } from '../../../devices/devices.query.repository';
+import { DeviceQ } from '../../../application/infrastructure/devices/devices.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
 import { CurrentRefreshToken } from '../auth/decorators/current-refresh-token';
-import { DeviceDocument } from '../../../devices/schemas/devices.database.schema';
-import { Errors } from '../../../utils/handle.error';
+import { DeviceDocument } from '../../../application/schemas/devices/schemas/devices.database.schema';
+import { Errors } from '../../../application/utils/handle.error';
 import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteAllDevicesExceptActiveCommand } from './use-cases/delete.all.devices.except.active.use-case';

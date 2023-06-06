@@ -1,27 +1,36 @@
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Blog, BlogSchema } from '../src/blogs/schemas/blogs.database.schema';
-import { Post, PostSchema } from '../src/posts/schemas/posts.database.schema';
-import { User, UserSchema } from '../src/users/schemas/users.database.schema';
+import {
+  Blog,
+  BlogSchema,
+} from '../src/application/schemas/blogs/schemas/blogs.database.schema';
+import {
+  Post,
+  PostSchema,
+} from '../src/application/schemas/posts/schemas/posts.database.schema';
+import {
+  User,
+  UserSchema,
+} from '../src/application/schemas/users/schemas/users.database.schema';
 import {
   CommentSchema,
   DBComment,
-} from '../src/comments/schemas/comments.database.schema';
+} from '../src/application/schemas/comments/schemas/comments.database.schema';
 import { AppController } from '../src/app.controller';
 import { BlogController } from '../src/blogs/blogs.controller';
 import { PostController } from '../src/posts/posts.controller';
 import { UsersController } from '../src/users/users.controller';
 import { AppService } from '../src/app.service';
-import { BlogService } from '../src/blogs/blogs.service';
-import { PostService } from '../src/posts/posts.service';
-import { UsersService } from '../src/users/users.service';
-import { BlogsRepository } from '../src/blogs/blogs.repository';
-import { BlogQ } from '../src/blogs/blogs.query.repository';
-import { PostsRepository } from '../src/posts/posts.repository';
-import { PostQ } from '../src/posts/posts.query.repository';
-import { UsersRepository } from '../src/users/users.repository';
-import { UserQ } from '../src/users/users.query.repository';
-import { CommentQ } from '../src/comments/comments.query.repository';
+import { BlogService } from '../src/application/infrastructure/blogs/blogs.service';
+import { PostService } from '../src/application/infrastructure/posts/posts.service';
+import { UsersService } from '../src/application/infrastructure/users/users.service';
+import { BlogsRepository } from '../src/application/infrastructure/blogs/blogs.repository';
+import { BlogQ } from '../src/application/infrastructure/blogs/blogs.query.repository';
+import { PostsRepository } from '../src/application/infrastructure/posts/posts.repository';
+import { PostQ } from '../src/application/infrastructure/posts/posts.query.repository';
+import { UsersRepository } from '../src/application/infrastructure/users/users.repository';
+import { UserQ } from '../src/application/infrastructure/users/users.query.repository';
+import { CommentQ } from '../src/application/infrastructure/comments/comments.query.repository';
 
 export const appTestingModule = {
   imports: [

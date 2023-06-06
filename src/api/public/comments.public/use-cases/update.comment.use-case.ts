@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentQ } from '../../../../comments/comments.query.repository';
-import { Errors } from '../../../../utils/handle.error';
+import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { Errors } from '../../../../application/utils/handle.error';
 export class UpdateCommentCommand {
   constructor(
     public commentId: string,

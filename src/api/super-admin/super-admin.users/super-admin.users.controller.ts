@@ -10,22 +10,22 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from '../../../users/users.service';
-import { UserQ } from '../../../users/users.query.repository';
+import { UsersService } from '../../../application/infrastructure/users/users.service';
+import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
 import { AdminAuthGuard } from '../../public/auth/guards/admin-auth.guard';
-import { UserQuery } from '../../../users/dto/user.query';
+import { UserQuery } from '../../../application/dto/users/dto/user.query';
 import { FilterQuery, SortOrder } from 'mongoose';
-import { UserDocument } from '../../../users/schemas/users.database.schema';
-import { makePagination } from '../../../utils/make.paggination';
-import { Errors } from '../../../utils/handle.error';
-import { UserBody } from '../../../users/dto/user.body';
+import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
+import { makePagination } from '../../../application/utils/make.paggination';
+import { Errors } from '../../../application/utils/handle.error';
+import { UserBody } from '../../../application/dto/users/dto/user.body';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from './use-cases/create.user.use-case';
-import { UserViewDto } from '../../../users/dto/user.view.dto';
-import { UserWithPaginationDto } from '../../../users/dto/user.with.pagination.dto';
-import { UserMapper } from '../../../utils/mappers/user.mapper';
+import { UserViewDto } from '../../../application/dto/users/dto/user.view.dto';
+import { UserWithPaginationDto } from '../../../application/dto/users/dto/user.with.pagination.dto';
+import { UserMapper } from '../../../application/utils/mappers/user.mapper';
 import { DeleteUserBySuperAdminCommand } from './use-cases/delete.user.by.super.admin.use-case';
-import { BanBody } from '../../../users/dto/ban.body';
+import { BanBody } from '../../../application/dto/users/dto/ban.body';
 import { BanUnbanUserBySuperAdminCommand } from './use-cases/ban.unban.user.by.super.admin.use-case';
 
 @Controller('sa/users')

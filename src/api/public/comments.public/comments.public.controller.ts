@@ -9,11 +9,11 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Errors } from '../../../utils/handle.error';
+import { Errors } from '../../../application/utils/handle.error';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ContentDto } from '../../../comments/dto/content.dto';
+import { ContentDto } from '../../../application/dto/comments/dto/content.dto';
 import { CurrentUserId } from '../auth/decorators/current-user.param.decorator';
-import { LikeBody } from '../../../likes/dto/like.body';
+import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CurrentUserIdAndLogin } from '../auth/decorators/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommandBus } from '@nestjs/cqrs';

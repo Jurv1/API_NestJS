@@ -1,8 +1,8 @@
 import { ICommandHandler } from '@nestjs/cqrs';
-import { PostService } from '../../../../posts/posts.service';
-import { CommentMapper } from '../../../../utils/mappers/comment.mapper';
-import { CommentDocument } from '../../../../comments/schemas/comments.database.schema';
-import { Errors } from '../../../../utils/handle.error';
+import { PostService } from '../../../../application/infrastructure/posts/posts.service';
+import { CommentMapper } from '../../../../application/utils/mappers/comment.mapper';
+import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
+import { Errors } from '../../../../application/utils/handle.error';
 
 export class CreateCommentForPostCommand {
   constructor(

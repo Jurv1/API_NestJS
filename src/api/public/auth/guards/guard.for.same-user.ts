@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
-import { UserQ } from '../../../../users/users.query.repository';
-import { DeviceQ } from '../../../../devices/devices.query.repository';
-import { UserDocument } from '../../../../users/schemas/users.database.schema';
-import { Errors } from '../../../../utils/handle.error';
-import { DeviceDocument } from '../../../../devices/schemas/devices.database.schema';
+import { UserQ } from '../../../../application/infrastructure/users/users.query.repository';
+import { DeviceQ } from '../../../../application/infrastructure/devices/devices.query.repository';
+import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
+import { Errors } from '../../../../application/utils/handle.error';
+import { DeviceDocument } from '../../../../application/schemas/devices/schemas/devices.database.schema';
 
 @Injectable()
 export class GuardForSameUser implements CanActivate {

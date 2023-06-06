@@ -1,17 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogModelType } from './blogs/schemas/blogs.database.schema';
-import { Post, PostModelType } from './posts/schemas/posts.database.schema';
+import {
+  Blog,
+  BlogModelType,
+} from './application/schemas/blogs/schemas/blogs.database.schema';
+import {
+  Post,
+  PostModelType,
+} from './application/schemas/posts/schemas/posts.database.schema';
 import {
   CommentModelType,
   DBComment,
-} from './comments/schemas/comments.database.schema';
-import { User, UserModelType } from './users/schemas/users.database.schema';
+} from './application/schemas/comments/schemas/comments.database.schema';
+import {
+  User,
+  UserModelType,
+} from './application/schemas/users/schemas/users.database.schema';
 import {
   Device,
   DeviceModelType,
-} from './devices/schemas/devices.database.schema';
-import { Like, LikeModelType } from './likes/schemas/like.database.schema';
+} from './application/schemas/devices/schemas/devices.database.schema';
+import {
+  Like,
+  LikeModelType,
+} from './application/schemas/likes/schemas/like.database.schema';
 
 @Injectable()
 export class AppService {

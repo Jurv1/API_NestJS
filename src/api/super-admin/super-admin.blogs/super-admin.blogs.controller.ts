@@ -2,14 +2,14 @@ import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { AdminAuthGuard } from '../../public/auth/guards/admin-auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogToUserCommand } from './use-cases/bind.blog.to.user.use-case';
-import { BlogQueryParams } from '../../../blogs/dto/blog.query.params';
-import { filterQueryValid } from '../../../utils/query.validator';
-import { queryValidator } from '../../../utils/sorting.func';
-import { makePagination } from '../../../utils/make.paggination';
-import { Errors } from '../../../utils/handle.error';
-import { BlogQ } from '../../../blogs/blogs.query.repository';
-import { BlogWithPaginationDto } from '../../../blogs/dto/blog.with.pagination.dto';
-import { BlogMapper } from '../../../utils/mappers/blog.mapper';
+import { BlogQueryParams } from '../../../application/dto/blogs/dto/blog.query.params';
+import { filterQueryValid } from '../../../application/utils/query.validator';
+import { queryValidator } from '../../../application/utils/sorting.func';
+import { makePagination } from '../../../application/utils/make.paggination';
+import { Errors } from '../../../application/utils/handle.error';
+import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/blog.with.pagination.dto';
+import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {

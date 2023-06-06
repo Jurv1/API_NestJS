@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../../../users/users.service';
-import { UserDocument } from '../../../users/schemas/users.database.schema';
+import { UsersService } from '../../../application/infrastructure/users/users.service';
+import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import * as bcrypt from 'bcrypt';
-import { UserQ } from '../../../users/users.query.repository';
-import { MailService } from '../../../mail/mail.service';
+import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
+import { MailService } from '../../../application/mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
-import { jwtConstants } from '../../../config/consts';
+import { jwtConstants } from '../../../application/config/consts';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListModel,
   TokenBlackListDocument,
-} from '../../../devices/schemas/refresh-token.blacklist';
+} from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
 
 @Injectable()
 export class AuthService {

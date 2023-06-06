@@ -1,9 +1,9 @@
 import { ICommandHandler } from '@nestjs/cqrs';
-import { PostService } from '../../../../posts/posts.service';
-import { Errors } from '../../../../utils/handle.error';
-import { PostMapper } from '../../../../utils/mappers/post.mapper';
-import { PostDocument } from '../../../../posts/schemas/posts.database.schema';
-import { PostViewModel } from '../../../../posts/schemas/post-view.model';
+import { PostService } from '../../../../application/infrastructure/posts/posts.service';
+import { Errors } from '../../../../application/utils/handle.error';
+import { PostMapper } from '../../../../application/utils/mappers/post.mapper';
+import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
+import { PostViewModel } from '../../../../application/schemas/posts/schemas/post-view.model';
 import { UserIdAndLogin } from '../../../public/auth/dto/user-id.and.login';
 export class CreatePostForBlogCommand {
   constructor(
