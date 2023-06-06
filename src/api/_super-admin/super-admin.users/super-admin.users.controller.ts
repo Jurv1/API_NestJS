@@ -10,7 +10,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from '../../../application/infrastructure/users/users.service';
 import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
 import { AdminAuthGuard } from '../../_public/auth/guards/admin-auth.guard';
 import { UserQuery } from '../../../application/dto/users/dto/user.query';

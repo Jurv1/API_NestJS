@@ -15,7 +15,6 @@ import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,
 } from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
-import { SuperAdminUsersController } from '../../_super-admin/super-admin.users/super-admin.users.controller';
 import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
 import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
 import {

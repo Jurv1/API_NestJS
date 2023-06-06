@@ -1,4 +1,4 @@
-import { createParamDecorator, ExecutionContext, Inject } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const CurrentRefreshToken = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {

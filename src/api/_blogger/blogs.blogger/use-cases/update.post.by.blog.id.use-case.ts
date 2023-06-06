@@ -18,7 +18,7 @@ export class UpdatePostByBlogIdCommand {
 export class UpdatePostByBlogIdUseCase
   implements ICommandHandler<UpdatePostByBlogIdCommand>
 {
-  constructor(private readonly postQ: PostQ, private readonly blogQ: BlogQ) {}
+  constructor(private readonly postQ: PostQ) {}
   async execute(command: UpdatePostByBlogIdCommand) {
     const post: PostDocument = await this.postQ.getOnePostByPostAndBlogIds(
       command.postId,

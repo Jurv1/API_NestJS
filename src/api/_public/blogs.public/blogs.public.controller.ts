@@ -1,19 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Post,
-  Put,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { BlogService } from '../../../application/infrastructure/blogs/blogs.service';
+import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
-import { PostService } from '../../../application/infrastructure/posts/posts.service';
 import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/blog.query.params';
