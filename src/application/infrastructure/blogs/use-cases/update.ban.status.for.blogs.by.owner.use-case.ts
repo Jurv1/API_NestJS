@@ -1,9 +1,11 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsRepository } from '../blogs.repository';
 
 export class UpdateBanStatusForBlogsByOwnerCommand {
   constructor(public userId: string, public banStatus: boolean) {}
 }
+
+@CommandHandler(UpdateBanStatusForBlogsByOwnerCommand)
 export class UpdateBanStatusForBlogsByOwnerUseCase
   implements ICommandHandler<UpdateBanStatusForBlogsByOwnerCommand>
 {

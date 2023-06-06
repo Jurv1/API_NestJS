@@ -1,4 +1,4 @@
-import { CommandBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanBody } from '../../../../application/dto/users/dto/ban.body';
 import { UserQ } from '../../../../application/infrastructure/users/users.query.repository';
 import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
@@ -12,6 +12,8 @@ import { UpdateBanStatusForCommentOwnerCommand } from '../../../../application/i
 export class BanUnbanUserBySuperAdminCommand {
   constructor(public userId: string, public banInfo: BanBody) {}
 }
+
+@CommandHandler(BanUnbanUserBySuperAdminCommand)
 export class BanUnbanUserBySuperAdminUseCase
   implements ICommandHandler<BanUnbanUserBySuperAdminCommand>
 {

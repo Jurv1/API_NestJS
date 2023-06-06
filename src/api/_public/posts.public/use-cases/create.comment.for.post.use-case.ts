@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostService } from '../../../../application/infrastructure/posts/posts.service';
 import { CommentMapper } from '../../../../application/utils/mappers/comment.mapper';
 import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
@@ -13,6 +13,7 @@ export class CreateCommentForPostCommand {
   ) {}
 }
 
+@CommandHandler(CreateCommentForPostCommand)
 export class CreateCommentForPostUseCase
   implements ICommandHandler<CreateCommentForPostCommand>
 {

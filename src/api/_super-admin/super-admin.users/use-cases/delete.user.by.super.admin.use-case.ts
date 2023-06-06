@@ -1,9 +1,11 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersRepository } from '../../../../application/infrastructure/users/users.repository';
 import { Errors } from '../../../../application/utils/handle.error';
 export class DeleteUserBySuperAdminCommand {
   constructor(public userId: string) {}
 }
+
+@CommandHandler(DeleteUserBySuperAdminCommand)
 export class DeleteUserBySuperAdminUseCase
   implements ICommandHandler<DeleteUserBySuperAdminCommand>
 {

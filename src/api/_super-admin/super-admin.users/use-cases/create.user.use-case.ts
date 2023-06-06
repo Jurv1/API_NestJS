@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../../../../application/infrastructure/users/users.service';
 import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';
@@ -14,6 +14,7 @@ export class CreateUserCommand {
   ) {}
 }
 
+@CommandHandler(CreateUserCommand)
 export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   constructor(
     private readonly userService: UsersService,

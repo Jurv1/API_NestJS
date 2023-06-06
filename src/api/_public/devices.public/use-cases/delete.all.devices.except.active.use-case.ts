@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DevicesService } from '../../../../application/infrastructure/devices/devices.service';
 import { Errors } from '../../../../application/utils/handle.error';
 
@@ -6,6 +6,7 @@ export class DeleteAllDevicesExceptActiveCommand {
   constructor(public userId: string, public deviceId: string) {}
 }
 
+@CommandHandler(DeleteAllDevicesExceptActiveCommand)
 export class DeleteAllDevicesExceptActiveUseCase
   implements ICommandHandler<DeleteAllDevicesExceptActiveCommand>
 {

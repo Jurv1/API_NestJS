@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../../application/infrastructure/posts/posts.repository';
 import { PostQ } from '../../../../application/infrastructure/posts/posts.query.repository';
 import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
@@ -11,6 +11,8 @@ export class DeleteOnePostBySpecificBlogIdCommand {
     public userId: string,
   ) {}
 }
+
+@CommandHandler(DeleteOnePostBySpecificBlogIdCommand)
 export class DeleteOnePostBySpecificBlogIdUseCase
   implements ICommandHandler<DeleteOnePostBySpecificBlogIdCommand>
 {

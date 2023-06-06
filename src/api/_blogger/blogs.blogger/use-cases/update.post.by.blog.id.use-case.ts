@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostQ } from '../../../../application/infrastructure/posts/posts.query.repository';
 import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
 import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
@@ -15,6 +15,8 @@ export class UpdatePostByBlogIdCommand {
     public userId: string,
   ) {}
 }
+
+@CommandHandler(UpdatePostByBlogIdCommand)
 export class UpdatePostByBlogIdUseCase
   implements ICommandHandler<UpdatePostByBlogIdCommand>
 {

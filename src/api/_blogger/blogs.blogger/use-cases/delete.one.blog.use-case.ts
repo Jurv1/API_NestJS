@@ -1,10 +1,12 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
 import { Errors } from '../../../../application/utils/handle.error';
 
 export class DeleteOneBlogCommand {
   constructor(public blogId: string) {}
 }
+
+@CommandHandler(DeleteOneBlogCommand)
 export class DeleteOneBlogUseCase
   implements ICommandHandler<DeleteOneBlogCommand>
 {

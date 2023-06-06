@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
@@ -13,6 +13,7 @@ export class UpdateBlogCommand {
   ) {}
 }
 
+@CommandHandler(UpdateBlogCommand)
 export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
   constructor(
     private readonly blogQ: BlogQ,

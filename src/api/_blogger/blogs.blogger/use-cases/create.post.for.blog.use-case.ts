@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostService } from '../../../../application/infrastructure/posts/posts.service';
 import { Errors } from '../../../../application/utils/handle.error';
 import { PostMapper } from '../../../../application/utils/mappers/post.mapper';
@@ -14,6 +14,8 @@ export class CreatePostForBlogCommand {
     public userData: UserIdAndLogin,
   ) {}
 }
+
+@CommandHandler(CreatePostForBlogCommand)
 export class CreatePostForBlogUseCase
   implements ICommandHandler<CreatePostForBlogCommand>
 {

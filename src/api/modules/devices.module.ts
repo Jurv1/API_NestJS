@@ -23,6 +23,7 @@ import {
   UserSchema,
 } from '../../application/schemas/users/schemas/users.database.schema';
 import { UsersRepository } from '../../application/infrastructure/users/users.repository';
+import { DevicesService } from '../../application/infrastructure/devices/devices.service';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { UsersRepository } from '../../application/infrastructure/users/users.re
     AuthService,
     UserQ,
     DeviceQ,
+    DevicesService,
     UsersService,
     MailService,
     UsersRepository,

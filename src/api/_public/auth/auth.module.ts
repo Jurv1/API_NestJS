@@ -21,6 +21,14 @@ import {
   User,
   UserSchema,
 } from '../../../application/schemas/users/schemas/users.database.schema';
+import { PublicAuthController } from './auth.controller';
+import { DeviceQ } from '../../../application/infrastructure/devices/devices.query.repository';
+import {
+  Device,
+  DeviceSchema,
+} from '../../../application/schemas/devices/schemas/devices.database.schema';
+import { DevicesService } from '../../../application/infrastructure/devices/devices.service';
+import { DevicesRepository } from '../../../application/infrastructure/devices/devices.repository';
 
 console.log(process.env.SECRET);
 @Module({
@@ -36,9 +44,11 @@ console.log(process.env.SECRET);
     MailModule,
     MongooseModule.forFeature([
       { name: RefreshTokenBlacklist.name, schema: RefreshTokenBlackListSchema },
+      { name: User.name, schema: UserSchema },
+      { name: Device.name, schema: DeviceSchema },
     ]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
+  controllers: [PublicAuthController],
   providers: [
     AuthService,
     UsersService,
@@ -48,6 +58,9 @@ console.log(process.env.SECRET);
     MailService,
     UserQ,
     UsersRepository,
+    DeviceQ,
+    DevicesService,
+    DevicesRepository,
   ],
   exports: [AuthService],
 })

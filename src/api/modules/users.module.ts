@@ -29,6 +29,8 @@ import {
   DeviceSchema,
 } from '../../application/schemas/devices/schemas/devices.database.schema';
 import { UserMapper } from '../../application/utils/mappers/user.mapper';
+import { UsersService } from '../../application/infrastructure/users/users.service';
+import { MailService } from '../../application/mail/mail.service';
 
 @Module({
   imports: [
@@ -43,6 +45,12 @@ import { UserMapper } from '../../application/utils/mappers/user.mapper';
     CqrsModule,
   ],
   controllers: [SuperAdminUsersController],
-  providers: [...allUsersUseCases, ...allReposForUserModule, UserMapper],
+  providers: [
+    ...allUsersUseCases,
+    ...allReposForUserModule,
+    UserMapper,
+    UsersService,
+    MailService,
+  ],
 })
 export class UsersModule {}

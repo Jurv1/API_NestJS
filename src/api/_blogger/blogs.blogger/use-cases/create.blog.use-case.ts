@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { BlogMapper } from '../../../../application/utils/mappers/blog.mapper';
@@ -13,6 +13,8 @@ export class CreateBlogCommand {
     public userData: UserIdAndLogin,
   ) {}
 }
+
+@CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   constructor(
     private readonly blogService: BlogService,

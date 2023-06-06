@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserQ } from '../../../../application/infrastructure/users/users.query.repository';
 import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
@@ -8,6 +8,8 @@ import { UserDocument } from '../../../../application/schemas/users/schemas/user
 export class BindBlogToUserCommand {
   constructor(public blogId: string, public UserId: string) {}
 }
+
+@CommandHandler(BindBlogToUserCommand)
 export class BindBlogToUserUseCase
   implements ICommandHandler<BindBlogToUserCommand>
 {
