@@ -20,6 +20,13 @@ import {
 } from '../../application/schemas/likes/schemas/like.database.schema';
 import { PublicPostController } from '../_public/posts.public/posts.public.controller';
 import { JwtService } from '@nestjs/jwt';
+import { CreateCommentForPostUseCase } from '../_public/posts.public/use-cases/create.comment.for.post.use-case';
+import { PostService } from '../../application/infrastructure/posts/posts.service';
+import { BlogQ } from '../../application/infrastructure/blogs/blogs.query.repository';
+import {
+  Blog,
+  BlogSchema,
+} from '../../application/schemas/blogs/schemas/blogs.database.schema';
 
 @Module({
   imports: [
@@ -27,6 +34,7 @@ import { JwtService } from '@nestjs/jwt';
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([
       { name: DBComment.name, schema: CommentSchema },
+      { name: Blog.name, schema: BlogSchema },
     ]),
     MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
   ],
@@ -34,6 +42,9 @@ import { JwtService } from '@nestjs/jwt';
   providers: [
     ...allPostsUseCases,
     ...allReposForPosts,
+    CreateCommentForPostUseCase,
+    PostService,
+    BlogQ,
     LikesRepository,
     PostMapper,
     CommentMapper,
