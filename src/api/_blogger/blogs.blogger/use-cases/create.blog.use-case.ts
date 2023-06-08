@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { BlogMapper } from '../../../../application/utils/mappers/blog.mapper';
 import { Errors } from '../../../../application/utils/handle.error';
 import { UserIdAndLogin } from '../../../_public/auth/dto/user-id.and.login';
 

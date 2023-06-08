@@ -30,6 +30,7 @@ export class BanUnbanUserBySuperAdminUseCase
       await this.deviceRepository.deleteAllDevices(command.userId);
     }
     await user.updateBanInfo(command.banInfo);
+    await user.markModified('banInfo');
     await user.save();
     await this.commandBus.execute(
       new UpdateBanStatusForLikesOwnerCommand(

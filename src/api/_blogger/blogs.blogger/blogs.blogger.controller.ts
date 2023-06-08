@@ -13,7 +13,6 @@ import {
 import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/blog.query.params';
-import { filterQueryValid } from '../../../application/utils/query.validator';
 import { queryValidator } from '../../../application/utils/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';

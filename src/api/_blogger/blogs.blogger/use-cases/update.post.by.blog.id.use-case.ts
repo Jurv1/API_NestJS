@@ -31,6 +31,7 @@ export class UpdatePostByBlogIdUseCase
       title: command.title,
       shortDescription: command.shortDescription,
       content: command.content,
+      blogId: command.blogId,
     };
     await post.updatePost(updatePostDto);
     await post.save();

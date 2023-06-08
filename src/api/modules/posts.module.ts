@@ -18,6 +18,8 @@ import {
   Like,
   LikeSchema,
 } from '../../application/schemas/likes/schemas/like.database.schema';
+import { PublicPostController } from '../_public/posts.public/posts.public.controller';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -28,12 +30,14 @@ import {
     ]),
     MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
   ],
+  controllers: [PublicPostController],
   providers: [
     ...allPostsUseCases,
     ...allReposForPosts,
     LikesRepository,
     PostMapper,
     CommentMapper,
+    JwtService,
   ],
 })
 export class PostsModule {}
