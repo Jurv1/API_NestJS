@@ -1,5 +1,6 @@
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogForAdminDto } from '../../dto/blogs/dto/blog.for.admin.dto';
+import { BlogViewDto } from '../../dto/blogs/dto/blog.view.dto';
 
 export class BlogMapper {
   mapBlog(obj: BlogDocument) {
@@ -13,7 +14,7 @@ export class BlogMapper {
     };
   }
 
-  mapBlogs(objs: BlogDocument[]) {
+  mapBlogs(objs: BlogDocument[] | BlogViewDto[]) {
     return objs.map((el) => {
       return {
         id: el._id.toString(),
@@ -27,7 +28,7 @@ export class BlogMapper {
   }
 
   async mapBlogsForAdmin(
-    objs: BlogDocument[] | BlogForAdminDto[],
+    objs: BlogDocument[] | BlogForAdminDto[] | BlogViewDto[],
   ): Promise<BlogForAdminDto[]> {
     return objs.map((el) => {
       return {

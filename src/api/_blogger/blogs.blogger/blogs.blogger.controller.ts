@@ -33,6 +33,8 @@ import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/delete.one.pos
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { filterForBlogger } from '../../../application/utils/filters/filter.for.blogger';
+import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/blog.with.pagination.dto';
+import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 
 @Controller('blogger/blogs')
 export class BloggerBlogController {
@@ -40,6 +42,7 @@ export class BloggerBlogController {
     protected blogQ: BlogQ,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
+    private readonly blogMapper: BlogMapper,
   ) {}
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -58,7 +61,10 @@ export class BloggerBlogController {
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      return await this.blogQ.getAllBlogsForBlogger(filter, sort, pagination);
+      const blogsWithPag: BlogWithPaginationDto =
+        await this.blogQ.getAllBlogsForBlogger(filter, sort, pagination);
+      blogsWithPag.items = this.blogMapper.mapBlogs(blogsWithPag.items);
+      return blogsWithPag;
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
@@ -73,7 +79,7 @@ export class BloggerBlogController {
   ) {
     const { name, description, websiteUrl } = body;
 
-    await this.commandBus.execute(
+    return await this.commandBus.execute(
       new CreateBlogCommand(name, description, websiteUrl, userData),
     );
   }

@@ -16,10 +16,7 @@ export class CreateBlogCommand {
 
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
-  constructor(
-    private readonly blogService: BlogService,
-    private readonly blogMapper: BlogMapper,
-  ) {}
+  constructor(private readonly blogService: BlogService) {}
   async execute(command: CreateBlogCommand) {
     const result: BlogDocument = await this.blogService.createOneBlog(
       command.name,
@@ -31,6 +28,6 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
 
     if (!result) throw new Errors.NOT_FOUND();
 
-    return this.blogMapper.mapBlog(result);
+    return result;
   }
 }

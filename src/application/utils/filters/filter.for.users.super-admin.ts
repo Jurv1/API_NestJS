@@ -7,9 +7,12 @@ export function filterForUsersSuperAdmin(
   searchEmailTerm: string | undefined,
 ): FilterQuery<UserDocument> {
   const filter: FilterQuery<UserDocument> = {};
-  if (banStatus === 'banned') filter.$and.push({ 'banInfo.isBanned': true });
-  if (banStatus === 'notBanned')
-    filter.$and.push({ 'banInfo.isBanned': false });
+  if (banStatus) {
+    filter.$and = [];
+    if (banStatus === 'banned') filter.$and.push({ 'banInfo.isBanned': true });
+    if (banStatus === 'notBanned')
+      filter.$and.push({ 'banInfo.isBanned': false });
+  }
 
   if (searchLoginTerm || searchEmailTerm) {
     filter.$or = [];

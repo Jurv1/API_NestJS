@@ -1,4 +1,10 @@
-import { IsBoolean, IsNotEmpty, IsString, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsString,
+  Min,
+  MinLength,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class BanBody {
@@ -9,6 +15,6 @@ export class BanBody {
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => value?.trim())
-  @Min(20)
+  @MinLength(20)
   banReason: string;
 }
