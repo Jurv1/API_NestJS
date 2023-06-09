@@ -29,6 +29,7 @@ export class DBComment {
       commentatorInfo: commentDto.commentatorInfo,
       likesInfo: commentDto.likesInfo,
       postId: commentDto.postId,
+      isUserBanned: false,
       createdAt: new Date().toISOString(),
     };
     return new CommentModel(createdComment);
