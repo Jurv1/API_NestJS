@@ -39,6 +39,7 @@ export class BlogMapper {
         isMembership: el.isMembership,
         createdAt: el.createdAt,
         blogOwnerInfo: el.ownerInfo,
+        banInfo: el.banInfo,
       };
     });
   }

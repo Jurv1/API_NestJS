@@ -92,7 +92,7 @@ export class PostService {
     userId: string,
     userLogin: string,
   ): Promise<CommentDocument | null> {
-    const foundedEl = await this.postQ.getOnePost(postId);
+    const foundedEl: PostDocument = await this.postQ.getOnePost(postId);
     if (foundedEl) {
       const newCommentTmp: CommentCreatingDto = {
         content: content,
@@ -105,7 +105,13 @@ export class PostService {
           dislikesCount: 0,
           myStatus: 'None',
         },
-        postId: postId,
+        postInfo: {
+          id: postId,
+          title: foundedEl.title,
+          blogName: foundedEl.blogName,
+          blogId: foundedEl.blogId,
+          blogOwnerId: foundedEl.ownerInfo.userId,
+        },
       };
       const comment: CommentDocument = await this.commentModel.createComment(
         newCommentTmp,

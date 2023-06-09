@@ -34,14 +34,20 @@ import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.d
 import { filterForBlogger } from '../../../application/utils/filters/filter.for.blogger';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
+import { BlogQueryForComments } from '../../../application/dto/blogs/dto/blog.query.for.comments';
+import { CommentQ } from '../../../application/infrastructure/comments/comments.query.repository';
+import { CommentsWithPagination } from '../../../application/dto/comments/dto/comments.with.pagination';
+import { CommentMapper } from '../../../application/utils/mappers/comment.mapper';
 
 @Controller('blogger/blogs')
 export class BloggerBlogController {
   constructor(
     protected blogQ: BlogQ,
+    private readonly commentQ: CommentQ,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
     private readonly blogMapper: BlogMapper,
+    private readonly commentMapper: CommentMapper,
   ) {}
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -68,6 +74,20 @@ export class BloggerBlogController {
       console.log(err);
       throw new Errors.NOT_FOUND();
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('comments')
+  async getAllCommentsForBlog(
+    @Query() query: BlogQueryForComments,
+    @CurrentUserId() userId: string,
+  ) {
+    const sort = queryValidator(query.sortBy, query.sortDirection);
+    const pagination = makePagination(query.pageNumber, query.pageSize);
+    const comments: CommentsWithPagination =
+      await this.commentQ.getCommentsForBlog(userId, sort, pagination);
+    comments.items = this.commentMapper.mapCommentsForBlogger(comments.items);
+    return comments;
   }
 
   @UseGuards(JwtAuthGuard)

@@ -3,6 +3,7 @@ import { LikeDocument } from '../../schemas/likes/schemas/like.database.schema';
 import { CommentDocument } from '../../schemas/comments/schemas/comments.database.schema';
 import { CommentViewModel } from '../../schemas/comments/schemas/comment-view.model';
 import { Inject } from '@nestjs/common';
+import { CommentsViewForBloggerDto } from '../../dto/comments/dto/comments.view.for.blogger.dto';
 
 export class CommentMapper {
   constructor(
@@ -43,6 +44,28 @@ export class CommentMapper {
         myStatus: userStatus || 'None',
       },
     };
+  }
+
+  mapCommentsForBlogger(
+    objs: CommentsViewForBloggerDto[] | CommentDocument[],
+  ): CommentsViewForBloggerDto[] {
+    return objs.map((el) => {
+      return {
+        id: el._id,
+        content: el.content,
+        commentatorInfo: {
+          userId: el.commentatorInfo.userId,
+          userLogin: el.commentatorInfo.userLogin,
+        },
+        createdAt: el.createdAt,
+        postInfo: {
+          id: el.postInfo.id,
+          title: el.postInfo.title,
+          blogId: el.postInfo.blogId,
+          blogName: el.postInfo.blogName,
+        },
+      };
+    });
   }
 
   async mapComments(

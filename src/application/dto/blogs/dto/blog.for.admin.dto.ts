@@ -1,4 +1,5 @@
 import { OwnerInfoDto } from './owner.info.dto';
+import { BlogBanInfoDto } from './blog.ban.info.dto';
 
 export class BlogForAdminDto {
   id: string;
@@ -8,4 +9,5 @@ export class BlogForAdminDto {
   isMembership: boolean;
   createdAt: string;
   blogOwnerInfo: OwnerInfoDto;
+  banInfo: BlogBanInfoDto;
 }

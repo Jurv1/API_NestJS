@@ -3,6 +3,7 @@ import { CommentatorInfo } from './commentator.info.schema';
 import { ExtendedLike } from '../../posts/schemas/likes.schemas/extended.likes.schema';
 import { HydratedDocument, Model } from 'mongoose';
 import { CommentCreatingDto } from '../../../dto/comments/dto/comment.creating.dto';
+import { PostInfoDto } from '../../../dto/posts/dto/post.info.dto';
 
 export type CommentDocument = HydratedDocument<DBComment>;
 @Schema()
@@ -14,7 +15,7 @@ export class DBComment {
   @Prop()
   likesInfo: ExtendedLike;
   @Prop()
-  postId: string;
+  postInfo: PostInfoDto;
   @Prop()
   isUserBanned: boolean;
   @Prop()
@@ -28,7 +29,7 @@ export class DBComment {
       content: commentDto.content,
       commentatorInfo: commentDto.commentatorInfo,
       likesInfo: commentDto.likesInfo,
-      postId: commentDto.postId,
+      postInfo: commentDto.postInfo,
       isUserBanned: false,
       createdAt: new Date().toISOString(),
     };
