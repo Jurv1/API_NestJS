@@ -12,7 +12,7 @@ export class UpdateBanStatusForCommentOwnerUseCase
   constructor(private readonly commentRepository: CommentRepository) {}
 
   async execute(command: UpdateBanStatusForCommentOwnerCommand) {
-    await this.commentRepository.updateBanStatusForCommentOwner(
+    return await this.commentRepository.updateBanStatusForCommentOwner(
       command.userId,
       command.banStatus,
     );

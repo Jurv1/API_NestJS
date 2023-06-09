@@ -16,7 +16,7 @@ export class CommentRepository {
   }
 
   async updateBanStatusForCommentOwner(userId: string, banStatus: boolean) {
-    this.commentModel.updateMany(
+    return this.commentModel.updateMany(
       { 'commentatorInfo.userId': userId },
       { $set: { isUserBanned: banStatus } },
     );
