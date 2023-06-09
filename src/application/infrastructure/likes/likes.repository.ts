@@ -60,7 +60,11 @@ export class LikesRepository {
 
   async countAllLikesForPostOrComment(id: string) {
     const allLikes: number = await this.likeModel.countDocuments({
-      $and: [{ commentPostId: id }, { userStatus: 'Like' }],
+      $and: [
+        { commentPostId: id },
+        { userStatus: 'Like' },
+        { isUserBanned: false },
+      ],
     });
 
     return allLikes;
@@ -68,7 +72,11 @@ export class LikesRepository {
 
   async countAllDislikesForPostOrComment(id: string) {
     const allDislikes: number = await this.likeModel.countDocuments({
-      $and: [{ commentPostId: id }, { userStatus: 'Dislike' }],
+      $and: [
+        { commentPostId: id },
+        { userStatus: 'Dislike' },
+        { isUserBanned: false },
+      ],
     });
 
     return allDislikes;
@@ -76,7 +84,13 @@ export class LikesRepository {
 
   async findLatestThreeLikes(commentId: string) {
     return this.likeModel
-      .find({ $and: [{ commentPostId: commentId }, { userStatus: 'Like' }] })
+      .find({
+        $and: [
+          { commentPostId: commentId },
+          { userStatus: 'Like' },
+          { isUserBanned: false },
+        ],
+      })
       .sort({ addedAt: -1 })
       .limit(3)
       .lean();

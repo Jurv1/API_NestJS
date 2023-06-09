@@ -11,7 +11,7 @@ export class CommentQ {
     @InjectModel(DBComment.name) private commentModel: CommentModelType,
   ) {}
   async getOneComment(id: string): Promise<any | null> {
-    return this.commentModel.findById({
+    return this.commentModel.findOne({
       $and: [
         {
           _id: id,
