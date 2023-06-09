@@ -12,7 +12,12 @@ export class CommentQ {
   ) {}
   async getOneComment(id: string): Promise<any | null> {
     return this.commentModel.findById({
-      _id: id,
+      $and: [
+        {
+          _id: id,
+        },
+        { isUserBanned: false },
+      ],
     });
   }
 }

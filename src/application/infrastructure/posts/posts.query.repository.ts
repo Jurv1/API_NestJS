@@ -54,14 +54,16 @@ export class PostQ {
   }
 
   async getOnePost(id: string): Promise<PostDocument | null> {
-    return this.postModel.findOne({ _id: id });
+    return this.postModel.findOne({
+      $and: [{ _id: id }, { isUserBanned: false }],
+    });
   }
   async getOnePostByPostAndBlogIds(
     postId: string,
     blogId: string,
   ): Promise<PostDocument | null> {
     return this.postModel.findOne({
-      $and: [{ _id: postId }, { blogId: blogId }],
+      $and: [{ _id: postId }, { blogId: blogId }, { isUserBanned: false }],
     });
   }
   async getAllPostsByBlogId(
@@ -80,7 +82,7 @@ export class PostQ {
     });
     const pagesCount: number = Math.ceil(countDoc / pagination['pageSize']);
     const allPosts = await this.postModel
-      .find({ blogId: id })
+      .find({ $and: [{ blogId: id }, { isUserBanned: false }] })
       .sort(sort)
       .skip(pagination['skipValue'])
       .limit(pagination['limitValue'])
@@ -108,7 +110,7 @@ export class PostQ {
     const countDoc = await this.commentModel.countDocuments({ postId: postId });
     const pagesCount = Math.ceil(countDoc / pagination['pageSize']);
     const allComments = await this.commentModel
-      .find({ postId: postId })
+      .find({ $and: [{ postId: postId }, { isUserBanned: false }] })
       .sort(sort)
       .skip(pagination['skipValue'])
       .limit(pagination['limitValue'])
