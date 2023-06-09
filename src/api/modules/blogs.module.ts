@@ -32,6 +32,7 @@ import {
   Like,
   LikeSchema,
 } from '../../application/schemas/likes/schemas/like.database.schema';
+import { PublicBlogController } from '../_public/blogs.public/blogs.public.controller';
 
 @Module({
   imports: [
@@ -44,7 +45,11 @@ import {
     ]),
     PostsModule,
   ],
-  controllers: [SuperAdminBlogsController, BloggerBlogController],
+  controllers: [
+    SuperAdminBlogsController,
+    BloggerBlogController,
+    PublicBlogController,
+  ],
   providers: [
     ...allBlogsUseCases,
     ...allReposForBlogs,
