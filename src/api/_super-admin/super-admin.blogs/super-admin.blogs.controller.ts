@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AdminAuthGuard } from '../../_public/auth/guards/admin-auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogToUserCommand } from './use-cases/bind.blog.to.user.use-case';
@@ -10,6 +19,8 @@ import { Errors } from '../../../application/utils/handle.error';
 import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
+import { BlogBanBody } from '../../../application/dto/blogs/dto/blog.ban.body';
+import { BanUnbanBlogByIdCommand } from './use-cases/ban.unban.blog.by.id.use-case';
 
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {
@@ -49,5 +60,13 @@ export class SuperAdminBlogsController {
     @Param('userId') userId: string,
   ) {
     return await this.commandBus.execute(new BindBlogToUserCommand(id, userId));
+  }
+
+  @HttpCode(204)
+  @Put(':id/ban')
+  async banUnbanBlog(@Param('id') id: string, @Body() body: BlogBanBody) {
+    return await this.commandBus.execute(
+      new BanUnbanBlogByIdCommand(id, body.isBanned),
+    );
   }
 }

@@ -8,6 +8,9 @@ import { queryValidator } from '../../../application/utils/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
+import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
+import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/blog.with.pagination.dto';
+import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 
 @Controller('blogs')
 export class PublicBlogController {
@@ -15,18 +18,25 @@ export class PublicBlogController {
     protected blogQ: BlogQ,
     protected postQ: PostQ,
     private readonly jwtService: JwtService,
+    private readonly blogMapper: BlogMapper,
   ) {}
   @Get()
   async getAll(@Query() query?: BlogQueryParams) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
-    const filter = filterQueryValid(searchNameTerm);
+    const filter = filterForPublicBlogs(searchNameTerm);
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      return await this.blogQ.getAllBlogs(filter, sort, pagination);
+      const result: BlogWithPaginationDto = await this.blogQ.getAllBlogs(
+        filter,
+        sort,
+        pagination,
+      );
+      result.items = this.blogMapper.mapBlogs(result.items);
+      return result;
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();

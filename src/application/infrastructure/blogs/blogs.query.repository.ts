@@ -11,7 +11,7 @@ import { BlogWithPaginationDto } from '../../dto/blogs/dto/blog.with.pagination.
 export class BlogQ {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
   async getAllBlogs(
-    filter: Document,
+    filter: FilterQuery<BlogDocument>,
     sort: { [key: string]: SortOrder },
     pagination: {
       skipValue: number;

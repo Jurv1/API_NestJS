@@ -3,6 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { BlogBody } from '../../../dto/blogs/dto/blog.body';
 import { BlogCreationDto } from '../../../dto/blogs/dto/blog.creation.dto';
 import { OwnerInfoDto } from '../../../dto/blogs/dto/owner.info.dto';
+import { BlogBanInfoDto } from '../../../dto/blogs/dto/blog.ban.info.dto';
 
 export type BlogDocument = HydratedDocument<Blog>;
 @Schema()
@@ -26,6 +27,9 @@ export class Blog {
   isUserBanned: boolean;
 
   @Prop()
+  banInfo: BlogBanInfoDto;
+
+  @Prop()
   createdAt: string;
 
   updateBlog(dto: BlogBody) {
@@ -43,6 +47,14 @@ export class Blog {
     this.isUserBanned = banStatus;
   }
 
+  updateBanInfoForBlog(banStatus: boolean) {
+    this.banInfo.isBanned = banStatus;
+    this.banInfo.banDate = new Date().toISOString();
+    if (!banStatus) {
+      this.banInfo.banDate = null;
+    }
+  }
+
   static createBlog(
     blogDto: BlogCreationDto,
     BlogModel: BlogModelType,
@@ -54,6 +66,10 @@ export class Blog {
       ownerInfo: {
         userId: blogDto.userId,
         userLogin: blogDto.userLogin,
+      },
+      banInfo: {
+        isBanned: false,
+        banDate: null,
       },
       isMembership: false,
       isUserBanned: false,
@@ -82,6 +98,7 @@ BlogSchema.methods = {
   updateBlog: Blog.prototype.updateBlog,
   bindUser: Blog.prototype.bindUser,
   updateBanInfo: Blog.prototype.updateBanInfo,
+  updateBanInfoForBlog: Blog.prototype.updateBanInfoForBlog,
 };
 
 export type BlogModelType = Model<BlogDocument> & BlogModelStaticType;
