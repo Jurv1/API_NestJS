@@ -7,6 +7,7 @@ import {
 } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogBody } from '../../dto/blogs/dto/blog.body';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
+import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
 
 @Injectable()
 export class BlogsRepository {
@@ -44,6 +45,20 @@ export class BlogsRepository {
     return this.blogModel.updateMany(
       { 'ownerInfo.userId': userId },
       { $set: { isUserBanned: banStatus } },
+    );
+  }
+
+  async banUserInBlog(blogId: string, bannedUser: BannedUserDto) {
+    await this.blogModel.updateOne(
+      { id: blogId },
+      { $push: { bannedUsersForBlog: bannedUser } },
+    );
+  }
+
+  async unbanUserInBlog(blogId: string, userId: string) {
+    await this.blogModel.updateOne(
+      { id: blogId },
+      { $pull: { 'bannedUsersForBlog.id': userId } },
     );
   }
 }

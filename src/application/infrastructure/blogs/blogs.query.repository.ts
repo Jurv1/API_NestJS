@@ -68,6 +68,8 @@ export class BlogQ {
     };
   }
 
+  async getAllBannedUsersForBlogger(blogId: string) {}
+
   async getOneBlog(id: string): Promise<any | null> {
     return this.blogModel.findOne({ _id: id });
   }

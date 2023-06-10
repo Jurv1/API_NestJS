@@ -4,6 +4,7 @@ import { BlogBody } from '../../../dto/blogs/dto/blog.body';
 import { BlogCreationDto } from '../../../dto/blogs/dto/blog.creation.dto';
 import { OwnerInfoDto } from '../../../dto/blogs/dto/owner.info.dto';
 import { BlogBanInfoDto } from '../../../dto/blogs/dto/blog.ban.info.dto';
+import { BannedUserDto } from '../../../dto/blogs/dto/banned.user.dto';
 
 export type BlogDocument = HydratedDocument<Blog>;
 @Schema()
@@ -28,6 +29,9 @@ export class Blog {
 
   @Prop()
   banInfo: BlogBanInfoDto;
+
+  @Prop()
+  bannedUsersForBlog: BannedUserDto[] | [];
 
   @Prop()
   createdAt: string;
@@ -71,6 +75,7 @@ export class Blog {
         isBanned: false,
         banDate: null,
       },
+      bannedUsersForBlog: [],
       isMembership: false,
       isUserBanned: false,
       createdAt: new Date().toISOString(),
