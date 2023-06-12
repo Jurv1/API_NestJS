@@ -31,6 +31,10 @@ import {
 import { UserMapper } from '../../application/utils/mappers/user.mapper';
 import { UsersService } from '../../application/infrastructure/users/users.service';
 import { MailService } from '../../application/mail/mail.service';
+import { UsersBloggerController } from '../_blogger/users.blogger/users.blogger.controller';
+import { allUserBloggerUseCases } from './use-cases/blogger/all.user-blogger.use-cases';
+import { BlogQ } from '../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogsRepository } from '../../application/infrastructure/blogs/blogs.repository';
 
 @Module({
   imports: [
@@ -44,11 +48,14 @@ import { MailService } from '../../application/mail/mail.service';
     MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
     CqrsModule,
   ],
-  controllers: [SuperAdminUsersController],
+  controllers: [SuperAdminUsersController, UsersBloggerController],
   providers: [
     ...allUsersUseCases,
     ...allReposForUserModule,
+    ...allUserBloggerUseCases,
     UserMapper,
+    BlogQ,
+    BlogsRepository,
     UsersService,
     MailService,
   ],

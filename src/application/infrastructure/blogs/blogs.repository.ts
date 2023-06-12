@@ -5,7 +5,7 @@ import {
   BlogDocument,
   BlogModelType,
 } from '../../schemas/blogs/schemas/blogs.database.schema';
-import { BlogBody } from '../../dto/blogs/dto/blog.body';
+import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
 import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
 

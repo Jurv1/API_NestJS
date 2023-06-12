@@ -5,7 +5,7 @@ import {
   BlogDocument,
 } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { FilterQuery, Model, SortOrder } from 'mongoose';
-import { BlogWithPaginationDto } from '../../dto/blogs/dto/blog.with.pagination.dto';
+import { BlogWithPaginationDto } from '../../dto/blogs/dto/view/blog.with.pagination.dto';
 
 @Injectable()
 export class BlogQ {
@@ -68,7 +68,22 @@ export class BlogQ {
     };
   }
 
-  async getAllBannedUsersForBlogger(blogId: string) {}
+  async getAllBannedUsersForBlogger(blogId: string) {
+    return this.blogModel
+      .findOne({ _id: blogId }, { bannedUsersForBlog: 1 })
+      .lean();
+  }
+
+  async getSlicedBannedUsers(
+    filter: any,
+    sort: any,
+    from: number,
+    size: number,
+  ) {
+    return this.blogModel
+      .find(filter, {}, { bannedUsersForBlog: { $slice: [from, size] } })
+      .sort(sort);
+  }
 
   async getOneBlog(id: string): Promise<any | null> {
     return this.blogModel.findOne({ _id: id });

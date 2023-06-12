@@ -1,6 +1,6 @@
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogForAdminDto } from '../../dto/blogs/dto/blog.for.admin.dto';
-import { BlogViewDto } from '../../dto/blogs/dto/blog.view.dto';
+import { BlogViewDto } from '../../dto/blogs/dto/view/blog.view.dto';
 
 export class BlogMapper {
   mapBlog(obj: BlogDocument) {

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { BlogBody } from '../../../dto/blogs/dto/blog.body';
+import { BlogBody } from '../../../dto/blogs/dto/body/blog.body';
 import { BlogCreationDto } from '../../../dto/blogs/dto/blog.creation.dto';
 import { OwnerInfoDto } from '../../../dto/blogs/dto/owner.info.dto';
 import { BlogBanInfoDto } from '../../../dto/blogs/dto/blog.ban.info.dto';

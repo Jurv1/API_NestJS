@@ -1,5 +1,5 @@
-import { BlogDocument } from '../../../schemas/blogs/schemas/blogs.database.schema';
-import { BlogForAdminDto } from './blog.for.admin.dto';
+import { BlogDocument } from '../../../../schemas/blogs/schemas/blogs.database.schema';
+import { BlogForAdminDto } from '../blog.for.admin.dto';
 import { BlogViewDto } from './blog.view.dto';
 
 export class BlogWithPaginationDto {
