@@ -11,9 +11,6 @@ import {
 import { JwtAuthGuard } from '../../_public/auth/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../_public/auth/decorators/current-user.param.decorator';
 import { BloggerBanDto } from '../../../application/dto/blogs/dto/blogger.ban.dto';
-import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
-import { Errors } from '../../../application/utils/handle.error';
 import { QueryForBannedUsers } from '../../../application/dto/blogs/dto/queries/query.for.banned.users';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetAllBannedUsersByBlogIdCommand } from './use-cases/queries/use-cases/get.all.banned.users.by.blog.id.use-case';
