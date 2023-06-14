@@ -1,7 +1,9 @@
+import { SortOrder } from 'mongoose';
+
 export class QueryForBannedUsers {
   searchLoginTerm: string;
   sortBy: string;
-  sortDirection: string;
+  sortDirection: SortOrder;
   pageNumber: string;
   pageSize: string;
 }

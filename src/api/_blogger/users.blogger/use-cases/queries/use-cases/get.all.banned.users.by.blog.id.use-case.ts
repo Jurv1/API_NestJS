@@ -4,9 +4,10 @@ import { Errors } from '../../../../../../application/utils/handle.error';
 import { BlogQ } from '../../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BannedUserDto } from '../../../../../../application/dto/blogs/dto/banned.user.dto';
 import { filterForBannedUsers } from '../../../../../../application/utils/filters/filter.for.banned.users';
-import { queryValidator } from '../../../../../../application/utils/sorting.func';
 import { QueryForBannedUsers } from '../../../../../../application/dto/blogs/dto/queries/query.for.banned.users';
 import { makePagination } from '../../../../../../application/utils/make.paggination';
+import { UserQ } from '../../../../../../application/infrastructure/users/users.query.repository';
+import { sortForBannedUsers } from '../../../../../../application/utils/sorts/sort.for.banned.users';
 
 export class GetAllBannedUsersByBlogIdCommand {
   constructor(
@@ -20,7 +21,7 @@ export class GetAllBannedUsersByBlogIdCommand {
 export class GetAllBannedUsersByBlogIdUseCase
   implements IQueryHandler<GetAllBannedUsersByBlogIdCommand>
 {
-  constructor(private readonly blogQ: BlogQ) {}
+  constructor(private readonly blogQ: BlogQ, private readonly userQ: UserQ) {}
   async execute(command: GetAllBannedUsersByBlogIdCommand) {
     const blog: BlogDocument = await this.blogQ.getOneBlog(command.blogId);
     if (!blog) throw new Errors.NOT_FOUND();
@@ -32,25 +33,39 @@ export class GetAllBannedUsersByBlogIdUseCase
       command.query.pageNumber,
       command.query.pageSize,
     );
-    const from: number = pagination.pageNumber * pagination.pageSize;
-    const filter = filterForBannedUsers(command.query.searchLoginTerm, blog.id);
-    const sort = queryValidator(
+    const bannedIds = [];
+    blog.bannedUsersForBlog.forEach((el) => {
+      bannedIds.push(el.id);
+    });
+    const filter = filterForBannedUsers(
+      command.query.searchLoginTerm,
+      bannedIds,
+    );
+
+    const sort = sortForBannedUsers(
       command.query.sortBy,
       command.query.sortDirection,
     );
-    const blogWithSlicedBannedUsers = await this.blogQ.getSlicedBannedUsers(
+
+    const bannedUsers = await this.userQ.getAllUsersInBannedBlog(
       filter,
       sort,
-      from,
-      +command.query.pageSize,
+      pagination,
     );
-
+    const bans = [...blog.bannedUsersForBlog];
     return {
       pagesCount: Math.ceil(allBannedUsersForBlog.length / pagination.pageSize),
       page: pagination.pageNumber,
       pageSize: pagination.pageSize,
       totalCount: allBannedUsersForBlog.length,
-      items: blogWithSlicedBannedUsers,
+      items: bannedUsers.map((el) => {
+        const user = bans.find((obj) => obj.id == el._id.toString());
+        return {
+          id: el.id,
+          login: el.accountData.login,
+          banInfo: user.banInfo,
+        };
+      }),
     };
   }
 }

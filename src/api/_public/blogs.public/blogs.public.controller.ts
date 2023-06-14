@@ -3,7 +3,7 @@ import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.rep
 import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
-import { queryValidator } from '../../../application/utils/sorting.func';
+import { queryValidator } from '../../../application/utils/sorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';

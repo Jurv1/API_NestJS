@@ -35,6 +35,15 @@ export class BanUnbanUserByBloggerUseCase
     if (!user) throw new Errors.NOT_FOUND();
 
     if (command.bloggerBanDto.isBanned) {
+      const arr: string[] = [];
+      blog.bannedUsersForBlog.forEach((el) => {
+        if (el.id == command.userId) {
+          arr.push(el.id);
+        }
+      });
+      if (arr.length > 0) {
+        throw new Errors.NOT_FOUND();
+      }
       const bannedUser: BannedUserDto = {
         id: user.id,
         login: user.accountData.login,

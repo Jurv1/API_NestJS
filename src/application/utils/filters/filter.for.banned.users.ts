@@ -3,19 +3,19 @@ import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema'
 
 export function filterForBannedUsers(
   searchLoginTerm: string | undefined,
-  blogId: string,
+  bannedIds: string[],
 ) {
   const filter: FilterQuery<BlogDocument> = {};
   filter.$and = [];
   if (searchLoginTerm) {
     filter.$and.push({
-      'bannedUsersForBlog.login': {
+      'accountData.login': {
         $regex: searchLoginTerm,
         $options: 'i',
       },
     });
   }
 
-  filter.$and.push({ _id: blogId });
+  filter.$and.push({ _id: { $in: bannedIds } });
   return filter;
 }

@@ -79,10 +79,12 @@ export class BlogQ {
     sort: any,
     from: number,
     size: number,
-  ) {
+  ): Promise<BlogDocument | null> {
     return this.blogModel
       .find(filter, {}, { bannedUsersForBlog: { $slice: [from, size] } })
-      .sort(sort);
+      .sort(sort)
+      .limit(size)
+      .lean();
   }
 
   async getOneBlog(id: string): Promise<any | null> {

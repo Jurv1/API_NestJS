@@ -40,6 +40,24 @@ export class UserQ {
     };
   }
 
+  async getAllUsersInBannedBlog(
+    filter,
+    sort: { [key: string]: SortOrder },
+    pagination: {
+      skipValue: number;
+      limitValue: number;
+      pageSize: number;
+      pageNumber: number;
+    },
+  ): Promise<UserDocument[]> {
+    return this.userModel
+      .find(filter)
+      .sort(sort)
+      .skip(pagination.skipValue)
+      .limit(pagination.limitValue)
+      .lean();
+  }
+
   async getOneUserByLogin(login: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ 'accountData.login': login });
   }

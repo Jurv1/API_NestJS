@@ -49,16 +49,18 @@ export class BlogsRepository {
   }
 
   async banUserInBlog(blogId: string, bannedUser: BannedUserDto) {
-    await this.blogModel.updateOne(
-      { id: blogId },
+    const result = await this.blogModel.updateOne(
+      { _id: blogId },
       { $push: { bannedUsersForBlog: bannedUser } },
     );
+
+    return result;
   }
 
   async unbanUserInBlog(blogId: string, userId: string) {
     await this.blogModel.updateOne(
-      { id: blogId },
-      { $pull: { 'bannedUsersForBlog.id': userId } },
+      { _id: blogId },
+      { $pull: { bannedUsersForBlog: { id: userId } } },
     );
   }
 }
