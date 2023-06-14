@@ -87,7 +87,15 @@ export class BlogQ {
       .lean();
   }
 
-  async getOneBlog(id: string): Promise<any | null> {
-    return this.blogModel.findOne({ _id: id });
+  async getOneBlog(id: string): Promise<BlogDocument | null> {
+    return this.blogModel.findOne({
+      $and: [{ _id: id }, { 'banInfo.isBanned': false }],
+    });
+  }
+
+  async getOneBlogForAdmin(id: string): Promise<BlogDocument | null> {
+    return this.blogModel.findOne({
+      _id: id,
+    });
   }
 }

@@ -62,6 +62,7 @@ export class SuperAdminBlogsController {
     return await this.commandBus.execute(new BindBlogToUserCommand(id, userId));
   }
 
+  @UseGuards(AdminAuthGuard)
   @HttpCode(204)
   @Put(':id/ban')
   async banUnbanBlog(@Param('id') id: string, @Body() body: BlogBanBody) {

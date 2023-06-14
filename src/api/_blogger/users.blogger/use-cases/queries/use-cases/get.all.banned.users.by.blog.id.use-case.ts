@@ -34,7 +34,7 @@ export class GetAllBannedUsersByBlogIdUseCase
       command.query.pageSize,
     );
     const bannedIds = [];
-    blog.bannedUsersForBlog.forEach((el) => {
+    blog.bannedUsersForBlog.forEach((el: BannedUserDto) => {
       bannedIds.push(el.id);
     });
     const filter = filterForBannedUsers(
@@ -61,7 +61,7 @@ export class GetAllBannedUsersByBlogIdUseCase
       items: bannedUsers.map((el) => {
         const user = bans.find((obj) => obj.id == el._id.toString());
         return {
-          id: el.id,
+          id: el._id.toString(),
           login: el.accountData.login,
           banInfo: user.banInfo,
         };

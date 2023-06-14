@@ -12,7 +12,9 @@ export class BanUnbanBlogByIdUseCase
   constructor(private readonly blogQ: BlogQ) {}
 
   async execute(command: BanUnbanBlogByIdCommand) {
-    const blog: BlogDocument = await this.blogQ.getOneBlog(command.blogId);
+    const blog: BlogDocument = await this.blogQ.getOneBlogForAdmin(
+      command.blogId,
+    );
     await blog.updateBanInfoForBlog(command.isBanned);
     await blog.markModified('banInfo');
     await blog.save();

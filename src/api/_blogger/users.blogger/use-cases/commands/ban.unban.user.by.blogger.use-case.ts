@@ -36,7 +36,7 @@ export class BanUnbanUserByBloggerUseCase
 
     if (command.bloggerBanDto.isBanned) {
       const arr: string[] = [];
-      blog.bannedUsersForBlog.forEach((el) => {
+      blog.bannedUsersForBlog.forEach((el: BannedUserDto) => {
         if (el.id == command.userId) {
           arr.push(el.id);
         }
