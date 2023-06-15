@@ -3,6 +3,11 @@ import { PostService } from '../../../../application/infrastructure/posts/posts.
 import { CommentMapper } from '../../../../application/utils/mappers/comment.mapper';
 import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';
+import { PostQ } from '../../../../application/infrastructure/posts/posts.query.repository';
+import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
+import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
+import { BannedUserDto } from '../../../../application/dto/blogs/dto/banned.user.dto';
 
 export class CreateCommentForPostCommand {
   constructor(
@@ -19,9 +24,16 @@ export class CreateCommentForPostUseCase
 {
   constructor(
     private readonly postService: PostService,
+    private readonly postQ: PostQ,
+    private readonly blogQ: BlogQ,
     private readonly commentMapper: CommentMapper,
   ) {}
   async execute(command: CreateCommentForPostCommand) {
+    const post: PostDocument = await this.postQ.getOnePost(command.postId);
+    const blog: BlogDocument = await this.blogQ.getOneBlog(post.blogId);
+    blog.bannedUsersForBlog.forEach((el: BannedUserDto) => {
+      if (el.id == command.userId) throw new Errors.FORBIDDEN();
+    });
     const result: CommentDocument =
       await this.postService.createOneCommentByPostId(
         command.postId,

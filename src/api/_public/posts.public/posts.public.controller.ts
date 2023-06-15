@@ -27,11 +27,13 @@ import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateCommentForPostCommand } from './use-cases/create.comment.for.post.use-case';
 import { LikeCommentOrPostCommand } from '../comments.public/use-cases/like.comment.use-case';
+import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
 
 @Controller('posts')
 export class PublicPostController {
   constructor(
     protected postQ: PostQ,
+    private readonly blogQ: BlogQ,
     private readonly jwtService: JwtService,
     private readonly postMapper: PostMapper,
     private readonly commandBus: CommandBus,
@@ -79,6 +81,8 @@ export class PublicPostController {
 
       const result: PostDocument = await this.postQ.getOnePost(id);
       if (result) {
+        const blog = await this.blogQ.getOneBlog(result.blogId);
+        if (!blog) throw new Errors.NOT_FOUND();
         return await this.postMapper.mapPost(result, userId);
       } else {
         throw new Errors.NOT_FOUND();

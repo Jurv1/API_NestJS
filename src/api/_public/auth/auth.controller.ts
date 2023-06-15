@@ -38,8 +38,8 @@ export class PublicAuthController {
     private readonly deviceQ: DeviceQ,
   ) {}
 
-  @Throttle(5, 10)
-  @UseGuards(ThrottlerGuard, LocalAuthGuard)
+  //@Throttle(5, 10)
+  @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post('login')
   async login(
