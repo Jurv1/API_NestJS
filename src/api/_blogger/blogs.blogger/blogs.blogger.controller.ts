@@ -86,7 +86,10 @@ export class BloggerBlogController {
     const pagination = makePagination(query.pageNumber, query.pageSize);
     const comments: CommentsWithPagination =
       await this.commentQ.getCommentsForBlog(userId, sort, pagination);
-    comments.items = this.commentMapper.mapCommentsForBlogger(comments.items);
+    comments.items = await this.commentMapper.mapCommentsForBlogger(
+      comments.items,
+      userId,
+    );
     return comments;
   }
 

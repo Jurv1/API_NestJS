@@ -46,26 +46,49 @@ export class CommentMapper {
     };
   }
 
-  mapCommentsForBlogger(
+  async mapCommentsForBlogger(
     objs: CommentsViewForBloggerDto[] | CommentDocument[],
-  ): CommentsViewForBloggerDto[] {
-    return objs.map((el) => {
-      return {
-        id: el._id,
-        content: el.content,
-        commentatorInfo: {
-          userId: el.commentatorInfo.userId,
-          userLogin: el.commentatorInfo.userLogin,
-        },
-        createdAt: el.createdAt,
-        postInfo: {
-          id: el.postInfo.id,
-          title: el.postInfo.title,
-          blogId: el.postInfo.blogId,
-          blogName: el.postInfo.blogName,
-        },
-      };
-    });
+    userId?: string,
+  ): Promise<CommentsViewForBloggerDto[]> {
+    let like: LikeDocument | null;
+    let userStatus: string | undefined = 'None';
+    return await Promise.all(
+      objs.map(async (el) => {
+        const commentId = el._id.toString();
+        const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
+          commentId,
+        );
+        const allDislikes =
+          await this.likesRepo.countAllDislikesForPostOrComment(commentId);
+        if (userId) {
+          like = await this.likesRepo.getUserStatusForCommentOrPost(
+            userId.toString(),
+            commentId,
+          );
+          userStatus = like?.userStatus;
+        }
+        return {
+          id: el._id,
+          content: el.content,
+          commentatorInfo: {
+            userId: el.commentatorInfo.userId,
+            userLogin: el.commentatorInfo.userLogin,
+          },
+          createdAt: el.createdAt,
+          likesInfo: {
+            likesCount: allLikes,
+            dislikesCount: allDislikes,
+            myStatus: userStatus || 'None',
+          },
+          postInfo: {
+            id: el.postInfo.id,
+            title: el.postInfo.title,
+            blogId: el.postInfo.blogId,
+            blogName: el.postInfo.blogName,
+          },
+        };
+      }),
+    );
   }
 
   async mapComments(
