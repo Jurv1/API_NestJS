@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/_public/auth/auth.module';
 import { MailModule } from './application/mail/mail.module';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -41,6 +42,16 @@ import {
 @Module({
   imports: [
     configModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME,
+      autoLoadEntities: false,
+      synchronize: false,
+    }),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
