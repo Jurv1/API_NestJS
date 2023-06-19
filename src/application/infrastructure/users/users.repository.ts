@@ -1,30 +1,63 @@
+import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import {
-  User,
-  UserDocument,
-  UserModelType,
-} from '../../schemas/users/schemas/users.database.schema';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
+import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: UserModelType,
-  ) {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
   async createOne(
     userCreationDto: UserCreationDto,
   ): Promise<UserDocument | null> {
-    const createdUser: UserDocument = this.userModel.createUser(
-      userCreationDto,
-      this.userModel,
+    const userId = await this.dataSource.query(
+      `INSERT INTO public."Users" 
+                ("Login", "Email", "Password",
+                    "PasswordSalt", "IsConfirmed", "IsBanned", "CreatedAt") 
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    RETURNING "Id";`,
+      [
+        userCreationDto.login,
+        userCreationDto.email,
+        userCreationDto.passwordHash,
+        userCreationDto.passwordSalt,
+        userCreationDto.isConfirmed,
+        false,
+        new Date().toISOString(),
+      ],
     );
-    await createdUser.save();
-    return createdUser;
+
+    await this.dataSource.query(
+      `
+      INSERT INTO public."BansForUsersByAdmin"
+        ("UserId")
+      VALUES ($1)
+      `,
+      [userId[0].Id],
+    );
+
+    return await this.dataSource.query(
+      `
+      SELECT Users."Id", Users."Login", Users."Email", Users."IsBanned",
+            Users."CreatedAt", Bans."BanDate", Bans."BanReason"
+      FROM public."Users" as Users
+      LEFT JOIN public."BansForUsersByAdmin" as Bans
+        ON Bans."UserId" = Users."Id"
+      WHERE Users."Id" = $1;
+      `,
+      [userId[0].Id],
+    );
   }
 
   async deleteOne(id: string): Promise<boolean> {
-    const result = await this.userModel.deleteOne({ _id: id });
-    return result.deletedCount === 1;
+    const result = await this.dataSource.query(
+      `
+            DELETE FROM public."Users"
+            WHERE "Id" = $1;
+            `,
+      [id],
+    );
+    return result[1] === 1;
   }
 }

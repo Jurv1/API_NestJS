@@ -1,6 +1,6 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanBody } from '../../../../application/dto/users/dto/ban.body';
-import { UserQ } from '../../../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
 import { DevicesRepository } from '../../../../application/infrastructure/devices/devices.repository';
 import { Errors } from '../../../../application/utils/handle.error';

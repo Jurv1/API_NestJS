@@ -10,7 +10,6 @@ import {
   DeviceSchema,
 } from '../../application/schemas/devices/schemas/devices.database.schema';
 import { AuthService } from '../_public/auth/auth.service';
-import { UserQ } from '../../application/infrastructure/users/users.query.repository';
 import { DeviceQ } from '../../application/infrastructure/devices/devices.query.repository';
 import { UsersService } from '../../application/infrastructure/users/users.service';
 import { MailService } from '../../application/mail/mail.service';
@@ -22,8 +21,10 @@ import {
   User,
   UserSchema,
 } from '../../application/schemas/users/schemas/users.database.schema';
-import { UsersRepository } from '../../application/infrastructure/users/users.repository';
 import { DevicesService } from '../../application/infrastructure/devices/devices.service';
+import { UsersRepository } from '../../application/infrastructure/users/users.repository';
+import { UsersQueryRepository } from '../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../application/infrastructure/users/_MongoDB/users.query.repository';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { DevicesService } from '../../application/infrastructure/devices/devices
     ...allReposForDevices,
     JwtService,
     AuthService,
+    UsersQueryRepository,
     UserQ,
     DeviceQ,
     DevicesService,

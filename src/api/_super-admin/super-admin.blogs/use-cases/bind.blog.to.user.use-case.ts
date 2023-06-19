@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserQ } from '../../../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';

@@ -6,7 +6,7 @@ import { BannedUserDto } from '../../../../../../application/dto/blogs/dto/banne
 import { filterForBannedUsers } from '../../../../../../application/utils/filters/filter.for.banned.users';
 import { QueryForBannedUsers } from '../../../../../../application/dto/blogs/dto/queries/query.for.banned.users';
 import { makePagination } from '../../../../../../application/utils/make.paggination';
-import { UserQ } from '../../../../../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../../../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { sortForBannedUsers } from '../../../../../../application/utils/sorts/sort.for.banned.users';
 
 export class GetAllBannedUsersByBlogIdCommand {

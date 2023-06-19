@@ -28,8 +28,8 @@ import { BlogsRepository } from '../src/application/infrastructure/blogs/blogs.r
 import { BlogQ } from '../src/application/infrastructure/blogs/blogs.query.repository';
 import { PostsRepository } from '../src/application/infrastructure/posts/posts.repository';
 import { PostQ } from '../src/application/infrastructure/posts/posts.query.repository';
-import { UsersRepository } from '../src/application/infrastructure/users/users.repository';
-import { UserQ } from '../src/application/infrastructure/users/users.query.repository';
+import { UsersRepository } from '../src/application/infrastructure/users/_MongoDB/users.repository';
+import { UserQ } from '../src/application/infrastructure/users/_MongoDB/users.query.repository';
 import { CommentQ } from '../src/application/infrastructure/comments/comments.query.repository';
 
 export const appTestingModule = {

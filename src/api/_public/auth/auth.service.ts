@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../../application/infrastructure/users/users.service';
 import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import * as bcrypt from 'bcrypt';
-import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { MailService } from '../../../application/mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../../../application/config/consts';

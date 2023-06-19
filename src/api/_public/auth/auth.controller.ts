@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUserId } from './decorators/current-user.param.decorator';
-import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import { CurrentUserData } from './decorators/current-user.data';
 import { UserLoginDataDto } from './dto/user-login-data.dto';

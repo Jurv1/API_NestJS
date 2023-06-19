@@ -15,8 +15,6 @@ import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,
 } from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
-import { UserQ } from '../../../application/infrastructure/users/users.query.repository';
-import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
 import {
   User,
   UserSchema,
@@ -29,6 +27,9 @@ import {
 } from '../../../application/schemas/devices/schemas/devices.database.schema';
 import { DevicesService } from '../../../application/infrastructure/devices/devices.service';
 import { DevicesRepository } from '../../../application/infrastructure/devices/devices.repository';
+import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
+import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
+import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
 
 console.log(process.env.SECRET);
 @Module({
@@ -56,9 +57,10 @@ console.log(process.env.SECRET);
     JwtStrategy,
     AdminStrategy,
     MailService,
-    UserQ,
+    UsersQueryRepository,
     UsersRepository,
     DeviceQ,
+    UserQ,
     DevicesService,
     DevicesRepository,
   ],

@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
 import bcrypt from 'bcrypt';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
-import { UserQ } from './users.query.repository';
 import { MailService } from '../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import add from 'date-fns/add';
 import { UpdatePasswordDto } from '../../dto/users/dto/update.password.dto';
+import { UsersRepository } from './users.repository';
+import { UsersQueryRepository } from './users.query.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly userQ: UserQ,
+    private readonly userQ: UsersQueryRepository,
     private readonly mailService: MailService,
   ) {}
   async createOneUser(
@@ -36,12 +36,16 @@ export class UsersService {
     const result: UserDocument = await this.usersRepository.createOne(userDto);
     if (!confirmed) {
       if (result) {
-        await this.mailService.sendUserConfirmation(
-          result.accountData.email,
-          'Please, to continue work with our service confirm your email',
-          result.accountData.login,
-          result.emailConfirmation.confirmationCode,
-        );
+        try {
+          await this.mailService.sendUserConfirmation(
+            result.accountData.email,
+            'Please, to continue work with our service confirm your email',
+            result.accountData.login,
+            result.emailConfirmation.confirmationCode,
+          );
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
     return result;
