@@ -6,7 +6,7 @@ export const CurrentUserData = createParamDecorator(
     try {
       const request = context.switchToHttp().getRequest();
       const userData: UserLoginDataDto = {
-        userId: request.user.id,
+        userId: request.user.Id,
         device: request.headers['user-agent'] || 'unknown device',
         deviceIp: request.ip,
       };

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
-import { MailService } from '../../mail/mail.service';
+import { MailService } from '../../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import add from 'date-fns/add';
 import { UpdatePasswordDto } from '../../dto/users/dto/update.password.dto';
@@ -35,13 +35,17 @@ export class UsersService {
 
     const result: UserDocument = await this.usersRepository.createOne(userDto);
     if (!confirmed) {
+      await this.usersRepository.updateEmailConfirmation(result[0].Id);
+      const confirmationCode = await this.userQ.getConfirmationCodeByUserId(
+        result[0].Id,
+      );
       if (result) {
         try {
           await this.mailService.sendUserConfirmation(
-            result.accountData.email,
+            result[0].Email,
             'Please, to continue work with our service confirm your email',
-            result.accountData.login,
-            result.emailConfirmation.confirmationCode,
+            result[0].Login,
+            confirmationCode[0].ConfirmationCode,
           );
         } catch (err) {
           console.log(err);

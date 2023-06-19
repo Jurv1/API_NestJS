@@ -4,7 +4,7 @@ import { UsersService } from '../../../application/infrastructure/users/users.se
 import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import * as bcrypt from 'bcrypt';
 import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
-import { MailService } from '../../../application/mail/mail.service';
+import { MailService } from '../../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../../../application/config/consts';
 import { InjectModel } from '@nestjs/mongoose';
@@ -28,10 +28,7 @@ export class AuthService {
     const user: UserDocument = await this.userService.findUserByLogin(login);
 
     if (user) {
-      const isPasswordLegit = await bcrypt.compare(
-        password,
-        user.accountData.password,
-      );
+      const isPasswordLegit = await bcrypt.compare(password, user[0].Password);
       if (isPasswordLegit) {
         return user;
       }
@@ -42,12 +39,12 @@ export class AuthService {
 
   async login(user: UserDocument) {
     const accessPayload = {
-      username: user.accountData.login,
-      userId: user._id,
+      username: user[0].Login,
+      userId: user[0].Id,
     };
     const refreshPayload = {
-      username: user.accountData.login,
-      userId: user._id,
+      username: user[0].Login,
+      userId: user[0].Id,
       deviceId: uuidv4(),
     };
     return {

@@ -63,7 +63,7 @@ export class UsersQueryRepository {
       "Login",
       "Email",
       "Password"
-    FROM public.Users
+    FROM public."Users"
     WHERE "Login" = $1;
 `,
       [login],
@@ -76,7 +76,7 @@ export class UsersQueryRepository {
     return await this.dataSource.query(
       `
       SELECT * 
-      FROM public.Users
+      FROM public."Users"
       WHERE "Login" = $1
         OR "Email" = $1;
       `,
@@ -116,6 +116,18 @@ export class UsersQueryRepository {
       WHERE "RecoveryCode" = $1;
       `,
       [code],
+    );
+  }
+
+  async getConfirmationCodeByUserId(id: string) {
+    return await this.dataSource.query(
+      `
+      SELECT "ConfirmationCode" AS code
+      FROM public."EmailConfirmationForUsers"
+      WHERE
+        "UserId" = $1;  
+      `,
+      [id],
     );
   }
 }

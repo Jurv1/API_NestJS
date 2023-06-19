@@ -11,7 +11,6 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUserId } from './decorators/current-user.param.decorator';
-import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import { CurrentUserData } from './decorators/current-user.data';
 import { UserLoginDataDto } from './dto/user-login-data.dto';
@@ -27,12 +26,13 @@ import { EmailDto } from './dto/email.dto';
 import { NewPasswordDto } from './dto/new.password.dto';
 import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.token';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
 
 @Controller('auth')
 export class PublicAuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userQ: UserQ,
+    private readonly userQ: UsersQueryRepository,
     private readonly userService: UsersService,
     private readonly deviceService: DevicesService,
     private readonly deviceQ: DeviceQ,
@@ -71,8 +71,8 @@ export class PublicAuthController {
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
     const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
     return {
-      email: user.accountData.email,
-      login: user.accountData.login,
+      email: user[0].Email,
+      login: user[0].Login,
       userId: currentUserId,
     };
   }
@@ -84,10 +84,8 @@ export class PublicAuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    const isLoginExists: UserDocument = await this.userQ.getOneByLoginOrEmail(
-      login,
-    );
-    if (isLoginExists) {
+    const isLoginExists: any = await this.userQ.getOneByLoginOrEmail(login);
+    if (isLoginExists.length !== 0) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
           {
@@ -98,10 +96,8 @@ export class PublicAuthController {
       });
     }
 
-    const isEmailExists: UserDocument = await this.userQ.getOneByLoginOrEmail(
-      email,
-    );
-    if (isEmailExists) {
+    const isEmailExists: any = await this.userQ.getOneByLoginOrEmail(email);
+    if (isEmailExists.length !== 0) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
           {

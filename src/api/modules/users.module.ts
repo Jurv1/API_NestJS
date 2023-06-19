@@ -30,7 +30,7 @@ import {
 } from '../../application/schemas/devices/schemas/devices.database.schema';
 import { UserMapper } from '../../application/utils/mappers/user.mapper';
 import { UsersService } from '../../application/infrastructure/users/users.service';
-import { MailService } from '../../application/mail/mail.service';
+import { MailService } from '../../mail/mail.service';
 import { UsersBloggerController } from '../_blogger/users.blogger/users.blogger.controller';
 import { allUserBloggerUseCases } from './use-cases/blogger/all.user-blogger.use-cases';
 import { BlogQ } from '../../application/infrastructure/blogs/blogs.query.repository';

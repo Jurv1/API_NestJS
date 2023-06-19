@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/_public/auth/auth.module';
-import { MailModule } from './application/mail/mail.module';
+import { MailModule } from './mail/mail.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UsersModule } from './api/modules/users.module';
 import { DevicesModule } from './api/modules/devices.module';

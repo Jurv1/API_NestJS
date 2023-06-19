@@ -12,7 +12,7 @@ import {
 import { AuthService } from '../_public/auth/auth.service';
 import { DeviceQ } from '../../application/infrastructure/devices/devices.query.repository';
 import { UsersService } from '../../application/infrastructure/users/users.service';
-import { MailService } from '../../application/mail/mail.service';
+import { MailService } from '../../mail/mail.service';
 import {
   RefreshTokenBlacklist,
   RefreshTokenBlackListSchema,

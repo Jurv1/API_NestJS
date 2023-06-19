@@ -4,6 +4,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
 import { BanBody } from '../../dto/users/dto/ban.body';
+import { v4 as uuidv4 } from 'uuid';
+import { add } from 'date-fns';
 
 @Injectable()
 export class UsersRepository {
@@ -69,6 +71,20 @@ export class UsersRepository {
       WHERE "Id" = $2;
       `,
       [banBody.isBanned, userId],
+    );
+  }
+
+  async updateEmailConfirmation(id: string) {
+    await this.dataSource.query(
+      `
+      INSERT INTO public."EmailConfirmationForUsers" ("ConfirmationCode", "ExpirationDate", "UserId")
+        VALUES($1, $2, $3) 
+      ON CONFLICT ("UserId") 
+      DO 
+        UPDATE SET "ConfirmationCode" = EXCLUDED."ConfirmationCode",
+            "ExpirationDate" = EXCLUDED."ExpirationDate";
+      `,
+      [uuidv4(), add(new Date(), { hours: 1, minutes: 3 }), id],
     );
   }
 
