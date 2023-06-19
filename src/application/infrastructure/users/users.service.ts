@@ -33,13 +33,13 @@ export class UsersService {
       isConfirmed: confirmed,
     };
 
-    const result: UserDocument = await this.usersRepository.createOne(userDto);
+    const result: any = await this.usersRepository.createOne(userDto);
     if (!confirmed) {
-      await this.usersRepository.updateEmailConfirmation(result[0].Id);
+      await this.updateEmailConfirmation(result[0].Id, uuidv4());
       const confirmationCode = await this.userQ.getConfirmationCodeByUserId(
         result[0].Id,
       );
-      if (result) {
+      if (result.length !== 0) {
         try {
           await this.mailService.sendUserConfirmation(
             result[0].Email,
@@ -63,49 +63,38 @@ export class UsersService {
     return await this.usersRepository.deleteOne(id);
   }
 
-  async updatePassInfo(
-    user: UserDocument,
-    recoveryCode: string,
-    expirationDate: Date,
-  ) {
-    const recoveryCodeDto = {
-      recoveryCode,
-      expirationDate,
-    };
-    await user.updateRecoveryCode(recoveryCodeDto);
-
-    return true;
-  }
-
   async makePasswordRecoveryMail(email: string) {
-    const user: UserDocument = await this.userQ.getOneByLoginOrEmail(email);
+    const user: any = await this.userQ.getOneByLoginOrEmail(email);
 
-    if (!user) return false;
-    //const userId = user._id.toString();
+    if (user.length === 0) return false;
     const recoveryCode = uuidv4();
     const expirationDate = add(new Date(), {
       hours: 1,
     });
-    await this.updatePassInfo(user, recoveryCode, expirationDate);
+    await this.usersRepository.updatePasswordConfirmation(
+      user[0].Id,
+      recoveryCode,
+      expirationDate,
+    );
 
     try {
       await this.mailService.sendPasswordRecoveryMessage(
-        user.accountData.email,
+        user[0].Email,
         'Password Recovery',
-        user.accountData.login,
+        user[0].Login,
         recoveryCode,
       );
     } catch (err) {
       console.log(err);
-      return null;
+      return false;
     }
 
     return true;
   }
 
   async updateNewPassword(pass: string, code: string) {
-    const user = await this.userQ.getOneByPassCode(code);
-    if (!user) return null;
+    const user: any = await this.userQ.getOneByPassCode(code);
+    if (user.length == 0) return null;
 
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(pass, passwordSalt);
@@ -115,7 +104,19 @@ export class UsersService {
       passwordSalt,
     };
 
-    await user.updatePassword(updatePasswordDto);
+    await this.usersRepository.updatePassword(
+      user[0].Id,
+      updatePasswordDto.passwordHash,
+      updatePasswordDto.passwordSalt,
+    );
     return true;
+  }
+
+  async updateConfirmedFieldInUsers(id: string, isConf: boolean) {
+    await this.usersRepository.updateConfirmationInUsers(id, isConf);
+  }
+
+  async updateEmailConfirmation(id: string, code: string) {
+    await this.usersRepository.updateEmailConfirmation(id, code);
   }
 }

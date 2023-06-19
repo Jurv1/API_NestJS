@@ -75,7 +75,7 @@ export class UsersQueryRepository {
   ): Promise<UserDocument | null> {
     return await this.dataSource.query(
       `
-      SELECT * 
+      SELECT "Id", "IsConfirmed", "Login" 
       FROM public."Users"
       WHERE "Login" = $1
         OR "Email" = $1;
@@ -100,9 +100,10 @@ export class UsersQueryRepository {
   ): Promise<UserDocument | null> {
     return this.dataSource.query(
       `
-      SELECT * 
-      FROM public.EmailConfirmationForUsers
-      WHERE "ConfirmationCode" = $1;
+      SELECT User."Id" as Id, "IsConfirmed", "ConfirmationCode", "ExpirationDate"
+      FROM public."EmailConfirmationForUsers" as Email
+          LEFT JOIN public."Users" as Users ON "ConfirmationCode" = $1
+      WHERE Users."Id" = Email."UserId";
       `,
       [confirmationCode],
     );
@@ -111,9 +112,10 @@ export class UsersQueryRepository {
   async getOneByPassCode(code: string): Promise<UserDocument | null> {
     return this.dataSource.query(
       `
-      SELECT * 
-      FROM public.PasswordRecoveryForUsers
-      WHERE "RecoveryCode" = $1;
+      SELECT User."Id" as Id, "RecoveryCode", "ExpirationDate"
+      FROM public."PasswordRecoveryForUsers" as Pass
+          LEFT JOIN public."Users" as Users ON "RecoveryCode" = $1
+      WHERE Users."Id" = Pass."UserId";
       `,
       [code],
     );

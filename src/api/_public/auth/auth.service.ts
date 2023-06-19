@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../../application/infrastructure/users/users.service';
 import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import * as bcrypt from 'bcrypt';
-import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { MailService } from '../../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../../../application/config/consts';
@@ -13,21 +12,22 @@ import {
   RefreshTokenBlackListModel,
   TokenBlackListDocument,
 } from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
+import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UsersService,
-    private readonly userQ: UserQ,
+    private readonly userQ: UsersQueryRepository,
     private readonly mailService: MailService,
     @InjectModel(RefreshTokenBlacklist.name)
     private readonly refreshModel: RefreshTokenBlackListModel,
   ) {}
   async validateUser(login: string, password: string) {
-    const user: UserDocument = await this.userService.findUserByLogin(login);
+    const user: any = await this.userService.findUserByLogin(login);
 
-    if (user) {
+    if (user.length !== 0) {
       const isPasswordLegit = await bcrypt.compare(password, user[0].Password);
       if (isPasswordLegit) {
         return user;
@@ -59,17 +59,12 @@ export class AuthService {
 
   async confirmEmail(code: string): Promise<boolean> {
     try {
-      const user: UserDocument = await this.userQ.getOneByConfirmationCode(
-        code,
-      );
-      if (!user) return false;
-      if (user.emailConfirmation.isConfirmed) return false;
-      if (user.emailConfirmation.confirmationCode !== code) return false;
-      if (user.emailConfirmation.expirationDate < new Date()) return false;
-
-      await user.updateEmailConfirmation(true);
-      await user.save();
-
+      const user: any = await this.userQ.getOneByConfirmationCode(code);
+      if (user.length === 0) return false;
+      if (user[0].IsConfirmed) return false;
+      if (user[0].ConfirmationCode !== code) return false;
+      if (user[0].ExpirationDate < new Date()) return false;
+      await this.userService.updateConfirmedFieldInUsers(user[0].Id, true);
       return true;
     } catch (err) {
       console.log(err);
@@ -78,11 +73,13 @@ export class AuthService {
   }
 
   async resendConfirmationEmail(email: string) {
-    const user: UserDocument = await this.userQ.getOneByLoginOrEmail(email);
-    if (!user || user.emailConfirmation.isConfirmed) return false;
+    const user: any = await this.userQ.getOneByLoginOrEmail(email);
+    if (user.length || user[0].IsConfirmed) return false;
     const newRegistrationCode = uuidv4();
-    await user.updateEmailConfirmationCode(newRegistrationCode);
-    await user.save();
+    await this.userService.updateEmailConfirmation(
+      user[0].Id,
+      newRegistrationCode,
+    );
     try {
       await this.mailService.sendUserConfirmation(
         user.accountData.email,
@@ -94,7 +91,6 @@ export class AuthService {
       console.log(err);
       return false;
     }
-    await user.updateEmailConfirmationCode(newRegistrationCode);
     return true;
   }
 

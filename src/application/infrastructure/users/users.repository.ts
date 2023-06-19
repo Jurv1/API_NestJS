@@ -74,7 +74,7 @@ export class UsersRepository {
     );
   }
 
-  async updateEmailConfirmation(id: string) {
+  async updateEmailConfirmation(id: string, code: string) {
     await this.dataSource.query(
       `
       INSERT INTO public."EmailConfirmationForUsers" ("ConfirmationCode", "ExpirationDate", "UserId")
@@ -84,7 +84,43 @@ export class UsersRepository {
         UPDATE SET "ConfirmationCode" = EXCLUDED."ConfirmationCode",
             "ExpirationDate" = EXCLUDED."ExpirationDate";
       `,
-      [uuidv4(), add(new Date(), { hours: 1, minutes: 3 }), id],
+      [code, add(new Date(), { hours: 1, minutes: 3 }), id],
+    );
+  }
+
+  async updatePasswordConfirmation(id: string, code: string, date: Date) {
+    await this.dataSource.query(
+      `
+      INSERT INTO public."PasswordRecoveryForUsers" ("RecoveryCode", "ExpirationDate", "UserId")
+        VALUES($1, $2, $3) 
+      ON CONFLICT ("UserId") 
+      DO 
+        UPDATE SET "ConfirmationCode" = EXCLUDED."RecoveryCode",
+            "ExpirationDate" = EXCLUDED."ExpirationDate";
+      `,
+      [code, date, id],
+    );
+  }
+
+  async updateConfirmationInUsers(id: string, isConfirmed: boolean) {
+    await this.dataSource.query(
+      `
+      UPDATE public."Users"
+        SET "IsConfirmed" = $1
+      WHERE "Id" = $2;
+      `,
+      [isConfirmed, id],
+    );
+  }
+
+  async updatePassword(id: string, passHash: string, passSalt: string) {
+    await this.dataSource.query(
+      `
+      UPDATE public."Users"
+        SET "PasswordHash" = $1, "PasswordSalt" = $2
+      WHERE "Id" = $3;
+      `,
+      [passHash, passSalt, id],
     );
   }
 

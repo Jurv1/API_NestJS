@@ -108,13 +108,13 @@ export class PublicAuthController {
       });
     }
 
-    const user: UserDocument = await this.userService.createOneUser(
+    const user: any = await this.userService.createOneUser(
       login,
       email,
       password,
       false,
     );
-    if (user) {
+    if (user.length !== 0) {
       return { message: 'all good' };
     } else {
       throw new Errors.BAD_REQUEST({
@@ -133,7 +133,7 @@ export class PublicAuthController {
     return;
   }
 
-  @Post('/new-password')
+  @Post('new-password')
   async makeNewPassword(@Body() body: NewPasswordDto) {
     const { newPassword, recoveryCode } = body;
 
