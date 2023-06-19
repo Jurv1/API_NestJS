@@ -19,14 +19,13 @@ import { DevicesService } from '../../../application/infrastructure/devices/devi
 import { UsersService } from '../../../application/infrastructure/users/users.service';
 import { Errors } from '../../../application/utils/handle.error';
 import { CurrentRefreshToken } from './decorators/current-refresh-token';
-import { DeviceQ } from '../../../application/infrastructure/devices/devices.query.repository';
-import { DeviceDocument } from '../../../application/schemas/devices/schemas/devices.database.schema';
 import { UserBody } from '../../../application/dto/users/dto/user.body';
 import { EmailDto } from './dto/email.dto';
 import { NewPasswordDto } from './dto/new.password.dto';
 import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.token';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
+import { v4 as uuid4 } from 'uuid';
 
 @Controller('auth')
 export class PublicAuthController {
@@ -35,7 +34,6 @@ export class PublicAuthController {
     private readonly userQ: UsersQueryRepository,
     private readonly userService: UsersService,
     private readonly deviceService: DevicesService,
-    private readonly deviceQ: DeviceQ,
   ) {}
 
   //@Throttle(5, 10)
@@ -214,13 +212,9 @@ export class PublicAuthController {
     if (!isTokenValid) {
       throw new Errors.UNAUTHORIZED();
     }
-    await this.authService.addRefreshToBlackList(refreshToken);
-    console.log(refreshToken);
     const userId = await this.authService.getUserIdByToken(refreshToken);
     if (userId) {
-      const user: UserDocument = await this.userQ.getOneUserById(
-        userId.toString(),
-      );
+      const user: any = await this.userQ.getOneUserById(userId.toString());
       const deviceId = await this.authService.getDeviceIdFromRefresh(
         refreshToken,
       );
@@ -229,20 +223,22 @@ export class PublicAuthController {
         user.accountData.login,
         '10s',
       );
+      const newDeviceId = uuid4();
       const newRefreshToken = await this.authService.createRefreshToken(
         userId,
         user.accountData.login,
-        deviceId,
+        newDeviceId,
         '20s',
       );
       const iatFromToken: number = await this.authService.getIatFromToken(
         newRefreshToken,
       );
-      const device: DeviceDocument = await this.deviceQ.getOneDeviceById(
-        deviceId,
-      );
 
-      await device.updateLastActiveDate(iatFromToken);
+      await this.deviceService.updateDeviceIdAndIat(
+        deviceId,
+        newDeviceId,
+        iatFromToken,
+      );
 
       res
         .cookie('refreshToken', newRefreshToken, {
@@ -264,7 +260,6 @@ export class PublicAuthController {
 
     const deviceId = await this.authService.getDeviceIdFromRefresh(refresh);
     await this.deviceService.deleteOneDeviceById(deviceId);
-    await this.authService.addRefreshToBlackList(refresh);
     return;
   }
 }

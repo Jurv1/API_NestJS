@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { DevicesService } from '../../../../application/infrastructure/devices/devices.service';
-import { Errors } from '../../../../application/utils/handle.error';
+import { DevicesService } from '../../../../../application/infrastructure/devices/devices.service';
+import { Errors } from '../../../../../application/utils/handle.error';
 
 export class DeleteOneDeviceCommand {
   constructor(public deviceId: string) {}

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { SortOrder } from 'mongoose';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
 
 @Injectable()

@@ -1,44 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Device,
-  DeviceModelType,
-} from '../../schemas/devices/schemas/devices.database.schema';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
-export class DeviceQ {
-  constructor(
-    @InjectModel(Device.name) private readonly deviceModel: DeviceModelType,
-  ) {}
+export class DevicesQueryRepository {
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
   async getAllDevicesByUserId(userId: string) {
-    return this.deviceModel.find({ userId: userId }).lean();
+    return this.dataSource.query(
+      `
+      SELECT * 
+      FROM public."Devices"
+      WHERE
+        "UserId" = $1;
+      `,
+      [userId],
+    );
   }
 
   async getOneDeviceById(deviceId: string) {
-    return this.deviceModel.findOne({ deviceId: deviceId });
-  }
-
-  async getOneDeviceByTitleAndUserId(title: string, userId: string) {
-    return this.deviceModel.findOne({ title: title, userId: userId });
-  }
-
-  async getOneDeviceByUserIdAndDeviceId(userId: string, deviceId: string) {
-    return this.deviceModel.findOne({
-      $and: [{ userId: userId, deviceId: deviceId }],
-    });
-  }
-
-  async findOneByDeviceIdUserIdAndTitle(
-    userId: string,
-    ip: string,
-    title: string,
-  ) {
-    return this.deviceModel.findOne({
-      $and: [{ userId: userId, ip: ip, title: title }],
-    });
-  }
-
-  async findOneByDeviceId(deviceId: string) {
-    return this.deviceModel.findOne({ deviceId: deviceId });
+    return this.dataSource.query(
+      `
+      SELECT *
+      FROM public."Devices"
+      WHERE
+        "DeviceId" = $1;
+      `,
+      [deviceId],
+    );
   }
 }

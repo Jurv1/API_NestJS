@@ -4,7 +4,6 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
 import { BanBody } from '../../dto/users/dto/ban.body';
-import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 
 @Injectable()

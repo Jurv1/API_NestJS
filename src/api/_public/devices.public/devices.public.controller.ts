@@ -7,22 +7,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
-import { DeviceQ } from '../../../application/infrastructure/devices/devices.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refresh.token';
 import { CurrentRefreshToken } from '../auth/decorators/current-refresh-token';
-import { DeviceDocument } from '../../../application/schemas/devices/schemas/devices.database.schema';
 import { Errors } from '../../../application/utils/handle.error';
 import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
 import { CommandBus } from '@nestjs/cqrs';
-import { DeleteAllDevicesExceptActiveCommand } from './use-cases/delete.all.devices.except.active.use-case';
-import { DeleteOneDeviceCommand } from './use-cases/delete.one.device.use-case';
+import { DeleteAllDevicesExceptActiveCommand } from './use-cases/command.use-cases/delete.all.devices.except.active.use-case';
+import { DeleteOneDeviceCommand } from './use-cases/command.use-cases/delete.one.device.use-case';
+import { GetAllDevicesQueryCommand } from './use-cases/query.use-cases/get.all.devices.use-case';
 
 @Controller('security/devices')
 export class PublicDeviceController {
   constructor(
     private readonly authService: AuthService,
-    private readonly deviceQ: DeviceQ,
     protected jwtService: JwtService,
     private readonly commandBus: CommandBus,
   ) {}
@@ -34,27 +32,10 @@ export class PublicDeviceController {
 
     try {
       if (payload && payload.userId) {
-        const allDevices = await this.deviceQ.getAllDevicesByUserId(
-          payload.userId,
+        return await this.commandBus.execute(
+          new GetAllDevicesQueryCommand(payload.userId, payload.deviceId),
         );
-        const device: DeviceDocument = await this.deviceQ.getOneDeviceById(
-          payload.deviceId,
-        );
-        await device.updateLastActiveDate(new Date().getTime());
-        await device.save();
-
-        if (allDevices) {
-          return allDevices.map((el) => {
-            return {
-              ip: el.ip,
-              title: el.title,
-              lastActiveDate: el.lastActiveDate,
-              deviceId: el.deviceId,
-            };
-          });
-        }
       }
-      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();

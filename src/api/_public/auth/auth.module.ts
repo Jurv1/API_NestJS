@@ -20,16 +20,15 @@ import {
   UserSchema,
 } from '../../../application/schemas/users/schemas/users.database.schema';
 import { PublicAuthController } from './auth.controller';
-import { DeviceQ } from '../../../application/infrastructure/devices/devices.query.repository';
 import {
   Device,
   DeviceSchema,
 } from '../../../application/schemas/devices/schemas/devices.database.schema';
 import { DevicesService } from '../../../application/infrastructure/devices/devices.service';
-import { DevicesRepository } from '../../../application/infrastructure/devices/devices.repository';
 import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
-import { UserQ } from '../../../application/infrastructure/users/_MongoDB/users.query.repository';
+import { DevicesRepository } from '../../../application/infrastructure/devices/devices.repository';
+import { DevicesQueryRepository } from '../../../application/infrastructure/devices/devices.query.repository';
 
 console.log(process.env.SECRET);
 @Module({
@@ -59,8 +58,7 @@ console.log(process.env.SECRET);
     MailService,
     UsersQueryRepository,
     UsersRepository,
-    DeviceQ,
-    UserQ,
+    DevicesQueryRepository,
     DevicesService,
     DevicesRepository,
   ],

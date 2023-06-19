@@ -1,20 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { DevicesRepository } from './devices.repository';
 import { UserLoginDataDto } from '../../../api/_public/auth/dto/user-login-data.dto';
-import {
-  Device,
-  DeviceDocument,
-  DeviceModelType,
-} from '../../schemas/devices/schemas/devices.database.schema';
 import { JwtService } from '@nestjs/jwt';
 import { DeviceCreateDto } from '../../dto/devices/dto/device-create.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { DevicesRepository } from './devices.repository';
 
 @Injectable()
 export class DevicesService {
   constructor(
     private readonly deviceRepository: DevicesRepository,
-    @InjectModel(Device.name) private readonly deviceModel: DeviceModelType,
     private readonly jwtService: JwtService,
   ) {}
   async deleteAllDevicesExceptActive(userId: string, deviceId: string) {
@@ -36,11 +29,14 @@ export class DevicesService {
       userId: userDto.userId,
     };
 
-    const device: DeviceDocument = await this.deviceModel.createDevice(
-      deviceDto,
-      this.deviceModel,
-    );
-    await device.save();
-    return device;
+    return await this.deviceRepository.createNewDevice(deviceDto);
+  }
+
+  async updateDeviceIdAndIat(
+    oldDeviceId: string,
+    newDeviceId: string,
+    newIat: number,
+  ) {
+    await this.deviceRepository.updateDevice(oldDeviceId, newDeviceId, newIat);
   }
 }

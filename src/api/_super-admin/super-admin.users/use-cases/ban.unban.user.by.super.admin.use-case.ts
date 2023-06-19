@@ -1,7 +1,6 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanBody } from '../../../../application/dto/users/dto/ban.body';
 import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
-import { DevicesRepository } from '../../../../application/infrastructure/devices/devices.repository';
 import { Errors } from '../../../../application/utils/handle.error';
 import { UpdateBanStatusForLikesOwnerCommand } from '../../../../application/infrastructure/likes/use-cases/update.ban.status.for.likes.owner.use-case';
 import { UpdateBanStatusForPostsOwnerCommand } from '../../../../application/infrastructure/posts/use-cases/update.ban.status.for.posts.owner.use-case';
@@ -9,6 +8,7 @@ import { UpdateBanStatusForBlogsByOwnerCommand } from '../../../../application/i
 import { UpdateBanStatusForCommentOwnerCommand } from '../../../../application/infrastructure/comments/use-cases/update.ban.status.for.comment.owner.use-case';
 import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
 import { UsersRepository } from '../../../../application/infrastructure/users/users.repository';
+import { DevicesRepository } from '../../../../application/infrastructure/devices/devices.repository';
 
 export class BanUnbanUserBySuperAdminCommand {
   constructor(public userId: string, public banInfo: BanBody) {}
@@ -32,9 +32,6 @@ export class BanUnbanUserBySuperAdminUseCase
       await this.deviceRepository.deleteAllDevices(command.userId);
     }
     await this.usersRepo.updateBanInfoForUser(user[0].Id, command.banInfo);
-    //await user.updateBanInfo(command.banInfo);
-    //await user.markModified('banInfo');
-    //await user.save();
     await this.commandBus.execute(
       new UpdateBanStatusForLikesOwnerCommand(
         command.userId,

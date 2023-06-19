@@ -1,19 +1,17 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
-import { UserQ } from '../../../../application/infrastructure/users/_MongoDB/users.query.repository';
-import { DeviceQ } from '../../../../application/infrastructure/devices/devices.query.repository';
-import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';
-import { DeviceDocument } from '../../../../application/schemas/devices/schemas/devices.database.schema';
+import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
+import { DevicesQueryRepository } from '../../../../application/infrastructure/devices/devices.query.repository';
 
 @Injectable()
 export class GuardForSameUser implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,
-    private readonly userQ: UserQ,
-    private readonly deviceQ: DeviceQ,
+    private readonly userQ: UsersQueryRepository,
+    private readonly deviceQ: DevicesQueryRepository,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -22,20 +20,11 @@ export class GuardForSameUser implements CanActivate {
     const tokenPayload: any = await this.authService.getTokenPayload(
       refreshToken,
     );
-    const user: UserDocument = await this.userQ.getOneUserById(
-      tokenPayload.userId,
-    );
-    if (!user) throw new Errors.FORBIDDEN();
-    const device: DeviceDocument = await this.deviceQ.getOneDeviceById(
-      request.params.id,
-    );
-    if (!device) throw new Errors.NOT_FOUND();
-    // const device: DeviceDocument =
-    //   await this.deviceQ.getOneDeviceByUserIdAndDeviceId(
-    //     tokenPayload.userId,
-    //     request.params.id,
-    //   );
-    if (device.userId !== user.id) throw new Errors.FORBIDDEN();
+    const user: any = await this.userQ.getOneUserById(tokenPayload.userId);
+    if (user.length === 0) throw new Errors.FORBIDDEN();
+    const device: any = await this.deviceQ.getOneDeviceById(request.params.id);
+    if (device.length === 0) throw new Errors.NOT_FOUND();
+    if (device[0].UserId !== user.id) throw new Errors.FORBIDDEN();
     return true;
   }
 }
