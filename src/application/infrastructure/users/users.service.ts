@@ -45,7 +45,7 @@ export class UsersService {
             result[0].Email,
             'Please, to continue work with our service confirm your email',
             result[0].Login,
-            confirmationCode[0].ConfirmationCode,
+            confirmationCode[0].code,
           );
         } catch (err) {
           console.log(err);

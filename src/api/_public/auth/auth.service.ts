@@ -74,7 +74,7 @@ export class AuthService {
 
   async resendConfirmationEmail(email: string) {
     const user: any = await this.userQ.getOneByLoginOrEmail(email);
-    if (user.length || user[0].IsConfirmed) return false;
+    if (user.length === 0 || user[0].IsConfirmed) return false;
     const newRegistrationCode = uuidv4();
     await this.userService.updateEmailConfirmation(
       user[0].Id,
@@ -82,9 +82,9 @@ export class AuthService {
     );
     try {
       await this.mailService.sendUserConfirmation(
-        user.accountData.email,
+        user[0].Email,
         'Please, to continue work with our service confirm your email',
-        user.accountData.login,
+        user[0].Login,
         newRegistrationCode,
       );
     } catch (err) {

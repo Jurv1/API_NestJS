@@ -8,7 +8,6 @@ import { UsersQueryRepository } from '../../../../application/infrastructure/use
 @Injectable()
 export class CustomGuardForRefreshToken implements CanActivate {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly authService: AuthService,
     private readonly userQ: UsersQueryRepository,
     private readonly deviceQ: DevicesQueryRepository,

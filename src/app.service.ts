@@ -13,17 +13,11 @@ import {
   DBComment,
 } from './application/schemas/comments/schemas/comments.database.schema';
 import {
-  User,
-  UserModelType,
-} from './application/schemas/users/schemas/users.database.schema';
-import {
-  Device,
-  DeviceModelType,
-} from './application/schemas/devices/schemas/devices.database.schema';
-import {
   Like,
   LikeModelType,
 } from './application/schemas/likes/schemas/like.database.schema';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AppService {
@@ -31,9 +25,8 @@ export class AppService {
     @InjectModel(Blog.name) private blogModel: BlogModelType,
     @InjectModel(Post.name) private postModel: PostModelType,
     @InjectModel(DBComment.name) private commentModel: CommentModelType,
-    @InjectModel(User.name) private userModel: UserModelType,
-    @InjectModel(Device.name) private readonly deviceModel: DeviceModelType,
     @InjectModel(Like.name) private readonly likeModel: LikeModelType,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
   getHello(): string {
     return 'Hello World!';
@@ -43,8 +36,15 @@ export class AppService {
     await this.blogModel.deleteMany();
     await this.postModel.deleteMany();
     await this.commentModel.deleteMany();
-    await this.userModel.deleteMany();
-    await this.deviceModel.deleteMany();
+    await this.dataSource.query(
+      `
+      DELETE FROM public."Devices";
+      DELETE FROM public."BansForUsersByAdmin";
+      DELETE FROM public."EmailConfirmationForUsers";
+      DELETE FROM public."PasswordRecoveryForUsers";
+      DELETE FROM public."Users";
+      `,
+    );
     await this.likeModel.deleteMany();
   }
 }

@@ -94,7 +94,7 @@ export class UsersRepository {
         VALUES($1, $2, $3) 
       ON CONFLICT ("UserId") 
       DO 
-        UPDATE SET "ConfirmationCode" = EXCLUDED."RecoveryCode",
+        UPDATE SET "RecoveryCode" = EXCLUDED."RecoveryCode",
             "ExpirationDate" = EXCLUDED."ExpirationDate";
       `,
       [code, date, id],
@@ -116,7 +116,7 @@ export class UsersRepository {
     await this.dataSource.query(
       `
       UPDATE public."Users"
-        SET "PasswordHash" = $1, "PasswordSalt" = $2
+        SET "Password" = $1, "PasswordSalt" = $2
       WHERE "Id" = $3;
       `,
       [passHash, passSalt, id],
