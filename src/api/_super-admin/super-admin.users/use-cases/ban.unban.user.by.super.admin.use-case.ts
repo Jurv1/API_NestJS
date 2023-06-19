@@ -1,6 +1,5 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanBody } from '../../../../application/dto/users/dto/ban.body';
-import { UserQ } from '../../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
 import { DevicesRepository } from '../../../../application/infrastructure/devices/devices.repository';
 import { Errors } from '../../../../application/utils/handle.error';
@@ -8,6 +7,8 @@ import { UpdateBanStatusForLikesOwnerCommand } from '../../../../application/inf
 import { UpdateBanStatusForPostsOwnerCommand } from '../../../../application/infrastructure/posts/use-cases/update.ban.status.for.posts.owner.use-case';
 import { UpdateBanStatusForBlogsByOwnerCommand } from '../../../../application/infrastructure/blogs/use-cases/update.ban.status.for.blogs.by.owner.use-case';
 import { UpdateBanStatusForCommentOwnerCommand } from '../../../../application/infrastructure/comments/use-cases/update.ban.status.for.comment.owner.use-case';
+import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
+import { UsersRepository } from '../../../../application/infrastructure/users/users.repository';
 
 export class BanUnbanUserBySuperAdminCommand {
   constructor(public userId: string, public banInfo: BanBody) {}
@@ -18,7 +19,8 @@ export class BanUnbanUserBySuperAdminUseCase
   implements ICommandHandler<BanUnbanUserBySuperAdminCommand>
 {
   constructor(
-    private readonly userQ: UserQ,
+    private readonly userQ: UsersQueryRepository,
+    private readonly usersRepo: UsersRepository,
     private readonly deviceRepository: DevicesRepository,
     private readonly commandBus: CommandBus,
   ) {}
@@ -29,9 +31,10 @@ export class BanUnbanUserBySuperAdminUseCase
     if (command.banInfo.isBanned) {
       await this.deviceRepository.deleteAllDevices(command.userId);
     }
-    await user.updateBanInfo(command.banInfo);
-    await user.markModified('banInfo');
-    await user.save();
+    await this.usersRepo.updateBanInfoForUser(user[0].Id, command.banInfo);
+    //await user.updateBanInfo(command.banInfo);
+    //await user.markModified('banInfo');
+    //await user.save();
     await this.commandBus.execute(
       new UpdateBanStatusForLikesOwnerCommand(
         command.userId,

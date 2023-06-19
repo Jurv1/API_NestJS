@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
+import { BanBody } from '../../dto/users/dto/ban.body';
 
 @Injectable()
 export class UsersRepository {
@@ -32,7 +33,7 @@ export class UsersRepository {
       `
       INSERT INTO public."BansForUsersByAdmin"
         ("UserId")
-      VALUES ($1)
+      VALUES ($1);
       `,
       [userId[0].Id],
     );
@@ -47,6 +48,27 @@ export class UsersRepository {
       WHERE Users."Id" = $1;
       `,
       [userId[0].Id],
+    );
+  }
+
+  async updateBanInfoForUser(userId: string, banBody: BanBody) {
+    await this.dataSource.query(
+      `
+      UPDATE public."BansForUsersByAdmin"
+      SET "BanReason" = $1,
+        "BanDate" = $2
+      WHERE "UserId" = $3;
+      `,
+      [banBody.banReason, new Date().toISOString(), userId],
+    );
+
+    await this.dataSource.query(
+      `
+      UPDATE public."Users"
+      SET "IsBanned" = $1
+      WHERE "Id" = $2;
+      `,
+      [banBody.isBanned, userId],
     );
   }
 

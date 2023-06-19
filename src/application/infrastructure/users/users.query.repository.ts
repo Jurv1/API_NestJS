@@ -88,7 +88,7 @@ export class UsersQueryRepository {
     return this.dataSource.query(
       `
       SELECT * 
-      FROM public.Users
+      FROM public."Users"
       WHERE "Id" = $1;
       `,
       [id],
