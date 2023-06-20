@@ -3,11 +3,11 @@ import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.rep
 import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
-import { queryValidator } from '../../../application/utils/sorts/sorting.func';
+import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
-import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
+import { filterForPublicBlogs } from '../../../application/utils/filters/_MongoFilters/filter.for.public.blogs';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 

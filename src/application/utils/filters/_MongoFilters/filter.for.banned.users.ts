@@ -1,5 +1,5 @@
 import { FilterQuery } from 'mongoose';
-import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
+import { BlogDocument } from '../../../schemas/blogs/schemas/blogs.database.schema';
 
 export function filterForBannedUsers(
   searchLoginTerm: string | undefined,

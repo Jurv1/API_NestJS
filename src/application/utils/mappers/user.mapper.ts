@@ -16,14 +16,18 @@ export class UserMapper {
       //obj[0].banInfo,
     };
   }
-  mapUsers(objs: UserDocument[] | UserViewDto[]): UserViewDto[] {
+  mapUsers(objs: any): any {
     return objs.map((el) => {
       return {
-        id: el._id.toString(),
-        login: el.accountData.login,
-        email: el.accountData.email,
-        createdAt: el.accountData.createdAt,
-        banInfo: el.banInfo,
+        id: el.Id,
+        login: el.Login,
+        email: el.Email,
+        createdAt: el.CreatedAt,
+        banInfo: {
+          isBanned: el.IsBanned,
+          banDate: el.BanDate,
+          banReason: el.BanReason,
+        },
       };
     });
   }

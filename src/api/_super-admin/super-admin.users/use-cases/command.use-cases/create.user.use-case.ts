@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersService } from '../../../../application/infrastructure/users/users.service';
-import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
-import { Errors } from '../../../../application/utils/handle.error';
-import { UserMapper } from '../../../../application/utils/mappers/user.mapper';
-import { UserViewDto } from '../../../../application/dto/users/dto/user.view.dto';
+import { UsersService } from '../../../../../application/infrastructure/users/users.service';
+import { UserDocument } from '../../../../../application/schemas/users/schemas/users.database.schema';
+import { Errors } from '../../../../../application/utils/handle.error';
+import { UserMapper } from '../../../../../application/utils/mappers/user.mapper';
+import { UserViewDto } from '../../../../../application/dto/users/dto/user.view.dto';
 
 export class CreateUserCommand {
   constructor(

@@ -14,8 +14,8 @@ import { PostQ } from '../../../application/infrastructure/posts/posts.query.rep
 import { JwtService } from '@nestjs/jwt';
 import { PostMapper } from '../../../application/utils/mappers/post.mapper';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
-import { queryValidator } from '../../../application/utils/sorts/sorting.func';
-import { filterQueryValid } from '../../../application/utils/sorts/query.validator';
+import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
+import { filterQueryValid } from '../../../application/utils/sorts/_MongoSorts/query.validator';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostDocument } from '../../../application/schemas/posts/schemas/posts.database.schema';

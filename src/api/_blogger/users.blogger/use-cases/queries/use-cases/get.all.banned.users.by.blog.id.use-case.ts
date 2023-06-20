@@ -3,11 +3,11 @@ import { BlogDocument } from '../../../../../../application/schemas/blogs/schema
 import { Errors } from '../../../../../../application/utils/handle.error';
 import { BlogQ } from '../../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BannedUserDto } from '../../../../../../application/dto/blogs/dto/banned.user.dto';
-import { filterForBannedUsers } from '../../../../../../application/utils/filters/filter.for.banned.users';
+import { filterForBannedUsers } from '../../../../../../application/utils/filters/_MongoFilters/filter.for.banned.users';
 import { QueryForBannedUsers } from '../../../../../../application/dto/blogs/dto/queries/query.for.banned.users';
 import { makePagination } from '../../../../../../application/utils/make.paggination';
 import { UserQ } from '../../../../../../application/infrastructure/users/_MongoDB/users.query.repository';
-import { sortForBannedUsers } from '../../../../../../application/utils/sorts/sort.for.banned.users';
+import { sortForBannedUsers } from '../../../../../../application/utils/sorts/_MongoSorts/sort.for.banned.users';
 
 export class GetAllBannedUsersByBlogIdCommand {
   constructor(

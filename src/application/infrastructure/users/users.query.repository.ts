@@ -6,7 +6,61 @@ import { UserDocument } from '../../schemas/users/schemas/users.database.schema'
 @Injectable()
 export class UsersQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  async getAllUsersForAdmin(
+    filter: { [key: string]: string | boolean },
+    sort: { [key: string]: string },
+    pagination: {
+      skipValue: number;
+      limitValue: number;
+      pageSize: number;
+      pageNumber: number;
+    },
+  ) {
+    //const s = Object.keys(sort)[0];
+    return await this.dataSource.query(
+      `
+      SELECT 
+        Users."Id",
+        Users."Login",
+        Users."Email",
+        Users."CreatedAt",
+        Users."IsBanned",
+        Bans."BanDate",
+        Bans."BanReason"
+      FROM public."Users" as Users
+      LEFT JOIN public."BansForUsersByAdmin" as Bans
+       ON Bans."UserId" = Users."Id"
+      WHERE ("Login" ILIKE $1 OR "Email" ILIKE $2)
+        AND ("IsBanned" = $3 OR "IsBanned" = $4)
+      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
+      `,
+      [
+        filter['loginTerm'],
+        filter['emailTerm'],
+        filter['banCond'],
+        filter['banCond1'],
+      ],
+    );
+  }
 
+  async countAllUsersRows(filter: { [key: string]: string | boolean }) {
+    return await this.dataSource.query(
+      `
+      SELECT 
+        COUNT(*)
+      FROM public."Users"
+      WHERE ("Login" ILIKE $1 OR "Email" ILIKE $2)
+        AND ("IsBanned" = $3 OR "IsBanned" = $4)  
+      `,
+      [
+        filter['loginTerm'],
+        filter['emailTerm'],
+        filter['banCond'],
+        filter['banCond1'],
+      ],
+    );
+  }
   // async getAllUsers(
   //   filter: any,
   //   sort: { [key: string]: SortOrder },

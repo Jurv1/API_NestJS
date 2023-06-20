@@ -1,5 +1,5 @@
 import { FilterQuery } from 'mongoose';
-import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
+import { UserDocument } from '../../../schemas/users/schemas/users.database.schema';
 
 export function filterForUsersSuperAdmin(
   banStatus: string,

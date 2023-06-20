@@ -13,7 +13,7 @@ import {
 import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
-import { queryValidator } from '../../../application/utils/sorts/sorting.func';
+import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { BlogBody } from '../../../application/dto/blogs/dto/body/blog.body';
@@ -31,7 +31,7 @@ import { UpdatePostByBlogIdCommand } from './use-cases/update.post.by.blog.id.us
 import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/delete.one.post.by.specific.blog.id.use-case';
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { filterForBlogger } from '../../../application/utils/filters/filter.for.blogger';
+import { filterForBlogger } from '../../../application/utils/filters/_MongoFilters/filter.for.blogger';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogQueryForComments } from '../../../application/dto/blogs/dto/queries/blog.query.for.comments';
