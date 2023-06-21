@@ -11,6 +11,7 @@ export class DeleteUserBySuperAdminUseCase
 {
   constructor(private readonly userRepository: UsersRepository) {}
   async execute(command: DeleteUserBySuperAdminCommand) {
+    if (isNaN(+command.userId)) throw new Errors.NOT_FOUND();
     const result: boolean = await this.userRepository.deleteOne(command.userId);
     if (!result) throw new Errors.NOT_FOUND();
     return result;

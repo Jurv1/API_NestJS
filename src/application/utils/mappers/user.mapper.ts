@@ -4,7 +4,7 @@ import { UserViewDto } from '../../dto/users/dto/user.view.dto';
 export class UserMapper {
   mapUser(obj: UserDocument): UserViewDto {
     return {
-      id: obj[0].Id,
+      id: obj[0].Id.toString(),
       login: obj[0].Login,
       email: obj[0].Email,
       createdAt: obj[0].CreatedAt,
@@ -19,7 +19,7 @@ export class UserMapper {
   mapUsers(objs: any): any {
     return objs.map((el) => {
       return {
-        id: el.Id,
+        id: el.Id.toString(),
         login: el.Login,
         email: el.Email,
         createdAt: el.CreatedAt,

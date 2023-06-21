@@ -115,7 +115,8 @@ export class UsersQueryRepository {
       "Id",
       "Login",
       "Email",
-      "Password"
+      "Password",
+      "IsBanned"
     FROM public."Users"
     WHERE "Login" = $1;
 `,
