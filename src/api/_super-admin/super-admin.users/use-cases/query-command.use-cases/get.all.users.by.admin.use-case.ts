@@ -2,7 +2,6 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UsersQueryRepository } from '../../../../../application/infrastructure/users/users.query.repository';
 import { UserMapper } from '../../../../../application/utils/mappers/user.mapper';
 import { paginator } from '../../../../../application/utils/paginator/paginator';
-import { Errors } from '../../../../../application/utils/handle.error';
 
 export class GetAllUsersByAdminQueryCommand {
   constructor(

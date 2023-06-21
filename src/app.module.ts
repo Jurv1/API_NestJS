@@ -44,13 +44,14 @@ import {
     configModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.PG_HOST,
       port: 5432,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
+      username: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
       autoLoadEntities: false,
       synchronize: false,
+      ssl: true,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([
