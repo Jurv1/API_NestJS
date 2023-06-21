@@ -5,6 +5,7 @@ import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
 import { BanBody } from '../../dto/users/dto/ban.body';
 import { add } from 'date-fns';
+import { getTimeForUserBan } from '../../utils/funcs/get.time.for.user-ban';
 
 @Injectable()
 export class UsersRepository {
@@ -60,7 +61,7 @@ export class UsersRepository {
         "BanDate" = $2
       WHERE "UserId" = $3;
       `,
-      [banBody.banReason, new Date().toISOString(), userId],
+      [banBody.banReason, getTimeForUserBan(banBody.isBanned), userId],
     );
 
     await this.dataSource.query(

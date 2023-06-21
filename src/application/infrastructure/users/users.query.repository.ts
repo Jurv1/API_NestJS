@@ -16,7 +16,6 @@ export class UsersQueryRepository {
       pageNumber: number;
     },
   ) {
-    //const s = Object.keys(sort)[0];
     return await this.dataSource.query(
       `
       SELECT 

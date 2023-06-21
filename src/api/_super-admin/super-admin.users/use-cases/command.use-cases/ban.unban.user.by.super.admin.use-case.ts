@@ -30,6 +30,8 @@ export class BanUnbanUserBySuperAdminUseCase
     if (!user) throw new Errors.NOT_FOUND();
     if (command.banInfo.isBanned) {
       await this.deviceRepository.deleteAllDevices(command.userId);
+    } else {
+      command.banInfo.banReason = null;
     }
     await this.usersRepo.updateBanInfoForUser(user[0].Id, command.banInfo);
     await this.commandBus.execute(
