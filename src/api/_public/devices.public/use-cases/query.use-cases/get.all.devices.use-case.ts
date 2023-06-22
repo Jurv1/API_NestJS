@@ -18,8 +18,11 @@ export class GetAllDevicesUseCase
     private readonly deviceMapper: DeviceMapper,
   ) {}
   async execute(command: GetAllDevicesQueryCommand) {
+    await this.devicesRepo.updateDeviceIat(
+      command.deviceId,
+      new Date().getTime(),
+    );
     const allDevices = await this.deviceQ.getAllDevicesByUserId(command.userId);
-    await this.devicesRepo.updateDeviceIat(command.deviceId);
 
     if (allDevices.length > 0) {
       return this.deviceMapper.mapDevices(allDevices);
