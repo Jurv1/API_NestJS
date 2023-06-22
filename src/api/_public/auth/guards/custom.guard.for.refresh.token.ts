@@ -26,7 +26,13 @@ export class CustomGuardForRefreshToken implements CanActivate {
       const activeDevice = await this.deviceQ.getOneDeviceById(
         tokenPayload.deviceId,
       );
-      return activeDevice.length !== 0;
+      if (activeDevice.length === 0) {
+        throw new Errors.UNAUTHORIZED();
+      }
+      if (tokenPayload.iat < activeDevice[0].LastActiveDate) {
+        throw new Errors.UNAUTHORIZED();
+      }
+      return true;
     } catch (err) {
       console.log(err);
       throw new Errors.UNAUTHORIZED();
