@@ -38,4 +38,8 @@ export class DevicesService {
   ) {
     await this.deviceRepository.updateDevice(oldDeviceId, newDeviceId, newIat);
   }
+
+  async updateDeviceIat(deviceId: string, iat: number): Promise<boolean> {
+    return await this.deviceRepository.updateDeviceIat(deviceId, iat);
+  }
 }

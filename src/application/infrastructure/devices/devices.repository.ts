@@ -88,14 +88,16 @@ export class DevicesRepository {
     );
   }
 
-  async updateDeviceIat(deviceId: string) {
-    await this.dataSource.query(
+  async updateDeviceIat(deviceId: string, iat: number): Promise<boolean> {
+    const result = await this.dataSource.query(
       `
       UPDATE public."Devices"
         SET "LastActiveDate" = $1
       WHERE "DeviceId" = $2;
       `,
-      [new Date().getTime(), deviceId],
+      [new Date(iat * 1000).toISOString(), deviceId],
     );
+
+    return result[1] === 1;
   }
 }

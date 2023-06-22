@@ -25,7 +25,6 @@ import { NewPasswordDto } from './dto/new.password.dto';
 import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.token';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
-import { v4 as uuid4 } from 'uuid';
 
 @Controller('auth')
 export class PublicAuthController {
@@ -36,8 +35,8 @@ export class PublicAuthController {
     private readonly deviceService: DevicesService,
   ) {}
 
-  //@Throttle(5, 10)
-  @UseGuards(LocalAuthGuard)
+  @Throttle(5, 10)
+  @UseGuards(ThrottlerGuard, LocalAuthGuard)
   @HttpCode(200)
   @Post('login')
   async login(
@@ -75,8 +74,8 @@ export class PublicAuthController {
     };
   }
 
-  @UseGuards(ThrottlerGuard)
   @Throttle(5, 10)
+  @UseGuards(ThrottlerGuard)
   @HttpCode(204)
   @Post('registration')
   async registerMe(@Body() body: UserBody) {
@@ -223,22 +222,17 @@ export class PublicAuthController {
         user[0].Login,
         '10s',
       );
-      const newDeviceId = uuid4();
       const newRefreshToken = await this.authService.createRefreshToken(
         userId,
         user[0].Login,
-        newDeviceId,
+        deviceId,
         '20s',
       );
       const iatFromToken: number = await this.authService.getIatFromToken(
         newRefreshToken,
       );
 
-      await this.deviceService.updateDeviceIdAndIat(
-        deviceId,
-        newDeviceId,
-        iatFromToken,
-      );
+      await this.deviceService.updateDeviceIat(deviceId, iatFromToken);
 
       res
         .cookie('refreshToken', newRefreshToken, {
