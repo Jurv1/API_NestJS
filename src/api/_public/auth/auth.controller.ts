@@ -71,7 +71,7 @@ export class PublicAuthController {
     return {
       email: user[0].Email,
       login: user[0].Login,
-      userId: currentUserId,
+      userId: currentUserId.toString(),
     };
   }
 
@@ -220,13 +220,13 @@ export class PublicAuthController {
       );
       const accessToken = await this.authService.createAccessToken(
         userId,
-        user.accountData.login,
+        user[0].Login,
         '10s',
       );
       const newDeviceId = uuid4();
       const newRefreshToken = await this.authService.createRefreshToken(
         userId,
-        user.accountData.login,
+        user[0].Login,
         newDeviceId,
         '20s',
       );

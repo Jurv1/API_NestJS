@@ -138,7 +138,9 @@ export class AuthService {
   }
 
   async verifyToken(token: string): Promise<any> {
-    return await this.jwtService.verifyAsync(token);
+    return await this.jwtService.verifyAsync(token, {
+      secret: process.env.SECRET,
+    });
   }
 
   async addRefreshToBlackList(token: string) {

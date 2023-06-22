@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Errors } from '../../../../application/utils/handle.error';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { DevicesQueryRepository } from '../../../../application/infrastructure/devices/devices.query.repository';
 import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
@@ -27,8 +26,7 @@ export class CustomGuardForRefreshToken implements CanActivate {
       const activeDevice = await this.deviceQ.getOneDeviceById(
         tokenPayload.deviceId,
       );
-      if (activeDevice.length === 0) return false;
-      return true;
+      return activeDevice.length !== 0;
     } catch (err) {
       console.log(err);
       throw new Errors.UNAUTHORIZED();

@@ -61,7 +61,7 @@ export class DevicesRepository {
       [id],
     );
 
-    return result[0] === 1;
+    return result[1] === 1;
   }
 
   async deleteAllDevices(userId: string) {

@@ -30,7 +30,6 @@ import { UsersQueryRepository } from '../../../application/infrastructure/users/
 import { DevicesRepository } from '../../../application/infrastructure/devices/devices.repository';
 import { DevicesQueryRepository } from '../../../application/infrastructure/devices/devices.query.repository';
 
-console.log(process.env.SECRET);
 @Module({
   imports: [
     ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),

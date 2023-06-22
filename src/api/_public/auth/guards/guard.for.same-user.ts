@@ -24,7 +24,7 @@ export class GuardForSameUser implements CanActivate {
     if (user.length === 0) throw new Errors.FORBIDDEN();
     const device: any = await this.deviceQ.getOneDeviceById(request.params.id);
     if (device.length === 0) throw new Errors.NOT_FOUND();
-    if (device[0].UserId !== user.id) throw new Errors.FORBIDDEN();
+    if (device[0].UserId !== user[0].Id) throw new Errors.FORBIDDEN();
     return true;
   }
 }

@@ -12,7 +12,7 @@ import { CustomGuardForRefreshToken } from '../auth/guards/custom.guard.for.refr
 import { CurrentRefreshToken } from '../auth/decorators/current-refresh-token';
 import { Errors } from '../../../application/utils/handle.error';
 import { GuardForSameUser } from '../auth/guards/guard.for.same-user';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DeleteAllDevicesExceptActiveCommand } from './use-cases/command.use-cases/delete.all.devices.except.active.use-case';
 import { DeleteOneDeviceCommand } from './use-cases/command.use-cases/delete.one.device.use-case';
 import { GetAllDevicesQueryCommand } from './use-cases/query.use-cases/get.all.devices.use-case';
@@ -23,6 +23,7 @@ export class PublicDeviceController {
     private readonly authService: AuthService,
     protected jwtService: JwtService,
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @UseGuards(CustomGuardForRefreshToken)
@@ -32,7 +33,7 @@ export class PublicDeviceController {
 
     try {
       if (payload && payload.userId) {
-        return await this.commandBus.execute(
+        return await this.queryBus.execute(
           new GetAllDevicesQueryCommand(payload.userId, payload.deviceId),
         );
       }
