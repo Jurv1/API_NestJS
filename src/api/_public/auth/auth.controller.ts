@@ -207,8 +207,13 @@ export class PublicAuthController {
   @HttpCode(200)
   @Post('refresh-token')
   async refreshMyToken(@Response() res, @CurrentRefreshToken() refreshToken) {
-    const isTokenValid = await this.authService.verifyToken(refreshToken);
-    if (!isTokenValid) {
+    try {
+      const isTokenValid = await this.authService.verifyToken(refreshToken);
+      if (!isTokenValid) {
+        return new Errors.UNAUTHORIZED();
+      }
+    } catch (err) {
+      console.log(err);
       throw new Errors.UNAUTHORIZED();
     }
     const userId = await this.authService.getUserIdByToken(refreshToken);
