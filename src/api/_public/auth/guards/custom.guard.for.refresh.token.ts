@@ -30,8 +30,8 @@ export class CustomGuardForRefreshToken implements CanActivate {
         throw new Errors.UNAUTHORIZED();
       }
       if (
-        tokenPayload.iat * 1000 <
-        new Date(activeDevice[0].LastActiveDate).getTime()
+        new Date(tokenPayload.iat * 1000).toISOString() <
+        activeDevice[0].LastActiveDate
       ) {
         throw new Errors.UNAUTHORIZED();
       }
