@@ -29,7 +29,10 @@ export class CustomGuardForRefreshToken implements CanActivate {
       if (activeDevice.length === 0) {
         throw new Errors.UNAUTHORIZED();
       }
-      if (tokenPayload.iat < activeDevice[0].LastActiveDate) {
+      if (
+        tokenPayload.iat * 1000 <
+        new Date(activeDevice[0].LastActiveDate).getTime()
+      ) {
         throw new Errors.UNAUTHORIZED();
       }
       return true;
