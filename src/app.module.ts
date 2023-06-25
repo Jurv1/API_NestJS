@@ -38,21 +38,12 @@ import {
   Like,
   LikeSchema,
 } from './application/schemas/likes/schemas/like.database.schema';
+import { configForTypeOrm } from './application/config/config.for.type-orm';
 
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.PG_HOST,
-      port: 5432,
-      username: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE,
-      autoLoadEntities: false,
-      synchronize: false,
-      ssl: true,
-    }),
+    TypeOrmModule.forRoot(configForTypeOrm),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
