@@ -10,10 +10,14 @@ import { filterForPublicBlogs } from '../../../application/utils/filters/_MongoF
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetAllBlogsQueryCommand } from './use-cases/query.use-cases/get.all.blogs.use-case';
+import { GetOneBlogQueryCommand } from './use-cases/query.use-cases/get.one.blog.use-case';
 
 @Controller('blogs')
 export class PublicBlogController {
   constructor(
+    private readonly queryBus: QueryBus,
     protected blogQ: BlogsQueryRepository,
     protected postQ: PostQ,
     private readonly jwtService: JwtService,
@@ -28,39 +32,14 @@ export class PublicBlogController {
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
 
-    try {
-      const result: BlogWithPaginationDto = await this.blogQ.getAllBlogs(
-        filter,
-        sort,
-        pagination,
-      );
-      result.items = this.blogMapper.mapBlogs(result.items);
-      return result;
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
-    }
+    return await this.queryBus.execute(
+      new GetAllBlogsQueryCommand(filter, sort, pagination),
+    );
   }
 
   @Get(':id')
   async getOne(@Param('id') id: string) {
-    try {
-      const result = await this.blogQ.getOneBlog(id);
-      if (result) {
-        return {
-          id: result._id.toString(),
-          name: result.name,
-          description: result.description,
-          websiteUrl: result.websiteUrl,
-          isMembership: result.isMembership,
-          createdAt: result.createdAt,
-        };
-      }
-      throw new Errors.NOT_FOUND();
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
-    }
+    return this.queryBus.execute(new GetOneBlogQueryCommand(id));
   }
 
   @Get(':id/posts')

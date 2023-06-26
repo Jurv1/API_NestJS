@@ -10,15 +10,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BlogQ } from '../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
 import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
-import { Errors } from '../../../application/utils/handle.error';
 import { BlogBody } from '../../../application/dto/blogs/dto/body/blog.body';
 import { PostBody } from '../../../application/dto/posts/dto/post.body.without.blogId';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from './use-cases/command.use-cases/create.blog.use-case';
 import { CreatePostForBlogCommand } from './use-cases/command.use-cases/create.post.for.blog.use-case';
 import { UpdateBlogCommand } from './use-cases/command.use-cases/update.blog.use-case';
@@ -31,22 +29,20 @@ import { UpdatePostByBlogIdCommand } from './use-cases/command.use-cases/update.
 import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/command.use-cases/delete.one.post.by.specific.blog.id.use-case';
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { filterForBlogger } from '../../../application/utils/filters/_MongoFilters/filter.for.blogger';
-import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
-import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogQueryForComments } from '../../../application/dto/blogs/dto/queries/blog.query.for.comments';
 import { CommentQ } from '../../../application/infrastructure/comments/comments.query.repository';
 import { CommentsWithPagination } from '../../../application/dto/comments/dto/comments.with.pagination';
 import { CommentMapper } from '../../../application/utils/mappers/comment.mapper';
+import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
+import { GetAllBlogsForBloggerQueryCommand } from './use-cases/query.use-cases/get.all.blogs.for.blogger.query.use-case';
 
 @Controller('blogger/blogs')
 export class BloggerBlogController {
   constructor(
-    protected blogQ: BlogQ,
     private readonly commentQ: CommentQ,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
-    private readonly blogMapper: BlogMapper,
+    private readonly queryBus: QueryBus,
     private readonly commentMapper: CommentMapper,
   ) {}
   @UseGuards(JwtAuthGuard)
@@ -58,22 +54,14 @@ export class BloggerBlogController {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
-    const filter: FilterQuery<BlogDocument> = filterForBlogger(
-      searchNameTerm,
-      userId,
-    );
+    const filter: FilterQuery<BlogDocument> =
+      filterForPublicBlogs(searchNameTerm);
     const sort = queryValidator(sortBy, sortDirection);
     const pagination = makePagination(pageNumber, pageSize);
 
-    try {
-      const blogsWithPag: BlogWithPaginationDto =
-        await this.blogQ.getAllBlogsForBlogger(filter, sort, pagination);
-      blogsWithPag.items = this.blogMapper.mapBlogs(blogsWithPag.items);
-      return blogsWithPag;
-    } catch (err) {
-      console.log(err);
-      throw new Errors.NOT_FOUND();
-    }
+    return await this.queryBus.execute(
+      new GetAllBlogsForBloggerQueryCommand(filter, sort, pagination, userId),
+    );
   }
 
   @UseGuards(JwtAuthGuard)

@@ -31,6 +31,62 @@ export class BlogsQueryRepository {
     );
   }
 
+  async countAllBlogs(filter: FilterQuery<BlogDocument>): Promise<number> {
+    const result = await this.dataSource.query(
+      `
+      SELECT COUNT(*) FROM public."Blogs"
+      WHERE "IsBanned" = false
+        AND "Name" ILIKE = $1;
+      `,
+      [filter['nameTerm']],
+    );
+
+    return result[0].count;
+  }
+
+  async getAllBlogsForBlogger(
+    filter: FilterQuery<BlogDocument>,
+    sort: { [key: string]: SortOrder },
+    pagination: {
+      skipValue: number;
+      limitValue: number;
+      pageSize: number;
+      pageNumber: number;
+    },
+    userId: string,
+  ) {
+    return await this.dataSource.query(
+      `
+      SELECT * FROM public."Blogs" AS Blogs
+      LEFT JOIN public."BlogsOwnerInfo" AS Info 
+        ON Blogs."Id" = Info."BlogId"
+      WHERE "Name" = $1
+        AND Info."UserId" = $2
+      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
+      `,
+      [filter['nameTerm'], userId],
+    );
+  }
+
+  async countBlogsForBlogger(
+    filter: FilterQuery<BlogDocument>,
+    userId: string,
+  ) {
+    const result = await this.dataSource.query(
+      `
+      SELECT COUNT(*) FROM public."Blogs" AS Blogs
+      LEFT JOIN public."BlogsOwnerInfo" AS Info 
+        ON Blogs."Id" = Info."BlogId"
+      WHERE Info."UserId" = $1
+        AND "Name" ILIKE = $2;
+      `,
+      [userId, filter['nameTerm']],
+    );
+
+    return result[0].count;
+  }
+
   async getAllBannedUsersForBlogger(blogId: string) {
     return this.dataSource.query(
       `
@@ -61,7 +117,7 @@ export class BlogsQueryRepository {
   //     .lean();
   // }
 
-  async getOneBlog(id: string): Promise<BlogDocument | null> {
+  async getOneBlog(id: string): Promise<any | null> {
     return this.dataSource.query(
       `
       SELECT * FROM public."Blogs"

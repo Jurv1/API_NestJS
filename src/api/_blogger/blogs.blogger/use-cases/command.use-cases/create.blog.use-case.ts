@@ -17,7 +17,7 @@ export class CreateBlogCommand {
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   constructor(private readonly blogService: BlogService) {}
   async execute(command: CreateBlogCommand) {
-    const result: BlogDocument = await this.blogService.createOneBlog(
+    const result: any = await this.blogService.createOneBlog(
       command.name,
       command.description,
       command.websiteUrl,
@@ -25,7 +25,7 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
       command.userData.userLogin,
     );
 
-    if (!result) throw new Errors.NOT_FOUND();
+    if (result.length === 0) throw new Errors.NOT_FOUND();
 
     return result;
   }

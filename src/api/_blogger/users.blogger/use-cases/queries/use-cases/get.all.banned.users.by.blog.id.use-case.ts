@@ -8,6 +8,7 @@ import { QueryForBannedUsers } from '../../../../../../application/dto/blogs/dto
 import { makePagination } from '../../../../../../application/utils/make.paggination';
 import { UserQ } from '../../../../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { sortForBannedUsers } from '../../../../../../application/utils/sorts/_MongoSorts/sort.for.banned.users';
+import { BlogsQueryRepository } from '../../../../../../application/infrastructure/blogs/blogs.query.repository';
 
 export class GetAllBannedUsersByBlogIdCommand {
   constructor(
@@ -21,11 +22,16 @@ export class GetAllBannedUsersByBlogIdCommand {
 export class GetAllBannedUsersByBlogIdUseCase
   implements IQueryHandler<GetAllBannedUsersByBlogIdCommand>
 {
-  constructor(private readonly blogQ: BlogQ, private readonly userQ: UserQ) {}
+  constructor(
+    private readonly blogQ: BlogsQueryRepository,
+    private readonly userQ: UserQ,
+  ) {}
   async execute(command: GetAllBannedUsersByBlogIdCommand) {
-    const blog: BlogDocument = await this.blogQ.getOneBlog(command.blogId);
-    if (!blog) throw new Errors.NOT_FOUND();
-    if (blog.ownerInfo.userId !== command.userId) throw new Errors.FORBIDDEN();
+    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+      command.blogId,
+    );
+    if (blog.length === 0) throw new Errors.NOT_FOUND();
+    if (blog[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
 
     const allBannedUsersForBlog: BannedUserDto[] | [] = blog.bannedUsersForBlog;
 

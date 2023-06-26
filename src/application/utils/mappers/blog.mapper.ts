@@ -5,12 +5,12 @@ import { BlogViewDto } from '../../dto/blogs/dto/view/blog.view.dto';
 export class BlogMapper {
   mapBlog(obj: BlogDocument) {
     return {
-      id: obj._id.toString(),
-      name: obj.name,
-      description: obj.description,
-      websiteUrl: obj.websiteUrl,
-      isMembership: obj.isMembership,
-      createdAt: obj.createdAt,
+      id: obj[0].Id.toString(),
+      name: obj[0].Name,
+      description: obj[0].Description,
+      websiteUrl: obj[0].WebsiteUrl,
+      isMembership: obj[0].IsMembership,
+      createdAt: obj[0].CreatedAt,
     };
   }
 
