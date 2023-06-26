@@ -1,7 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { BlogDocument } from '../../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { Errors } from '../../../../../../application/utils/handle.error';
-import { BlogQ } from '../../../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { BannedUserDto } from '../../../../../../application/dto/blogs/dto/banned.user.dto';
 import { filterForBannedUsers } from '../../../../../../application/utils/filters/_MongoFilters/filter.for.banned.users';
 import { QueryForBannedUsers } from '../../../../../../application/dto/blogs/dto/queries/query.for.banned.users';
