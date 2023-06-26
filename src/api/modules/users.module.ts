@@ -33,8 +33,8 @@ import { UsersService } from '../../application/infrastructure/users/users.servi
 import { MailService } from '../../mail/mail.service';
 import { UsersBloggerController } from '../_blogger/users.blogger/users.blogger.controller';
 import { allUserBloggerUseCases } from './use-cases/blogger/all.user-blogger.use-cases';
-import { BlogQ } from '../../application/infrastructure/blogs/blogs.query.repository';
-import { BlogsRepository } from '../../application/infrastructure/blogs/blogs.repository';
+import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
+import { BlogsRepository } from '../../application/infrastructure/blogs/_MongoDB/blogs.repository';
 
 @Module({
   imports: [

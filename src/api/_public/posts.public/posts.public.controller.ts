@@ -27,7 +27,7 @@ import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateCommentForPostCommand } from './use-cases/create.comment.for.post.use-case';
 import { LikeCommentOrPostCommand } from '../comments.public/use-cases/like.comment.use-case';
-import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogQ } from '../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 
 @Controller('posts')
 export class PublicPostController {

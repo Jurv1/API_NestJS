@@ -1,66 +1,115 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import {
-  Blog,
-  BlogDocument,
-  BlogModelType,
-} from '../../schemas/blogs/schemas/blogs.database.schema';
-import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
+import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
+import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
 import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
 
 @Injectable()
 export class BlogsRepository {
-  constructor(
-    @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
-  ) {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
   async createOne(blogDto: BlogCreationDto): Promise<any | null> {
-    const createdBlog: BlogDocument = await this.blogModel.createBlog(
-      blogDto,
-      this.blogModel,
+    const createdBlog: BlogDocument = await this.dataSource.query(
+      `
+      INSERT INTO public."Blog" (
+        "Name",
+        "Description",
+        "WebsiteUrl",
+        "IsMembership",
+        "IsBanned",
+        "CreatedAt"
+      )
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING "Id", "Name", "Description", "WebsiteUrl", "CreatedAt",
+        "IsMembership";
+      `,
+      [
+        blogDto.name,
+        blogDto.description,
+        blogDto.websiteUrl,
+        false,
+        false,
+        new Date().toISOString(),
+      ],
     );
-    await createdBlog.save();
-    return {
-      id: createdBlog._id,
-      name: createdBlog.name,
-      description: createdBlog.description,
-      websiteUrl: createdBlog.websiteUrl,
-      createdAt: createdBlog.createdAt,
-      isMembership: createdBlog.isMembership,
-    };
+
+    await this.dataSource.query(
+      `
+      INSERT INTO public."BlogsOwnerInfo" ("BlogId", "OwnerId", "OwnerLogin")
+      VALUES($1, $2, $3);
+      `,
+      [createdBlog[0].Id, blogDto.userId, blogDto.userLogin],
+    );
+
+    return createdBlog;
   }
 
-  async updateOne(blog: BlogDocument, blogBody: BlogBody): Promise<boolean> {
-    await blog.updateBlog(blogBody);
-    await blog.save();
-    return true;
+  async updateOne(blogId: string, blogBody: BlogBody): Promise<boolean> {
+    const result = await this.dataSource.query(
+      `
+      UPDATE public."Blogs"
+      SET "Name" = $1, "Description" = $2, "WebsiteUrl" = $3
+      WHERE "Id" = $4;
+      `,
+      [blogBody.name, blogBody.description, blogBody.websiteUrl, blogId],
+    );
+
+    return result[1] === 1;
   }
 
   async deleteOne(id: string): Promise<boolean> {
-    const result = await this.blogModel.deleteOne({ _id: id });
-    return result.deletedCount === 1;
+    const result = await this.dataSource.query(
+      `
+      DELETE FROM public."Blogs"
+      WHERE "Id" = $1;
+      `,
+      [id],
+    );
+
+    return result[1] === 1;
   }
 
-  async updateBanStatusForBlogsByOwnerId(userId: string, banStatus: boolean) {
-    return this.blogModel.updateMany(
-      { 'ownerInfo.userId': userId },
-      { $set: { isUserBanned: banStatus } },
+  async updateBanStatusForBlogsByOwnerId(blogId: string) {
+    return await this.dataSource.query(
+      `
+      INSERT INTO public."BlogsBansByAdmin" ("BlogId", "BanDate")
+        VALUES ($1, $2)
+      ON CONFLICT("BlogId") DO
+        UPDATE public."BlogsBansByAdmin" 
+            SET "BanDate" = EXCLUDED.BanDate;
+      `,
+      [blogId, new Date().toISOString()],
     );
   }
 
   async banUserInBlog(blogId: string, bannedUser: BannedUserDto) {
-    const result = await this.blogModel.updateOne(
-      { _id: blogId },
-      { $push: { bannedUsersForBlog: bannedUser } },
+    const result = await this.dataSource.query(
+      `
+      INSERT INTO public."BannedUsersByBlogger" 
+        ("BlogId", "UserId", "BanReason", "BanDate")
+      VALUES ($1, $2, $3, $4);
+      `,
+      [
+        blogId,
+        bannedUser.id,
+        bannedUser.banInfo.banReason,
+        bannedUser.banInfo.banDate,
+      ],
     );
 
     return result;
   }
 
   async unbanUserInBlog(blogId: string, userId: string) {
-    await this.blogModel.updateOne(
-      { _id: blogId },
-      { $pull: { bannedUsersForBlog: { id: userId } } },
+    await this.dataSource.query(
+      `
+      DELETE FROM public."BannedUsersByBlogger" 
+      WHERE "BlogId" = $1
+        AND "UserId" = $2;
+      `,
+      [blogId, userId],
     );
   }
 }

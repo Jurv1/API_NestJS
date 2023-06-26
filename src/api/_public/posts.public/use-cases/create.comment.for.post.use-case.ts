@@ -6,7 +6,7 @@ import { Errors } from '../../../../application/utils/handle.error';
 import { PostQ } from '../../../../application/infrastructure/posts/posts.query.repository';
 import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogQ } from '../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { BannedUserDto } from '../../../../application/dto/blogs/dto/banned.user.dto';
 
 export class CreateCommentForPostCommand {

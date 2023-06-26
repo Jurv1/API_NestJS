@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogQ } from '../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
 
 export class BanUnbanBlogByIdCommand {

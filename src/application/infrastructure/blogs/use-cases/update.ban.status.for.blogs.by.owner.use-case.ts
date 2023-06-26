@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../blogs.repository';
+import { BlogsRepository } from '../_MongoDB/blogs.repository';
 
 export class UpdateBanStatusForBlogsByOwnerCommand {
   constructor(public userId: string, public banStatus: boolean) {}

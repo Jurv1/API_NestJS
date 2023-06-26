@@ -1,5 +1,4 @@
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
-import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
@@ -10,11 +9,12 @@ import { PostQuery } from '../../../application/dto/posts/dto/post.query';
 import { filterForPublicBlogs } from '../../../application/utils/filters/_MongoFilters/filter.for.public.blogs';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
+import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
 
 @Controller('blogs')
 export class PublicBlogController {
   constructor(
-    protected blogQ: BlogQ,
+    protected blogQ: BlogsQueryRepository,
     protected postQ: PostQ,
     private readonly jwtService: JwtService,
     private readonly blogMapper: BlogMapper,

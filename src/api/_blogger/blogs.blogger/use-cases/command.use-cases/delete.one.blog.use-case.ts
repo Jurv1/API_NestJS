@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
-import { Errors } from '../../../../application/utils/handle.error';
-import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
-import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { BlogService } from '../../../../../application/infrastructure/blogs/blogs.service';
+import { Errors } from '../../../../../application/utils/handle.error';
+import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 
 export class DeleteOneBlogCommand {
   constructor(public blogId: string, public userId: string) {}
@@ -14,7 +14,7 @@ export class DeleteOneBlogUseCase
 {
   constructor(
     private readonly blogService: BlogService,
-    private readonly blogQ: BlogQ,
+    private readonly blogQ: BlogsQueryRepository,
   ) {}
 
   async execute(command: DeleteOneBlogCommand) {

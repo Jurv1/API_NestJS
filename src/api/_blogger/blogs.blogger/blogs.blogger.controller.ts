@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogQ } from '../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
 import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
@@ -19,16 +19,16 @@ import { Errors } from '../../../application/utils/handle.error';
 import { BlogBody } from '../../../application/dto/blogs/dto/body/blog.body';
 import { PostBody } from '../../../application/dto/posts/dto/post.body.without.blogId';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateBlogCommand } from './use-cases/create.blog.use-case';
-import { CreatePostForBlogCommand } from './use-cases/create.post.for.blog.use-case';
-import { UpdateBlogCommand } from './use-cases/update.blog.use-case';
-import { DeleteOneBlogCommand } from './use-cases/delete.one.blog.use-case';
+import { CreateBlogCommand } from './use-cases/command.use-cases/create.blog.use-case';
+import { CreatePostForBlogCommand } from './use-cases/command.use-cases/create.post.for.blog.use-case';
+import { UpdateBlogCommand } from './use-cases/command.use-cases/update.blog.use-case';
+import { DeleteOneBlogCommand } from './use-cases/command.use-cases/delete.one.blog.use-case';
 import { JwtAuthGuard } from '../../_public/auth/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../_public/auth/decorators/current-user.param.decorator';
 import { CurrentUserIdAndLogin } from '../../_public/auth/decorators/current-user.id.and.login';
 import { UserIdAndLogin } from '../../_public/auth/dto/user-id.and.login';
-import { UpdatePostByBlogIdCommand } from './use-cases/update.post.by.blog.id.use-case';
-import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/delete.one.post.by.specific.blog.id.use-case';
+import { UpdatePostByBlogIdCommand } from './use-cases/command.use-cases/update.post.by.blog.id.use-case';
+import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/command.use-cases/delete.one.post.by.specific.blog.id.use-case';
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { filterForBlogger } from '../../../application/utils/filters/_MongoFilters/filter.for.blogger';

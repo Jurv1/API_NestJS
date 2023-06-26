@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogQ } from '../../../../application/infrastructure/blogs/blogs.query.repository';
-import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
-import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { Errors } from '../../../../application/utils/handle.error';
+import { BlogService } from '../../../../../application/infrastructure/blogs/blogs.service';
+import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { Errors } from '../../../../../application/utils/handle.error';
+import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 
 export class UpdateBlogCommand {
   constructor(
@@ -17,14 +17,13 @@ export class UpdateBlogCommand {
 @CommandHandler(UpdateBlogCommand)
 export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
   constructor(
-    private readonly blogQ: BlogQ,
+    private readonly blogQ: BlogsQueryRepository,
     private readonly blogService: BlogService,
   ) {}
   async execute(command: UpdateBlogCommand) {
-    const foundedBlog: BlogDocument = await this.blogQ.getOneBlog(
-      command.blogId,
-    );
-    if (!foundedBlog) throw new Errors.NOT_FOUND();
+    //todo вставить вместо getOneBlog getOneBlogByBlogger
+    const foundedBlog: any = await this.blogQ.getOneBlog(command.blogId);
+    if (foundedBlog.length === 0) throw new Errors.NOT_FOUND();
     if (foundedBlog.ownerInfo.userId !== command.userId)
       throw new Errors.FORBIDDEN();
     const result = await this.blogService.updateOneBlog(

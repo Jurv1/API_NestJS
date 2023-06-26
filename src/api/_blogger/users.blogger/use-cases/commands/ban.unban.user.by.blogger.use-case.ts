@@ -1,11 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BloggerBanDto } from '../../../../../application/dto/blogs/dto/blogger.ban.dto';
-import { BlogQ } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
-import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { Errors } from '../../../../../application/utils/handle.error';
-import { UserQ } from '../../../../../application/infrastructure/users/_MongoDB/users.query.repository';
-import { UserDocument } from '../../../../../application/schemas/users/schemas/users.database.schema';
 import { BannedUserDto } from '../../../../../application/dto/blogs/dto/banned.user.dto';
+import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
+import { UsersQueryRepository } from '../../../../../application/infrastructure/users/users.query.repository';
 import { BlogsRepository } from '../../../../../application/infrastructure/blogs/blogs.repository';
 export class BanUnbanUserByBloggerCommand {
   constructor(
@@ -20,30 +18,21 @@ export class BanUnbanUserByBloggerUseCase
   implements ICommandHandler<BanUnbanUserByBloggerCommand>
 {
   constructor(
-    private readonly blogQ: BlogQ,
-    private readonly userQ: UserQ,
+    private readonly blogQ: BlogsQueryRepository,
+    private readonly userQ: UsersQueryRepository,
     private readonly blogRepository: BlogsRepository,
   ) {}
   async execute(command: BanUnbanUserByBloggerCommand) {
-    const blog: BlogDocument = await this.blogQ.getOneBlog(
+    const blogInfo: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.bloggerBanDto.blogId,
     );
 
-    if (blog.ownerInfo.userId !== command.ownerId) throw new Errors.FORBIDDEN();
+    if (blogInfo[0].OwnerId !== command.ownerId) throw new Errors.FORBIDDEN();
 
-    const user: UserDocument = await this.userQ.getOneUserById(command.userId);
-    if (!user) throw new Errors.NOT_FOUND();
+    const user: any = await this.userQ.getOneUserById(command.userId);
+    if (user.length === 0) throw new Errors.NOT_FOUND();
 
     if (command.bloggerBanDto.isBanned) {
-      const arr: string[] = [];
-      blog.bannedUsersForBlog.forEach((el: BannedUserDto) => {
-        if (el.id == command.userId) {
-          arr.push(el.id);
-        }
-      });
-      if (arr.length > 0) {
-        throw new Errors.NOT_FOUND();
-      }
       const bannedUser: BannedUserDto = {
         id: user.id,
         login: user.accountData.login,
@@ -53,9 +42,9 @@ export class BanUnbanUserByBloggerUseCase
           banDate: new Date().toISOString(),
         },
       };
-      await this.blogRepository.banUserInBlog(blog.id, bannedUser);
+      await this.blogRepository.banUserInBlog(blogInfo[0].Id, bannedUser);
     } else {
-      await this.blogRepository.unbanUserInBlog(blog.id, user.id);
+      await this.blogRepository.unbanUserInBlog(blogInfo[0].Id, user.id);
     }
   }
 }

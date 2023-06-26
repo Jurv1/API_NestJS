@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import {
-  Blog,
-  BlogDocument,
-} from '../../schemas/blogs/schemas/blogs.database.schema';
-import { FilterQuery, Model, SortOrder } from 'mongoose';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { FilterQuery, SortOrder } from 'mongoose';
+import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogWithPaginationDto } from '../../dto/blogs/dto/view/blog.with.pagination.dto';
 
 @Injectable()
-export class BlogQ {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
+export class BlogsQueryRepository {
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
   async getAllBlogs(
     filter: FilterQuery<BlogDocument>,
     sort: { [key: string]: SortOrder },
@@ -20,82 +19,80 @@ export class BlogQ {
       pageNumber: number;
     },
   ): Promise<BlogWithPaginationDto> {
-    const allBlogs: BlogDocument[] = await this.blogModel
-      .find(filter)
-      .sort(sort)
-      .skip(pagination['skipValue'])
-      .limit(pagination['limitValue'])
-      .lean();
-
-    const countDocs = await this.blogModel.countDocuments(filter);
-    const pagesCount = Math.ceil(countDocs / pagination['pageSize']);
-
-    return {
-      pagesCount: pagesCount,
-      page: pagination['pageNumber'],
-      pageSize: pagination['pageSize'],
-      totalCount: countDocs,
-      items: allBlogs,
-    };
-  }
-
-  async getAllBlogsForBlogger(
-    filter: FilterQuery<BlogDocument>,
-    sort: { [key: string]: SortOrder },
-    pagination: {
-      skipValue: number;
-      limitValue: number;
-      pageSize: number;
-      pageNumber: number;
-    },
-  ) {
-    const allBlogs: BlogDocument[] = await this.blogModel
-      .find(filter)
-      .sort(sort)
-      .skip(pagination['skipValue'])
-      .limit(pagination['limitValue'])
-      .lean();
-
-    const countDocs = await this.blogModel.countDocuments(filter);
-    const pagesCount = Math.ceil(countDocs / pagination['pageSize']);
-
-    return {
-      pagesCount: pagesCount,
-      page: pagination['pageNumber'],
-      pageSize: pagination['pageSize'],
-      totalCount: countDocs,
-      items: allBlogs,
-    };
+    return await this.dataSource.query(
+      `
+      SELECT * FROM public."Blogs" 
+      WHERE "IsBanned" = false
+        AND "Name" ILIKE = $1
+      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
+      `,
+      [filter['nameTerm']],
+    );
   }
 
   async getAllBannedUsersForBlogger(blogId: string) {
-    return this.blogModel
-      .findOne({ _id: blogId }, { bannedUsersForBlog: 1 })
-      .lean();
+    return this.dataSource.query(
+      `
+      SELECT 
+        Users."Id",
+        Users."Login",
+        BannedUsers."BanReason",
+        BannedUsers."BanDate"
+      FROM public."BannedUsersByBlogger" AS BannedUsers
+       LEFT JOIN public."Users" AS Users 
+        ON BannedUsers."UserId" = Users."Id"
+      WHERE BannedUsers."BlogId" = $1;
+      `,
+      [blogId],
+    );
   }
 
-  async getSlicedBannedUsers(
-    filter: any,
-    sort: any,
-    from: number,
-    size: number,
-  ): Promise<BlogDocument | null> {
-    return this.blogModel
-      .find(filter, {}, { bannedUsersForBlog: { $slice: [from, size] } })
-      .sort(sort)
-      .limit(size)
-      .lean();
-  }
+  // async getSlicedBannedUsers(
+  //   filter: any,
+  //   sort: any,
+  //   from: number,
+  //   size: number,
+  // ): Promise<BlogDocument | null> {
+  //   return this.blogModel
+  //     .find(filter, {}, { bannedUsersForBlog: { $slice: [from, size] } })
+  //     .sort(sort)
+  //     .limit(size)
+  //     .lean();
+  // }
 
   async getOneBlog(id: string): Promise<BlogDocument | null> {
-    return this.blogModel.findOne({
-      $and: [{ _id: id }, { 'banInfo.isBanned': false }],
-    });
+    return this.dataSource.query(
+      `
+      SELECT * FROM public."Blogs"
+      WHERE "Id" = $1 
+        AND "IsBanned" = false;
+      `,
+      [id],
+    );
+  }
+
+  async getOwnerIdAndBlogIdForBlogger(
+    id: string,
+  ): Promise<BlogDocument | null> {
+    return this.dataSource.query(
+      `
+      SELECT Info."OwnerId", Blogs."Id" FROM public."Blogs" as Blogs
+      LEFT JOIN public."BlogsOwnerInfo" as Info
+        ON Blogs."Id" = Info."BlogId"
+      WHERE Blogs."Id" = $1;
+      `,
+      [id],
+    );
   }
 
   async getOneBlogForAdmin(id: string): Promise<BlogDocument | null> {
-    return this.blogModel.findOne({
-      _id: id,
-    });
+    return this.dataSource.query(
+      `
+      SELECT * FROM public."Blogs"
+      WHERE "Id" = $1;
+      `,
+      [id],
+    );
   }
 }

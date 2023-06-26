@@ -22,7 +22,7 @@ import { PublicPostController } from '../_public/posts.public/posts.public.contr
 import { JwtService } from '@nestjs/jwt';
 import { CreateCommentForPostUseCase } from '../_public/posts.public/use-cases/create.comment.for.post.use-case';
 import { PostService } from '../../application/infrastructure/posts/posts.service';
-import { BlogQ } from '../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import {
   Blog,
   BlogSchema,

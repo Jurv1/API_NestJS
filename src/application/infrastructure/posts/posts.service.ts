@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BlogQ } from '../blogs/blogs.query.repository';
+import { BlogQ } from '../blogs/_MongoDB/blogs.query.repository';
 import { PostsRepository } from './posts.repository';
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { PostQ } from './posts.query.repository';

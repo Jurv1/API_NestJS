@@ -16,7 +16,7 @@ import { filterQueryValid } from '../../../application/utils/sorts/_MongoSorts/q
 import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
-import { BlogQ } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogQ } from '../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogBanBody } from '../../../application/dto/blogs/dto/body/blog.ban.body';
