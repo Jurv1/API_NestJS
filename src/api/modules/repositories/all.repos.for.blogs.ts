@@ -1,4 +1,3 @@
-import { BlogQ } from '../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
-import { BlogsRepository } from '../../../application/infrastructure/blogs/_MongoDB/blogs.repository';
-
-export const allReposForBlogs = [BlogQ, BlogsRepository];
+import { BlogsRepository } from '../../../application/infrastructure/blogs/blogs.repository';
+import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
+export const allReposForBlogs = [BlogsQueryRepository, BlogsRepository];

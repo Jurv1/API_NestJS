@@ -7,6 +7,7 @@ import { makePagination } from '../../../../../../application/utils/make.paggina
 import { UserQ } from '../../../../../../application/infrastructure/users/_MongoDB/users.query.repository';
 import { sortForBannedUsers } from '../../../../../../application/utils/sorts/_MongoSorts/sort.for.banned.users';
 import { BlogsQueryRepository } from '../../../../../../application/infrastructure/blogs/blogs.query.repository';
+import { UsersQueryRepository } from '../../../../../../application/infrastructure/users/users.query.repository';
 
 export class GetAllBannedUsersByBlogIdCommand {
   constructor(
@@ -22,7 +23,7 @@ export class GetAllBannedUsersByBlogIdUseCase
 {
   constructor(
     private readonly blogQ: BlogsQueryRepository,
-    private readonly userQ: UserQ,
+    private readonly userQ: UsersQueryRepository,
   ) {}
   async execute(command: GetAllBannedUsersByBlogIdCommand) {
     const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
@@ -51,25 +52,25 @@ export class GetAllBannedUsersByBlogIdUseCase
       command.query.sortDirection,
     );
 
-    const bannedUsers = await this.userQ.getAllUsersInBannedBlog(
-      filter,
-      sort,
-      pagination,
-    );
-    const bans = [...blog.bannedUsersForBlog];
-    return {
-      pagesCount: Math.ceil(allBannedUsersForBlog.length / pagination.pageSize),
-      page: pagination.pageNumber,
-      pageSize: pagination.pageSize,
-      totalCount: allBannedUsersForBlog.length,
-      items: bannedUsers.map((el) => {
-        const user = bans.find((obj) => obj.id == el._id.toString());
-        return {
-          id: el._id.toString(),
-          login: el.accountData.login,
-          banInfo: user.banInfo,
-        };
-      }),
-    };
+    // const bannedUsers = await this.userQ.getAllUsersInBannedBlog(
+    //   filter,
+    //   sort,
+    //   pagination,
+    // );
+    // const bans = [...blog.bannedUsersForBlog];
+    // return {
+    //   pagesCount: Math.ceil(allBannedUsersForBlog.length / pagination.pageSize),
+    //   page: pagination.pageNumber,
+    //   pageSize: pagination.pageSize,
+    //   totalCount: allBannedUsersForBlog.length,
+    //   items: bannedUsers.map((el) => {
+    //     const user = bans.find((obj) => obj.id == el._id.toString());
+    //     return {
+    //       id: el._id.toString(),
+    //       login: el.accountData.login,
+    //       banInfo: user.banInfo,
+    //     };
+    //   }),
+    // };
   }
 }

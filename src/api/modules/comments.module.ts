@@ -11,7 +11,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CommentService } from '../../application/infrastructure/comments/comments.service';
 import { CommentMapper } from '../../application/utils/mappers/comment.mapper';
 import { JwtService } from '@nestjs/jwt';
-import { PostQ } from '../../application/infrastructure/posts/posts.query.repository';
+import { PostQ } from '../../application/infrastructure/posts/_Mongo/posts.query.repository';
 import { LikesRepository } from '../../application/infrastructure/likes/likes.repository';
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
 import {

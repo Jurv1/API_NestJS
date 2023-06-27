@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogService } from '../../../../../application/infrastructure/blogs/blogs.service';
 import { Errors } from '../../../../../application/utils/handle.error';
-import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
+import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 
 export class DeleteOneBlogCommand {
   constructor(public blogId: string, public userId: string) {}
@@ -18,9 +18,12 @@ export class DeleteOneBlogUseCase
   ) {}
 
   async execute(command: DeleteOneBlogCommand) {
-    const blog: BlogDocument = await this.blogQ.getOneBlog(command.blogId);
-    if (!blog) throw new Errors.NOT_FOUND();
-    if (blog.ownerInfo.userId !== command.userId) throw new Errors.FORBIDDEN();
+    errorIfNan(command.blogId);
+    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+      command.blogId,
+    );
+    if (blog.length === 0) throw new Errors.NOT_FOUND();
+    if (blog[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
     const result: boolean = await this.blogService.deleteOneBlog(
       command.blogId,
     );

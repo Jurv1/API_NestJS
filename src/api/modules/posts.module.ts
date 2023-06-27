@@ -22,11 +22,13 @@ import { PublicPostController } from '../_public/posts.public/posts.public.contr
 import { JwtService } from '@nestjs/jwt';
 import { CreateCommentForPostUseCase } from '../_public/posts.public/use-cases/create.comment.for.post.use-case';
 import { PostService } from '../../application/infrastructure/posts/posts.service';
-import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import {
   Blog,
   BlogSchema,
 } from '../../application/schemas/blogs/schemas/blogs.database.schema';
+import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blogs.query.repository';
+import { PostQ } from '../../application/infrastructure/posts/_Mongo/posts.query.repository';
+import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 
 @Module({
   imports: [
@@ -44,7 +46,9 @@ import {
     ...allReposForPosts,
     CreateCommentForPostUseCase,
     PostService,
+    PostQ,
     BlogQ,
+    BlogsQueryRepository,
     LikesRepository,
     PostMapper,
     CommentMapper,

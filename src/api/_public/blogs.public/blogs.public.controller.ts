@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
-import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
+import { PostQ } from '../../../application/infrastructure/posts/_Mongo/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
 import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
@@ -7,20 +7,19 @@ import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
 import { filterForPublicBlogs } from '../../../application/utils/filters/_MongoFilters/filter.for.public.blogs';
-import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetAllBlogsQueryCommand } from './use-cases/query.use-cases/get.all.blogs.use-case';
 import { GetOneBlogQueryCommand } from './use-cases/query.use-cases/get.one.blog.use-case';
+import { PostsQueryRepository } from '../../../application/infrastructure/posts/posts.query.repository';
 
 @Controller('blogs')
 export class PublicBlogController {
   constructor(
     private readonly queryBus: QueryBus,
     protected blogQ: BlogsQueryRepository,
-    protected postQ: PostQ,
+    protected postQ: PostsQueryRepository,
     private readonly jwtService: JwtService,
-    private readonly blogMapper: BlogMapper,
   ) {}
   @Get()
   async getAll(@Query() query?: BlogQueryParams) {

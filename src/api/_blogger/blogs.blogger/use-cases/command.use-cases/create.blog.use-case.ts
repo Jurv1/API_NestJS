@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogService } from '../../../../../application/infrastructure/blogs/blogs.service';
 import { Errors } from '../../../../../application/utils/handle.error';
 import { UserIdAndLogin } from '../../../../_public/auth/dto/user-id.and.login';
+import { BlogMapper } from '../../../../../application/utils/mappers/blog.mapper';
 
 export class CreateBlogCommand {
   constructor(
@@ -14,7 +15,10 @@ export class CreateBlogCommand {
 
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
-  constructor(private readonly blogService: BlogService) {}
+  constructor(
+    private readonly blogService: BlogService,
+    private readonly blogMapper: BlogMapper,
+  ) {}
   async execute(command: CreateBlogCommand) {
     const result: any = await this.blogService.createOneBlog(
       command.name,

@@ -35,6 +35,7 @@ import { CommentsWithPagination } from '../../../application/dto/comments/dto/co
 import { CommentMapper } from '../../../application/utils/mappers/comment.mapper';
 import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
 import { GetAllBlogsForBloggerQueryCommand } from './use-cases/query.use-cases/get.all.blogs.for.blogger.query.use-case';
+import { sortingForUsersByAdmin } from '../../../application/utils/sorts/sorting.for.blogs';
 
 @Controller('blogger/blogs')
 export class BloggerBlogController {
@@ -56,7 +57,10 @@ export class BloggerBlogController {
 
     const filter: FilterQuery<BlogDocument> =
       filterForPublicBlogs(searchNameTerm);
-    const sort = queryValidator(sortBy, sortDirection);
+    const sort: { [key: string]: string } = sortingForUsersByAdmin(
+      sortBy,
+      sortDirection,
+    );
     const pagination = makePagination(pageNumber, pageSize);
 
     return await this.queryBus.execute(

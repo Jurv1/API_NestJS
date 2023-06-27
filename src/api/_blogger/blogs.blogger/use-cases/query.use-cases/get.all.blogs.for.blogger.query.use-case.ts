@@ -8,7 +8,7 @@ import { paginator } from '../../../../../application/utils/paginator/paginator'
 export class GetAllBlogsForBloggerQueryCommand {
   constructor(
     public filter: FilterQuery<BlogDocument>,
-    public sort: { [key: string]: SortOrder },
+    public sort: { [key: string]: string },
     public pagination: {
       skipValue: number;
       limitValue: number;
@@ -42,7 +42,7 @@ export class GetAllBlogsForBloggerQueryUseCase
     );
 
     return paginator(
-      countedBlogs,
+      +countedBlogs,
       command.pagination.pageSize,
       command.pagination.pageNumber,
       mappedBlogsForBlogger,

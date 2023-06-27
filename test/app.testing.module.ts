@@ -26,8 +26,8 @@ import { PostService } from '../src/application/infrastructure/posts/posts.servi
 import { UsersService } from '../src/application/infrastructure/users/users.service';
 import { BlogsRepository } from '../src/application/infrastructure/blogs/_MongoDB/blogs.repository';
 import { BlogQ } from '../src/application/infrastructure/blogs/_MongoDB/blogs.query.repository';
-import { PostsRepository } from '../src/application/infrastructure/posts/posts.repository';
-import { PostQ } from '../src/application/infrastructure/posts/posts.query.repository';
+import { PostsRepository } from '../src/application/infrastructure/posts/_Mongo/posts.repository';
+import { PostQ } from '../src/application/infrastructure/posts/_Mongo/posts.query.repository';
 import { UsersRepository } from '../src/application/infrastructure/users/_MongoDB/users.repository';
 import { UserQ } from '../src/application/infrastructure/users/_MongoDB/users.query.repository';
 import { CommentQ } from '../src/application/infrastructure/comments/comments.query.repository';

@@ -1,5 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { configForTypeOrm } from '../../src/application/config/config.for.type-orm';
+import {
+  configForTypeOrm,
+  defaultTypeOrm,
+} from '../../src/application/config/config.for.type-orm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppModule } from '../../src/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -11,7 +14,7 @@ import { useContainer } from 'class-validator';
 
 export async function createAndGetApp() {
   const testingModule = await Test.createTestingModule({
-    imports: [TypeOrmModule.forRoot(configForTypeOrm), AppModule],
+    imports: [TypeOrmModule.forRoot(defaultTypeOrm), AppModule],
   }).compile();
 
   const app: INestApplication = testingModule.createNestApplication();

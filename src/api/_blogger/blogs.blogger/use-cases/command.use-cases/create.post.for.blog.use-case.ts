@@ -7,6 +7,8 @@ import { PostViewModel } from '../../../../../application/schemas/posts/schemas/
 import { UserIdAndLogin } from '../../../../_public/auth/dto/user-id.and.login';
 import { BlogQ } from '../../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
+import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 export class CreatePostForBlogCommand {
   constructor(
     public title: string,
@@ -24,22 +26,25 @@ export class CreatePostForBlogUseCase
   constructor(
     private readonly postService: PostService,
     private readonly postMapper: PostMapper,
-    private readonly blogQ: BlogQ,
+    private readonly blogQ: BlogsQueryRepository,
   ) {}
 
   async execute(command: CreatePostForBlogCommand): Promise<PostViewModel> {
-    const blog: BlogDocument = await this.blogQ.getOneBlog(command.blogId);
-    if (!blog) throw new Errors.NOT_FOUND();
-    if (blog.ownerInfo.userId !== command.userData.userId)
+    errorIfNan(command.blogId);
+    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+      command.blogId,
+    );
+    if (blog.length === 0) throw new Errors.NOT_FOUND();
+    if (blog[0].OwnerId !== command.userData.userId)
       throw new Errors.FORBIDDEN();
-    const result: PostDocument = await this.postService.createOnePost(
+    const result: any = await this.postService.createOnePost(
       command.title,
       command.shortDescription,
       command.content,
       command.blogId,
       command.userData,
     );
-    if (!result) throw new Errors.NOT_FOUND();
+    if (result.length === 0) throw new Errors.NOT_FOUND();
     return await this.postMapper.mapPost(result);
   }
 }

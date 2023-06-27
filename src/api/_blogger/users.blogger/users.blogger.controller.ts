@@ -22,17 +22,17 @@ export class UsersBloggerController {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
   ) {}
-  @UseGuards(JwtAuthGuard)
-  @Get('blog/:id')
-  async getAllBannedUsersForBlog(
-    @Query() query: QueryForBannedUsers,
-    @Param('id') id: string,
-    @CurrentUserId() userId: string,
-  ) {
-    return await this.queryBus.execute(
-      new GetAllBannedUsersByBlogIdCommand(query, userId, id),
-    );
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('blog/:id')
+  // async getAllBannedUsersForBlog(
+  //   @Query() query: QueryForBannedUsers,
+  //   @Param('id') id: string,
+  //   @CurrentUserId() userId: string,
+  // ) {
+  //   return await this.queryBus.execute(
+  //     new GetAllBannedUsersByBlogIdCommand(query, userId, id),
+  //   );
+  // }
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)

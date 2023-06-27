@@ -12,7 +12,7 @@ export class PostMapper {
   ) {}
 
   async mapPost(obj: PostDocument, userId?: string): Promise<PostViewModel> {
-    const postId = obj._id.toString();
+    const postId = obj[0].Id.toString();
     let like: LikeDocument | null;
     let userStatus: string | undefined = 'None';
     const allLikes = await this.likesRepo.countAllLikesForPostOrComment(postId);
@@ -31,19 +31,19 @@ export class PostMapper {
     );
     const newestLikes: NewestLike[] = mapLikes(lastThreeLikes);
     return {
-      id: obj._id.toString(),
-      title: obj.title,
-      shortDescription: obj.shortDescription,
-      content: obj.content,
-      blogId: obj.blogId,
-      blogName: obj.blogName,
+      id: obj[0].Id.toString(),
+      title: obj[0].Title,
+      shortDescription: obj[0].ShortDescription,
+      content: obj[0].Content,
+      blogId: obj[0].BlogId.toString(),
+      blogName: obj[0].BlogName,
       extendedLikesInfo: {
         likesCount: allLikes,
         dislikesCount: allDislikes,
         myStatus: userStatus || 'None',
         newestLikes: newestLikes || [],
       },
-      createdAt: obj.createdAt,
+      createdAt: obj[0].CreatedAt,
     };
   }
 

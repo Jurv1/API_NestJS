@@ -38,12 +38,15 @@ import {
   Like,
   LikeSchema,
 } from './application/schemas/likes/schemas/like.database.schema';
-import { configForTypeOrm } from './application/config/config.for.type-orm';
+import {
+  configForTypeOrm,
+  defaultTypeOrm,
+} from './application/config/config.for.type-orm';
 
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot(configForTypeOrm),
+    TypeOrmModule.forRoot(defaultTypeOrm),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },

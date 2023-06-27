@@ -10,7 +10,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { PostQ } from '../../../application/infrastructure/posts/posts.query.repository';
 import { JwtService } from '@nestjs/jwt';
 import { PostMapper } from '../../../application/utils/mappers/post.mapper';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
@@ -27,13 +26,14 @@ import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateCommentForPostCommand } from './use-cases/create.comment.for.post.use-case';
 import { LikeCommentOrPostCommand } from '../comments.public/use-cases/like.comment.use-case';
-import { BlogQ } from '../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
+import { PostsQueryRepository } from '../../../application/infrastructure/posts/posts.query.repository';
+import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
 
 @Controller('posts')
 export class PublicPostController {
   constructor(
-    protected postQ: PostQ,
-    private readonly blogQ: BlogQ,
+    protected postQ: PostsQueryRepository,
+    private readonly blogQ: BlogsQueryRepository,
     private readonly jwtService: JwtService,
     private readonly postMapper: PostMapper,
     private readonly commandBus: CommandBus,
@@ -115,13 +115,13 @@ export class PublicPostController {
       if (payload) {
         userId = payload.userId;
       }
-      const allComments = await this.postQ.getAllCommentsByPostId(
-        id,
-        sort,
-        pagination,
-        userId,
-      );
-      if (allComments.items.length !== 0) return allComments;
+      // const allComments = await this.postQ.getAllCommentsByPostId(
+      //   id,
+      //   sort,
+      //   pagination,
+      //   userId,
+      // );
+      // if (allComments.items.length !== 0) return allComments;
       throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);

@@ -46,7 +46,7 @@ export class BlogsQueryRepository {
 
   async getAllBlogsForBlogger(
     filter: FilterQuery<BlogDocument>,
-    sort: { [key: string]: SortOrder },
+    sort: { [key: string]: string },
     pagination: {
       skipValue: number;
       limitValue: number;
@@ -60,8 +60,8 @@ export class BlogsQueryRepository {
       SELECT * FROM public."Blogs" AS Blogs
       LEFT JOIN public."BlogsOwnerInfo" AS Info 
         ON Blogs."Id" = Info."BlogId"
-      WHERE "Name" = $1
-        AND Info."UserId" = $2
+      WHERE "Name" ILIKE $1
+        AND Info."OwnerId" = $2
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -78,8 +78,8 @@ export class BlogsQueryRepository {
       SELECT COUNT(*) FROM public."Blogs" AS Blogs
       LEFT JOIN public."BlogsOwnerInfo" AS Info 
         ON Blogs."Id" = Info."BlogId"
-      WHERE Info."UserId" = $1
-        AND "Name" ILIKE = $2;
+      WHERE Info."OwnerId" = $1
+        AND "Name" ILIKE $2;
       `,
       [userId, filter['nameTerm']],
     );

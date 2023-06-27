@@ -33,14 +33,11 @@ import { UsersService } from '../../application/infrastructure/users/users.servi
 import { MailService } from '../../mail/mail.service';
 import { UsersBloggerController } from '../_blogger/users.blogger/users.blogger.controller';
 import { allUserBloggerUseCases } from './use-cases/blogger/all.user-blogger.use-cases';
-import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
-import { BlogsRepository } from '../../application/infrastructure/blogs/_MongoDB/blogs.repository';
+import { BlogsRepository } from '../../application/infrastructure/blogs/blogs.repository';
+import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blogs.query.repository';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
     MongooseModule.forFeature([
       { name: DBComment.name, schema: CommentSchema },
@@ -54,7 +51,7 @@ import { BlogsRepository } from '../../application/infrastructure/blogs/_MongoDB
     ...allReposForUserModule,
     ...allUserBloggerUseCases,
     UserMapper,
-    BlogQ,
+    BlogsQueryRepository,
     BlogsRepository,
     UsersService,
     MailService,

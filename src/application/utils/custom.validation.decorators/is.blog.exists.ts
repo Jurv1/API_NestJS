@@ -7,14 +7,16 @@ import {
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 import { BlogQ } from '../../infrastructure/blogs/_MongoDB/blogs.query.repository';
+import { BlogsQueryRepository } from '../../infrastructure/blogs/blogs.query.repository';
 
 @ValidatorConstraint({ name: 'IsBlogExists', async: true })
 @Injectable()
 export class IsBlogExists implements ValidatorConstraintInterface {
-  constructor(private readonly blogQ: BlogQ) {}
+  constructor(private readonly blogQ: BlogsQueryRepository) {}
   async validate(blogId: string) {
     const result = await this.blogQ.getOneBlog(blogId);
-    return !!result;
+    if (result.length === 0) return true;
+    //return !!result;
   }
 
   defaultMessage(args: ValidationArguments) {

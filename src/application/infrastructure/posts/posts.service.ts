@@ -1,8 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { BlogQ } from '../blogs/_MongoDB/blogs.query.repository';
-import { PostsRepository } from './posts.repository';
-import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
-import { PostQ } from './posts.query.repository';
 import { PostUpdateBody } from '../../dto/posts/dto/post.update.body';
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../utils/handle.error';
@@ -15,13 +11,16 @@ import { CommentCreatingDto } from '../../dto/comments/dto/comment.creating.dto'
 import { InjectModel } from '@nestjs/mongoose';
 import { UserIdAndLogin } from '../../../api/_public/auth/dto/user-id.and.login';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
+import { BlogsQueryRepository } from '../blogs/blogs.query.repository';
+import { PostsRepository } from './posts.repository';
+import { PostsQueryRepository } from './posts.query.repository';
 
 @Injectable()
 export class PostService {
   constructor(
-    protected readonly blogQ: BlogQ,
+    protected readonly blogQ: BlogsQueryRepository,
     protected readonly postsRepository: PostsRepository,
-    protected readonly postQ: PostQ,
+    protected readonly postQ: PostsQueryRepository,
     @InjectModel(DBComment.name)
     private readonly commentModel: CommentModelType,
   ) {}
@@ -32,10 +31,10 @@ export class PostService {
     blogId: string,
     userData: UserIdAndLogin,
   ): Promise<PostDocument | null> {
-    const foundedEl: BlogDocument = await this.blogQ.getOneBlog(blogId);
+    const foundedEl: any = await this.blogQ.getOneBlog(blogId);
 
-    if (foundedEl) {
-      const blogName: string = foundedEl.name;
+    if (foundedEl.length > 0) {
+      const blogName: string = foundedEl[0].Name;
       const postDto: PostCreationDto = {
         title: title,
         shortDescription: shortDescription,
@@ -67,19 +66,13 @@ export class PostService {
     content: string,
     blogId: string,
   ): Promise<boolean> {
-    const foundedPost: PostDocument = await this.postQ.getOnePost(id);
-
-    if (!foundedPost) return false;
     const postUpdateBody: PostUpdateBody = {
       title: title,
       shortDescription: shortDescription,
       content: content,
       blogId: blogId,
     };
-    await foundedPost.updatePost(postUpdateBody);
-    await foundedPost.save();
-
-    return true;
+    return await this.postsRepository.updatePost(id, postUpdateBody);
   }
 
   async deleteOnePost(id: string): Promise<boolean> {

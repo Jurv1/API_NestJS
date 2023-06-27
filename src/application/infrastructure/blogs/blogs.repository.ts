@@ -13,7 +13,7 @@ export class BlogsRepository {
   async createOne(blogDto: BlogCreationDto): Promise<any | null> {
     const createdBlog: BlogDocument = await this.dataSource.query(
       `
-      INSERT INTO public."Blog" (
+      INSERT INTO public."Blogs" (
         "Name",
         "Description",
         "WebsiteUrl",

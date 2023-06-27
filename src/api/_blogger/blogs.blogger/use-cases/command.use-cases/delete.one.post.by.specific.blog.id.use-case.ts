@@ -1,8 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../../../../application/infrastructure/posts/posts.repository';
-import { PostQ } from '../../../../../application/infrastructure/posts/posts.query.repository';
 import { PostDocument } from '../../../../../application/schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../../../../application/utils/handle.error';
+import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
+import { PostsRepository } from '../../../../../application/infrastructure/posts/posts.repository';
+import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 
 export class DeleteOnePostBySpecificBlogIdCommand {
   constructor(
@@ -17,17 +18,18 @@ export class DeleteOnePostBySpecificBlogIdUseCase
   implements ICommandHandler<DeleteOnePostBySpecificBlogIdCommand>
 {
   constructor(
-    private readonly postQ: PostQ,
+    private readonly postQ: PostsQueryRepository,
     private readonly postRepository: PostsRepository,
   ) {}
   async execute(
     command: DeleteOnePostBySpecificBlogIdCommand,
   ): Promise<boolean> {
-    const post: PostDocument = await this.postQ.getOnePostByPostAndBlogIds(
+    errorIfNan(command.postId, command.blogId);
+    const post: any = await this.postQ.getOnePostByPostAndBlogIds(
       command.postId,
       command.blogId,
     );
-    if (!post) throw new Errors.NOT_FOUND();
+    if (post.length === 0) throw new Errors.NOT_FOUND();
     if (post.ownerInfo.userId !== command.userId) throw new Errors.FORBIDDEN();
     return await this.postRepository.deleteOnePostBySpecificBlogId(
       command.postId,
