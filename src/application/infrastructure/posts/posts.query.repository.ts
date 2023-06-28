@@ -1,13 +1,14 @@
 import { DataSource } from 'typeorm';
 import { SortOrder } from 'mongoose';
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 export class PostsQueryRepository {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async getAllPosts(
-    filter: Document,
-    sort: { [key: string]: SortOrder },
+    filter: { [key: string]: string | boolean },
+    sort: { [key: string]: string },
     pagination: {
       skipValue: number;
       limitValue: number;
@@ -26,7 +27,17 @@ export class PostsQueryRepository {
     );
   }
 
-  async getOnePost(id: string): Promise<PostDocument | null> {
+  async countAllPosts(): Promise<number> {
+    const count = await this.dataSource.query(
+      `
+      SELECT COUNT(*) FROM public."Posts";
+      `,
+    );
+
+    return count[0].count;
+  }
+
+  async getOnePost(id: string): Promise<any | null> {
     return this.dataSource.query(
       `
       SELECT * FROM public."Posts"

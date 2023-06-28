@@ -53,7 +53,7 @@ export class PostMapper {
 
     return await Promise.all(
       objs.map(async (el) => {
-        const postId = el._id.toString();
+        const postId = el.Id.toString();
         const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
           postId,
         );
@@ -73,11 +73,11 @@ export class PostMapper {
         const newestLikes: NewestLike[] = mapLikes(lastThreeLikes);
         return {
           id: postId,
-          title: el.title,
-          shortDescription: el.shortDescription,
-          content: el.content,
-          blogId: el.blogId,
-          blogName: el.blogName,
+          title: el.Title,
+          shortDescription: el.ShortDescription,
+          content: el.Content,
+          blogId: el.BlogId.toString(),
+          blogName: el.BlogName,
           extendedLikesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,

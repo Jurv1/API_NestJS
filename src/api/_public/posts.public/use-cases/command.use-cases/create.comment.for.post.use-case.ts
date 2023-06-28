@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostService } from '../../../../application/infrastructure/posts/posts.service';
-import { CommentMapper } from '../../../../application/utils/mappers/comment.mapper';
-import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
-import { Errors } from '../../../../application/utils/handle.error';
-import { PostQ } from '../../../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
-import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { BlogQ } from '../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
-import { BannedUserDto } from '../../../../application/dto/blogs/dto/banned.user.dto';
+import { PostService } from '../../../../../application/infrastructure/posts/posts.service';
+import { CommentMapper } from '../../../../../application/utils/mappers/comment.mapper';
+import { CommentDocument } from '../../../../../application/schemas/comments/schemas/comments.database.schema';
+import { Errors } from '../../../../../application/utils/handle.error';
+import { PostQ } from '../../../../../application/infrastructure/posts/_Mongo/posts.query.repository';
+import { PostDocument } from '../../../../../application/schemas/posts/schemas/posts.database.schema';
+import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
+import { BlogQ } from '../../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
+import { BannedUserDto } from '../../../../../application/dto/blogs/dto/banned.user.dto';
 
 export class CreateCommentForPostCommand {
   constructor(

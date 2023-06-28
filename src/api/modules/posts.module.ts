@@ -20,7 +20,7 @@ import {
 } from '../../application/schemas/likes/schemas/like.database.schema';
 import { PublicPostController } from '../_public/posts.public/posts.public.controller';
 import { JwtService } from '@nestjs/jwt';
-import { CreateCommentForPostUseCase } from '../_public/posts.public/use-cases/create.comment.for.post.use-case';
+import { CreateCommentForPostUseCase } from '../_public/posts.public/use-cases/command.use-cases/create.comment.for.post.use-case';
 import { PostService } from '../../application/infrastructure/posts/posts.service';
 import {
   Blog,

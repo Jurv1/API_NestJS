@@ -14,7 +14,6 @@ import { JwtService } from '@nestjs/jwt';
 import { PostMapper } from '../../../application/utils/mappers/post.mapper';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
 import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
-import { filterQueryValid } from '../../../application/utils/sorts/_MongoSorts/query.validator';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { PostDocument } from '../../../application/schemas/posts/schemas/posts.database.schema';
@@ -23,11 +22,16 @@ import { ContentDto } from '../../../application/dto/comments/dto/content.dto';
 import { CurrentUserIdAndLogin } from '../auth/decorators/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { LikeBody } from '../../../application/dto/likes/dto/like.body';
-import { CommandBus } from '@nestjs/cqrs';
-import { CreateCommentForPostCommand } from './use-cases/create.comment.for.post.use-case';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateCommentForPostCommand } from './use-cases/command.use-cases/create.comment.for.post.use-case';
 import { LikeCommentOrPostCommand } from '../comments.public/use-cases/like.comment.use-case';
 import { PostsQueryRepository } from '../../../application/infrastructure/posts/posts.query.repository';
 import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
+import { ultimateSort } from '../../../application/utils/sorts/ultimate.sort';
+import { EnumForPosts } from '../../../application/enums/enum.for.posts';
+import { GetAllPostsQueryCommand } from './use-cases/query.use-cases/get.all.posts.query.use-case';
+import { GetOnePostQueryCommand } from './use-cases/query.use-cases/get.one.post.query.use-case';
 
 @Controller('posts')
 export class PublicPostController {
@@ -37,6 +41,7 @@ export class PublicPostController {
     private readonly jwtService: JwtService,
     private readonly postMapper: PostMapper,
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Get()
@@ -44,8 +49,8 @@ export class PublicPostController {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
-    const sort = queryValidator(sortBy, sortDirection);
-    const filter = filterQueryValid(searchNameTerm);
+    const sort = ultimateSort(sortBy, sortDirection, EnumForPosts);
+    const filter = filterForPublicBlogs(searchNameTerm);
     const pagination = makePagination(pageNumber, pageSize);
 
     let userId = null;
@@ -59,7 +64,9 @@ export class PublicPostController {
       if (payload) {
         userId = payload.userId;
       }
-      return await this.postQ.getAllPosts(filter, sort, pagination, userId);
+      return await this.queryBus.execute(
+        new GetAllPostsQueryCommand(filter, sort, pagination, userId),
+      );
     } catch (err) {
       console.log(err);
       throw new Errors.BAD_REQUEST();
@@ -78,19 +85,12 @@ export class PublicPostController {
       if (payload) {
         userId = payload.userId;
       }
-
-      const result: PostDocument = await this.postQ.getOnePost(id);
-      if (result) {
-        const blog = await this.blogQ.getOneBlog(result.blogId);
-        if (!blog) throw new Errors.NOT_FOUND();
-        return await this.postMapper.mapPost(result, userId);
-      } else {
-        throw new Errors.NOT_FOUND();
-      }
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
     }
+
+    return await this.queryBus.execute(new GetOnePostQueryCommand(id, userId));
   }
 
   @Get(':id/comments')
