@@ -88,7 +88,17 @@ export class BlogsQueryRepository {
     return result[0].count;
   }
 
-  async getAllBannedUsersForBlogger(blogId: string) {
+  async getAllBannedUsersForBlogger(
+    filter: { [key: string]: string | boolean },
+    sort: { [key: string]: string },
+    pagination: {
+      skipValue: number;
+      limitValue: number;
+      pageSize: number;
+      pageNumber: number;
+    },
+    blogId: string,
+  ) {
     return this.dataSource.query(
       `
       SELECT 
@@ -99,10 +109,32 @@ export class BlogsQueryRepository {
       FROM public."BannedUsersByBlogger" AS BannedUsers
        LEFT JOIN public."Users" AS Users 
         ON BannedUsers."UserId" = Users."Id"
-      WHERE BannedUsers."BlogId" = $1;
+      WHERE BannedUsers."BlogId" = $1
+        AND Users."Login" ILIKE $2
+      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
-      [blogId],
+      [blogId, filter['loginTerm']],
     );
+  }
+
+  async countAllBannedUsers(
+    filter: { [key: string]: string | boolean },
+    blogId: string,
+  ) {
+    const counts = await this.dataSource.query(
+      `
+      SELECT COUNT(*)
+      FROM public."BannedUsersByBlogger" AS BannedUsers
+       LEFT JOIN public."Users" AS Users 
+        ON BannedUsers."UserId" = Users."Id"
+      WHERE BannedUsers."BlogId" = $1
+        AND Users."Login" ILIKE $2
+      `,
+      [blogId, filter['loginTerm']],
+    );
+
+    return counts[0].count;
   }
 
   // async getSlicedBannedUsers(

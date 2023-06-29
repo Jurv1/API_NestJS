@@ -31,4 +31,18 @@ export class UserMapper {
       };
     });
   }
+
+  mapUsersForBlogger(objs: any): any {
+    return objs.map((el) => {
+      return {
+        id: el.Id.toString(),
+        login: el.Login,
+        banInfo: {
+          isBanned: el.IsBanned,
+          banDate: el.BanDate,
+          banReason: el.BanReason,
+        },
+      };
+    });
+  }
 }

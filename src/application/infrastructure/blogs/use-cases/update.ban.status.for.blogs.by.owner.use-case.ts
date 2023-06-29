@@ -11,10 +11,12 @@ export class UpdateBanStatusForBlogsByOwnerUseCase
 {
   constructor(private readonly blogRepository: BlogsRepository) {}
   async execute(command: UpdateBanStatusForBlogsByOwnerCommand) {
-    // return await this.blogRepository.updateBanStatusForBlogsByOwnerId(
-    //   command.userId,
-    //   command.banStatus,
-    // );
+    await this.blogRepository.updateBanStatusForBlogsByOwnerId(command.userId);
+
+    await this.blogRepository.updateIsBannedForBlog(
+      command.userId,
+      command.banStatus,
+    );
     return true;
   }
 }

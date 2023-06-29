@@ -88,17 +88,16 @@ export class PostsRepository {
     return result[1] === 1;
   }
 
-  // async updateBanStatusForPostByOwnerId(userId: string, banStatus: boolean) {
-  //   await this.dataSource.query(
-  //     `
-  //     UPDATE public."Posts"
-  //     SET "UserStatus" = $1
-  //     `,
-  //   );
-  //
-  //   return this.postModel.updateMany(
-  //     { 'ownerInfo.userId': userId },
-  //     { $set: { isUserBanned: banStatus } },
-  //   );
-  // }
+  async updateBanStatusForPostByOwnerId(banStatus: boolean) {
+    await this.dataSource.query(
+      `
+      UPDATE public."Posts" AS Posts
+      SET "UserStatus" = $1
+      LEFT JOIN public."Blogs" AS Blogs
+        ON Posts."BlogId" = Blogs."Id"
+      WHERE Blogs."IsBanned" = $1;
+      `,
+      [banStatus],
+    );
+  }
 }

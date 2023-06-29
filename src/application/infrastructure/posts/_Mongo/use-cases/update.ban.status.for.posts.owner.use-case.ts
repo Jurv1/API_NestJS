@@ -12,10 +12,9 @@ export class UpdateBanStatusForPostsOwnerUseCase
   constructor(private readonly postRepository: PostsRepository) {}
 
   async execute(command: UpdateBanStatusForPostsOwnerCommand) {
+    await this.postRepository.updateBanStatusForPostByOwnerId(
+      command.banStatus,
+    );
     return true;
-    // await this.postRepository.updateBanStatusForPostByOwnerId(
-    //   command.userId,
-    //   command.banStatus,
-    // );
   }
 }
