@@ -1,7 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostDocument } from '../../../../../application/schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../../../../application/utils/handle.error';
-import { PostUpdateBody } from '../../../../../application/dto/posts/dto/post.update.body';
 import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
 import { PostService } from '../../../../../application/infrastructure/posts/posts.service';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';

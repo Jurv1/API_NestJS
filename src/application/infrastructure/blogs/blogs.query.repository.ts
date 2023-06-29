@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { FilterQuery, SortOrder } from 'mongoose';
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogWithPaginationDto } from '../../dto/blogs/dto/view/blog.with.pagination.dto';
 
@@ -10,7 +9,7 @@ export class BlogsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async getAllBlogs(
-    filter: FilterQuery<BlogDocument>,
+    filter: { [key: string]: string | boolean },
     sort: { [key: string]: string },
     pagination: {
       skipValue: number;
@@ -31,7 +30,9 @@ export class BlogsQueryRepository {
     );
   }
 
-  async countAllBlogs(filter: FilterQuery<BlogDocument>): Promise<number> {
+  async countAllBlogs(filter: {
+    [key: string]: string | boolean;
+  }): Promise<number> {
     const result = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."Blogs"
@@ -45,7 +46,7 @@ export class BlogsQueryRepository {
   }
 
   async getAllBlogsForBlogger(
-    filter: FilterQuery<BlogDocument>,
+    filter: { [key: string]: string | boolean },
     sort: { [key: string]: string },
     pagination: {
       skipValue: number;
@@ -70,7 +71,7 @@ export class BlogsQueryRepository {
   }
 
   async countBlogsForBlogger(
-    filter: FilterQuery<BlogDocument>,
+    filter: { [key: string]: string | boolean },
     userId: string,
   ) {
     const result = await this.dataSource.query(

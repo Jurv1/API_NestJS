@@ -1,5 +1,4 @@
 import { DataSource } from 'typeorm';
-import { SortOrder } from 'mongoose';
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { InjectDataSource } from '@nestjs/typeorm';
 

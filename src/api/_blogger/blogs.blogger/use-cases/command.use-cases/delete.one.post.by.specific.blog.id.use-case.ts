@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostDocument } from '../../../../../application/schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../../../../application/utils/handle.error';
 import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
 import { PostsRepository } from '../../../../../application/infrastructure/posts/posts.repository';

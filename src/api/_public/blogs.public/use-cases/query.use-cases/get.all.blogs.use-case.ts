@@ -2,12 +2,10 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BlogMapper } from '../../../../../application/utils/mappers/blog.mapper';
 import { paginator } from '../../../../../application/utils/paginator/paginator';
-import { FilterQuery, SortOrder } from 'mongoose';
-import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 
 export class GetAllBlogsQueryCommand {
   constructor(
-    public filter: FilterQuery<BlogDocument>,
+    public filter: { [key: string]: string | boolean },
     public sort: { [key: string]: string },
     public pagination: {
       skipValue: number;
