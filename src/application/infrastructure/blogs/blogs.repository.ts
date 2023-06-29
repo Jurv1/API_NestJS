@@ -5,6 +5,7 @@ import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
 import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
+import { BanInfo } from '../../schemas/users/schemas/ban.info.schema';
 
 @Injectable()
 export class BlogsRepository {
@@ -59,6 +60,37 @@ export class BlogsRepository {
     return result[1] === 1;
   }
 
+  async updateBanInfoForBlogs(blogId: string, isBanned: boolean) {
+    await this.dataSource.query(
+      `
+      UPDATE public."Blogs"
+      SET "IsBanned" = $1
+      WHERE "Id" = $2;
+      `,
+      [blogId, isBanned],
+    );
+  }
+
+  async addBlogToBan(blogId: string) {
+    await this.dataSource.query(
+      `
+      INSERT INTO public."BlogsBansByAdmin" ("BlogId", "BanDate")
+      VALUES  ($1, $2);
+      `,
+      [blogId, new Date().toISOString()],
+    );
+  }
+
+  async removeBlogToBan(blogId: string) {
+    await this.dataSource.query(
+      `
+      DELETE FROM public."BlogsBansByAdmin"
+      WHERE "BlogId" = $1;
+      `,
+      [blogId],
+    );
+  }
+
   async deleteOne(id: string): Promise<boolean> {
     const result = await this.dataSource.query(
       `
@@ -69,6 +101,16 @@ export class BlogsRepository {
     );
 
     return result[1] === 1;
+  }
+
+  async bindUser(userId: number, userLogin: string, blogId: number) {
+    return await this.dataSource.query(
+      `
+      INSERT INTO public."BlogsOwnerInfo" ("OwnerId", "UserLogin", "BlogId")
+      VALUES ($1, $2, $3) 
+      `,
+      [userId, userLogin, blogId],
+    );
   }
 
   async updateBanStatusForBlogsByOwnerId(blogId: string) {

@@ -12,7 +12,6 @@ import { AdminAuthGuard } from '../../_public/auth/guards/admin-auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogToUserCommand } from './use-cases/bind.blog.to.user.use-case';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
-import { filterQueryValid } from '../../../application/utils/sorts/_MongoSorts/query.validator';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
@@ -22,6 +21,7 @@ import { BanUnbanBlogByIdCommand } from './use-cases/ban.unban.blog.by.id.use-ca
 import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { ultimateSort } from '../../../application/utils/sorts/ultimate.sort';
 import { EnumForBlogs } from '../../../application/enums/emun.for.blogs';
+import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
 
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {
@@ -36,7 +36,7 @@ export class SuperAdminBlogsController {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       query;
 
-    const filter = filterQueryValid(searchNameTerm);
+    const filter = filterForPublicBlogs(searchNameTerm);
     const sort = ultimateSort(sortBy, sortDirection, EnumForBlogs);
     const pagination = makePagination(pageNumber, pageSize);
 

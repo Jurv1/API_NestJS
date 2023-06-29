@@ -4,25 +4,33 @@ import { BlogQ } from '../../../../application/infrastructure/blogs/_MongoDB/blo
 import { BlogDocument } from '../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';
 import { UserDocument } from '../../../../application/schemas/users/schemas/users.database.schema';
+import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
+import { BlogsQueryRepository } from '../../../../application/infrastructure/blogs/blogs.query.repository';
+import { BlogService } from '../../../../application/infrastructure/blogs/blogs.service';
 
 export class BindBlogToUserCommand {
-  constructor(public blogId: string, public UserId: string) {}
+  constructor(public blogId: string, public userId: string) {}
 }
 
 @CommandHandler(BindBlogToUserCommand)
 export class BindBlogToUserUseCase
   implements ICommandHandler<BindBlogToUserCommand>
 {
-  constructor(private readonly userQ: UserQ, private readonly blogQ: BlogQ) {}
+  constructor(
+    private readonly userQ: UsersQueryRepository,
+    private readonly blogQ: BlogsQueryRepository,
+    private readonly blogService: BlogService,
+  ) {}
 
   async execute(command: BindBlogToUserCommand) {
-    const blog: BlogDocument = await this.blogQ.getOneBlog(command.blogId);
-    if (!blog) throw new Errors.NOT_FOUND();
-    if (blog.ownerInfo.userId) throw new Errors.BAD_REQUEST();
-    const user: UserDocument = await this.userQ.getOneUserById(command.UserId);
-    if (!user) throw new Errors.NOT_FOUND();
-    await blog.bindUser(user.id, user.accountData.login);
-    await blog.save();
+    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+      command.blogId,
+    );
+    if (blog.length === 0) throw new Errors.NOT_FOUND();
+    if (blog[0].OwnerId) throw new Errors.BAD_REQUEST();
+    const user: any = await this.userQ.getOneUserById(command.userId);
+    if (user.length === 0) throw new Errors.NOT_FOUND();
+    await this.blogService.bindUser(user[0].Id, user[0].Login, blog[0].Id);
     return;
   }
 }
