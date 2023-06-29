@@ -11,7 +11,7 @@ export class BlogsQueryRepository {
 
   async getAllBlogs(
     filter: FilterQuery<BlogDocument>,
-    sort: { [key: string]: SortOrder },
+    sort: { [key: string]: string },
     pagination: {
       skipValue: number;
       limitValue: number;
@@ -23,7 +23,7 @@ export class BlogsQueryRepository {
       `
       SELECT * FROM public."Blogs" 
       WHERE "IsBanned" = false
-        AND "Name" ILIKE = $1
+        AND "Name" ILIKE $1
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -36,7 +36,7 @@ export class BlogsQueryRepository {
       `
       SELECT COUNT(*) FROM public."Blogs"
       WHERE "IsBanned" = false
-        AND "Name" ILIKE = $1;
+        AND "Name" ILIKE $1;
       `,
       [filter['nameTerm']],
     );

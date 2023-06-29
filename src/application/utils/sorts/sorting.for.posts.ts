@@ -1,4 +1,3 @@
-import { EnumForBlogs } from '../../enums/emun.for.blogs';
 import { EnumForPosts } from '../../enums/enum.for.posts';
 
 export function sortingForPosts(

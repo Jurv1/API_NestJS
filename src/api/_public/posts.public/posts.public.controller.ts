@@ -16,7 +16,6 @@ import { PostQuery } from '../../../application/dto/posts/dto/post.query';
 import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
-import { PostDocument } from '../../../application/schemas/posts/schemas/posts.database.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ContentDto } from '../../../application/dto/comments/dto/content.dto';
 import { CurrentUserIdAndLogin } from '../auth/decorators/current-user.id.and.login';
@@ -64,13 +63,13 @@ export class PublicPostController {
       if (payload) {
         userId = payload.userId;
       }
-      return await this.queryBus.execute(
-        new GetAllPostsQueryCommand(filter, sort, pagination, userId),
-      );
     } catch (err) {
       console.log(err);
       throw new Errors.BAD_REQUEST();
     }
+    return await this.queryBus.execute(
+      new GetAllPostsQueryCommand(filter, sort, pagination, userId),
+    );
   }
 
   @Get(':id')

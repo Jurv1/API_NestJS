@@ -1,7 +1,4 @@
 import { enumType } from '../../enums/enum.types';
-import { EnumForBlogs } from '../../enums/emun.for.blogs';
-import { EnumForPosts } from '../../enums/enum.for.posts';
-import { EnumForUserByAdminSorting } from '../../enums/enum.for.user.by.admin.sorting';
 
 export function ultimateSort(
   sortBy: string,

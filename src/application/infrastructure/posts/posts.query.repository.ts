@@ -53,15 +53,17 @@ export class PostsQueryRepository {
   ): Promise<PostDocument | null> {
     return this.dataSource.query(
       `
-      SELECT * FROM public."Posts"
-      WHERE "Id" = $1 AND "BlogId" = $2 AND "UserStatus" = false;
+      SELECT * FROM public."Posts" AS Posts
+      LEFT JOIN public."BlogsOwnerInfo" AS Info 
+        ON Info."BlogId" = Posts."BlogId"
+      WHERE Posts."Id" = $1 AND Posts."BlogId" = $2 AND Posts."UserStatus" = false;
       `,
       [postId, blogId],
     );
   }
   async getAllPostsByBlogId(
     id: string,
-    sort: { [key: string]: SortOrder },
+    sort: { [key: string]: string },
     pagination: {
       skipValue: number;
       limitValue: number;
@@ -79,6 +81,17 @@ export class PostsQueryRepository {
       `,
       [id],
     );
+  }
+
+  async countAllPostsByBlogId(id: string) {
+    const counts = await this.dataSource.query(
+      `
+      SELECT COUNT(*) FROM public."Posts"
+      WHERE "BlogId" = $1 AND "UserStatus" = false;
+      `,
+      [id],
+    );
+    return counts[0].count;
   }
 
   // async getAllCommentsByPostId(

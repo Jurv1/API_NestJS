@@ -8,7 +8,7 @@ import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/b
 export class GetAllBlogsQueryCommand {
   constructor(
     public filter: FilterQuery<BlogDocument>,
-    public sort: { [key: string]: SortOrder },
+    public sort: { [key: string]: string },
     public pagination: {
       skipValue: number;
       limitValue: number;
@@ -36,7 +36,7 @@ export class GetAllBlogsUseCase
     const countedBlogs = await this.blogQ.countAllBlogs(command.filter);
 
     return paginator(
-      countedBlogs,
+      +countedBlogs,
       command.pagination.pageSize,
       command.pagination.pageNumber,
       mapperBlogs,

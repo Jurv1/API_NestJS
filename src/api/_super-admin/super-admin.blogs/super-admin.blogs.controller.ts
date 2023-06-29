@@ -13,7 +13,6 @@ import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogToUserCommand } from './use-cases/bind.blog.to.user.use-case';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
 import { filterQueryValid } from '../../../application/utils/sorts/_MongoSorts/query.validator';
-import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
@@ -21,6 +20,8 @@ import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogBanBody } from '../../../application/dto/blogs/dto/body/blog.ban.body';
 import { BanUnbanBlogByIdCommand } from './use-cases/ban.unban.blog.by.id.use-case';
 import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
+import { ultimateSort } from '../../../application/utils/sorts/ultimate.sort';
+import { EnumForBlogs } from '../../../application/enums/emun.for.blogs';
 
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {
@@ -36,7 +37,7 @@ export class SuperAdminBlogsController {
       query;
 
     const filter = filterQueryValid(searchNameTerm);
-    const sort = queryValidator(sortBy, sortDirection);
+    const sort = ultimateSort(sortBy, sortDirection, EnumForBlogs);
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
