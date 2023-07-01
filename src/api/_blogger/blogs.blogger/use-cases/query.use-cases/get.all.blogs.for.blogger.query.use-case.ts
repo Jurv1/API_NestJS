@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { BlogMapper } from '../../../../../application/utils/mappers/blog.mapper';
-import { FilterQuery, SortOrder } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { paginator } from '../../../../../application/utils/paginator/paginator';
 

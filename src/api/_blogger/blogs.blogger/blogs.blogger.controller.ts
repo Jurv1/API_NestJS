@@ -36,7 +36,7 @@ import { CommentMapper } from '../../../application/utils/mappers/comment.mapper
 import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
 import { GetAllBlogsForBloggerQueryCommand } from './use-cases/query.use-cases/get.all.blogs.for.blogger.query.use-case';
 import { ultimateSort } from '../../../application/utils/sorts/ultimate.sort';
-import { EnumForUserByAdminSorting } from '../../../application/enums/enum.for.user.by.admin.sorting';
+import { EnumForBlogs } from '../../../application/enums/emun.for.blogs';
 
 @Controller('blogger/blogs')
 export class BloggerBlogController {
@@ -61,7 +61,7 @@ export class BloggerBlogController {
     const sort: { [key: string]: string } = ultimateSort(
       sortBy,
       sortDirection,
-      EnumForUserByAdminSorting,
+      EnumForBlogs,
     );
     const pagination = makePagination(pageNumber, pageSize);
 

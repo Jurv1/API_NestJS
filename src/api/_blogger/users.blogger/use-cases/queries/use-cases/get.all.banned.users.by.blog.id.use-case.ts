@@ -1,10 +1,10 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Errors } from '../../../../../../application/utils/handle.error';
-import { BannedUserDto } from '../../../../../../application/dto/blogs/dto/banned.user.dto';
 import { BlogsQueryRepository } from '../../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { UsersQueryRepository } from '../../../../../../application/infrastructure/users/users.query.repository';
 import { UserMapper } from '../../../../../../application/utils/mappers/user.mapper';
 import { paginator } from '../../../../../../application/utils/paginator/paginator';
+import { errorIfNan } from '../../../../../../application/utils/funcs/is.Nan';
 
 export class GetAllBannedUsersByBlogIdCommand {
   constructor(
@@ -31,6 +31,7 @@ export class GetAllBannedUsersByBlogIdUseCase
     private readonly usersMapper: UserMapper,
   ) {}
   async execute(command: GetAllBannedUsersByBlogIdCommand) {
+    errorIfNan(command.blogId, command.userId);
     const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.blogId,
     );
