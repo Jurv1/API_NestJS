@@ -27,9 +27,9 @@ export class BlogMapper {
     });
   }
 
-  async mapBlogsForAdmin(
+  mapBlogsForAdmin(
     objs: BlogDocument[] | BlogForAdminDto[] | BlogViewDto[],
-  ): Promise<BlogForAdminDto[]> {
+  ): BlogForAdminDto[] {
     return objs.map((el) => {
       return {
         id: el.Id.toString(),

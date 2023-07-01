@@ -32,7 +32,7 @@ export class UpdatePostByBlogIdUseCase
     if (post.length === 0) throw new Errors.NOT_FOUND();
     if (post[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
     await this.postsService.updateOnePost(
-      post[0].Id,
+      command.postId,
       command.title,
       command.shortDescription,
       command.content,

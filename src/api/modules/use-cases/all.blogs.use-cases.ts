@@ -9,6 +9,7 @@ import { GetAllBlogsUseCase } from '../../_public/blogs.public/use-cases/query.u
 import { GetOneBlogUseCase } from '../../_public/blogs.public/use-cases/query.use-cases/get.one.blog.use-case';
 import { GetAllBlogsForBloggerQueryUseCase } from '../../_blogger/blogs.blogger/use-cases/query.use-cases/get.all.blogs.for.blogger.query.use-case';
 import { GetAllBlogsForAdminQueryUseCase } from '../../_super-admin/super-admin.blogs/use-cases/query.use-cases/get.all.blogs.for.admin.query.use-case';
+import { BanUnbanBlogByIdUseCase } from '../../_super-admin/super-admin.blogs/use-cases/command.use-cases/ban.unban.blog.by.id.use-case';
 
 export const allBlogsUseCases = [
   GetAllBlogsForBloggerQueryUseCase,
@@ -22,5 +23,5 @@ export const allBlogsUseCases = [
   UpdateBlogUseCase,
   UpdatePostByBlogIdUseCase,
   UpdateBanStatusForBlogsByOwnerUseCase,
-  //BanUnbanBlogByIdUseCase,
+  BanUnbanBlogByIdUseCase,
 ];

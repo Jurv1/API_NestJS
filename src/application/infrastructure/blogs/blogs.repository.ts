@@ -59,14 +59,18 @@ export class BlogsRepository {
     return result[1] === 1;
   }
 
-  async updateBanInfoForBlogs(blogId: string, isBanned: boolean) {
+  async updateBanInfoForBlogs(
+    blogId: string,
+    date: string | null,
+    isBanned: boolean,
+  ) {
     await this.dataSource.query(
       `
       UPDATE public."Blogs"
-      SET "IsBanned" = $1
-      WHERE "Id" = $2;
+      SET "IsBanned" = $1, "BanDate" = $2
+      WHERE "Id" = $3;
       `,
-      [blogId, isBanned],
+      [isBanned, date, blogId],
     );
   }
 

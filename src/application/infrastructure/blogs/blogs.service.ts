@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
 import { BlogsRepository } from './blogs.repository';
-import { BanInfo } from '../../schemas/users/schemas/ban.info.schema';
 
 @Injectable()
 export class BlogService {
@@ -38,7 +37,9 @@ export class BlogService {
   }
 
   async updateBanInfoForBlog(blogId: string, isBanned: boolean) {
-    await this.blogsRepository.updateBanInfoForBlogs(blogId, isBanned);
+    let date;
+    isBanned ? (date = new Date().toISOString()) : (date = null);
+    await this.blogsRepository.updateBanInfoForBlogs(blogId, date, isBanned);
     if (isBanned) {
       await this.blogsRepository.addBlogToBan(blogId);
     } else {
