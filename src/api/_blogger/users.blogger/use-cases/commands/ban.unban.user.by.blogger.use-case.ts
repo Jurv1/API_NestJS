@@ -34,8 +34,8 @@ export class BanUnbanUserByBloggerUseCase
 
     if (command.bloggerBanDto.isBanned) {
       const bannedUser: BannedUserDto = {
-        id: user.id,
-        login: user.accountData.login,
+        id: user[0].Id,
+        login: user[0].Login,
         banInfo: {
           isBanned: command.bloggerBanDto.isBanned,
           banReason: command.bloggerBanDto.banReason,
@@ -44,7 +44,7 @@ export class BanUnbanUserByBloggerUseCase
       };
       await this.blogRepository.banUserInBlog(blogInfo[0].Id, bannedUser);
     } else {
-      await this.blogRepository.unbanUserInBlog(blogInfo[0].Id, user.id);
+      await this.blogRepository.unbanUserInBlog(blogInfo[0].Id, user[0].Id);
     }
   }
 }

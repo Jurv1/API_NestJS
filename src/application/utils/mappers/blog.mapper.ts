@@ -32,12 +32,12 @@ export class BlogMapper {
   ): Promise<BlogForAdminDto[]> {
     return objs.map((el) => {
       return {
-        id: el._id.toString(),
-        name: el.name,
-        description: el.description,
-        websiteUrl: el.websiteUrl,
-        isMembership: el.isMembership,
-        createdAt: el.createdAt,
+        id: el.Id.toString(),
+        name: el.Name,
+        description: el.Description,
+        websiteUrl: el.WebsiteUrl,
+        isMembership: el.IsMembership,
+        createdAt: el.CreatedAt,
         blogOwnerInfo: el.ownerInfo,
         banInfo: el.banInfo,
       };

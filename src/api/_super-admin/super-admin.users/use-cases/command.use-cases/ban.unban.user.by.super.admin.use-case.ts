@@ -1,6 +1,5 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanBody } from '../../../../../application/dto/users/dto/ban.body';
-import { UserDocument } from '../../../../../application/schemas/users/schemas/users.database.schema';
 import { Errors } from '../../../../../application/utils/handle.error';
 import { UpdateBanStatusForLikesOwnerCommand } from '../../../../../application/infrastructure/likes/use-cases/update.ban.status.for.likes.owner.use-case';
 import { UpdateBanStatusForPostsOwnerCommand } from '../../../../../application/infrastructure/posts/_Mongo/use-cases/update.ban.status.for.posts.owner.use-case';
@@ -48,12 +47,12 @@ export class BanUnbanUserBySuperAdminUseCase
       ),
     );
 
-    await this.commandBus.execute(
-      new UpdateBanStatusForPostsOwnerCommand(
-        command.userId,
-        command.banInfo.isBanned,
-      ),
-    );
+    // await this.commandBus.execute(
+    //   new UpdateBanStatusForPostsOwnerCommand(
+    //     command.userId,
+    //     command.banInfo.isBanned,
+    //   ),
+    // );
     //
     //
     // await this.commandBus.execute(

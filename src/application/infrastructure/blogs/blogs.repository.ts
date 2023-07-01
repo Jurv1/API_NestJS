@@ -71,16 +71,20 @@ export class BlogsRepository {
     );
   }
 
-  async updateIsBannedForBlog(userId: string, isBanned: boolean) {
+  async updateIsBannedForBlogs(
+    userId: string,
+    date: string,
+    isBanned: boolean,
+  ) {
     await this.dataSource.query(
       `
-      UPDATE public."Blogs" AS Blogs
-      SET "IsBanned" = $1
+      UPDATE public."Blogs"
+      SET "IsBanned" = $1, "BanDate" = $2
+      FROM public."Blogs" AS Blogs
       LEFT JOIN public."BlogsOwnerInfo" AS Info 
-        ON Info."BlogId" = Blogs."Id"
-      WHERE Info."OwnerId" = $2;
+      ON Info."OwnerId" = $3;
       `,
-      [isBanned, userId],
+      [isBanned, date, userId],
     );
   }
 

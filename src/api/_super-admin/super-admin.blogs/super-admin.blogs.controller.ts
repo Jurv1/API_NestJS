@@ -41,11 +41,13 @@ export class SuperAdminBlogsController {
     const pagination = makePagination(pageNumber, pageSize);
 
     try {
-      const result: BlogWithPaginationDto = await this.blogQ.getAllBlogs(
+      const result: any = await this.blogQ.getAllBlogs(
         filter,
         sort,
         pagination,
       );
+      const mappedBlogs = await this.blogMapper.mapBlogsForAdmin(result);
+      return mappedBlogs;
       result.items = await this.blogMapper.mapBlogsForAdmin(result.items);
       return result;
     } catch (err) {

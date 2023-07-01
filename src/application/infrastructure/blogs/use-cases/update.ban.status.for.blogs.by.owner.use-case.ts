@@ -11,10 +11,12 @@ export class UpdateBanStatusForBlogsByOwnerUseCase
 {
   constructor(private readonly blogRepository: BlogsRepository) {}
   async execute(command: UpdateBanStatusForBlogsByOwnerCommand) {
-    await this.blogRepository.updateBanStatusForBlogsByOwnerId(command.userId);
-
-    await this.blogRepository.updateIsBannedForBlog(
+    //await this.blogRepository.updateBanStatusForBlogsByOwnerId(command.userId);
+    let date;
+    command.banStatus ? (date = new Date().toISOString()) : (date = null);
+    await this.blogRepository.updateIsBannedForBlogs(
       command.userId,
+      date,
       command.banStatus,
     );
     return true;

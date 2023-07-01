@@ -30,6 +30,6 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
 
     if (result.length === 0) throw new Errors.NOT_FOUND();
 
-    return result;
+    return this.blogMapper.mapBlog(result);
   }
 }
