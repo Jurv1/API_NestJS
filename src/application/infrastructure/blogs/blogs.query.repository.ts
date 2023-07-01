@@ -45,6 +45,41 @@ export class BlogsQueryRepository {
     return result[0].count;
   }
 
+  async getAllBlogsForAdmin(
+    filter: { [key: string]: string | boolean },
+    sort: { [key: string]: string },
+    pagination: {
+      skipValue: number;
+      limitValue: number;
+      pageSize: number;
+      pageNumber: number;
+    },
+  ) {
+    return await this.dataSource.query(
+      `
+      SELECT * FROM public."Blogs" AS Blogs
+      LEFT JOIN public."BlogsOwnerInfo" AS Info
+        ON Blogs."Id" = Info."BlogId"
+      WHERE "Name" ILIKE $1
+      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};  
+      `,
+      [filter['nameTerm']],
+    );
+  }
+
+  async countAllBlogsForAdmin(filter: { [key: string]: string | boolean }) {
+    const result = await this.dataSource.query(
+      `
+      SELECT COUNT(*) FROM public."Blogs"
+      WHERE "Name" ILIKE $1;
+      `,
+      [filter['nameTerm']],
+    );
+
+    return result[0].count;
+  }
+
   async getAllBlogsForBlogger(
     filter: { [key: string]: string | boolean },
     sort: { [key: string]: string },

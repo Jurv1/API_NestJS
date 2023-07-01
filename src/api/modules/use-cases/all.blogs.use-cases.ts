@@ -5,13 +5,14 @@ import { DeleteOnePostBySpecificBlogIdUseCase } from '../../_blogger/blogs.blogg
 import { UpdateBlogUseCase } from '../../_blogger/blogs.blogger/use-cases/command.use-cases/update.blog.use-case';
 import { UpdatePostByBlogIdUseCase } from '../../_blogger/blogs.blogger/use-cases/command.use-cases/update.post.by.blog.id.use-case';
 import { UpdateBanStatusForBlogsByOwnerUseCase } from '../../../application/infrastructure/blogs/use-cases/update.ban.status.for.blogs.by.owner.use-case';
-import { BanUnbanBlogByIdUseCase } from '../../_super-admin/super-admin.blogs/use-cases/ban.unban.blog.by.id.use-case';
 import { GetAllBlogsUseCase } from '../../_public/blogs.public/use-cases/query.use-cases/get.all.blogs.use-case';
 import { GetOneBlogUseCase } from '../../_public/blogs.public/use-cases/query.use-cases/get.one.blog.use-case';
 import { GetAllBlogsForBloggerQueryUseCase } from '../../_blogger/blogs.blogger/use-cases/query.use-cases/get.all.blogs.for.blogger.query.use-case';
+import { GetAllBlogsForAdminQueryUseCase } from '../../_super-admin/super-admin.blogs/use-cases/query.use-cases/get.all.blogs.for.admin.query.use-case';
 
 export const allBlogsUseCases = [
   GetAllBlogsForBloggerQueryUseCase,
+  GetAllBlogsForAdminQueryUseCase,
   GetAllBlogsUseCase,
   GetOneBlogUseCase,
   CreateBlogUseCase,

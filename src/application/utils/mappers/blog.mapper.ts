@@ -38,8 +38,14 @@ export class BlogMapper {
         websiteUrl: el.WebsiteUrl,
         isMembership: el.IsMembership,
         createdAt: el.CreatedAt,
-        blogOwnerInfo: el.ownerInfo,
-        banInfo: el.banInfo,
+        blogOwnerInfo: {
+          userId: el.OwnerId,
+          userLogin: el.OwnerLogin,
+        },
+        banInfo: {
+          isBanned: el.IsBanned,
+          banDate: el.BanDate,
+        },
       };
     });
   }
