@@ -39,7 +39,7 @@ export class BlogMapper {
         isMembership: el.IsMembership,
         createdAt: el.CreatedAt,
         blogOwnerInfo: {
-          userId: el.OwnerId,
+          userId: el.OwnerId.toString(),
           userLogin: el.OwnerLogin,
         },
         banInfo: {
