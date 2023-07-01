@@ -21,9 +21,10 @@ export class PostsRepository {
         "BlogId",
         "BlogName",
         "UserStatus",
+        "OwnerId",
         "CreatedAt"
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING 
         "Id",
         "Title",
@@ -41,6 +42,7 @@ export class PostsRepository {
         postDto.blogId,
         postDto.blogName,
         false,
+        postDto.ownerInfo.userId,
         new Date().toISOString(),
       ],
     );
@@ -88,16 +90,18 @@ export class PostsRepository {
     return result[1] === 1;
   }
 
-  async updateBanStatusForPostByOwnerId(banStatus: boolean) {
+  async updateBanStatusForPostByOwnerId(userId: string, banStatus: boolean) {
     await this.dataSource.query(
       `
       UPDATE public."Posts" AS Posts
       SET "UserStatus" = $1
-      LEFT JOIN public."Blogs" AS Blogs
-        ON Posts."BlogId" = Blogs."Id"
-      WHERE Blogs."IsBanned" = $1;
+      FROM (SELECT * FROM public."Posts" AS Posts2
+      LEFT JOIN public."Users" AS Info
+        ON Info."Id" = Posts2."OwnerId" WHERE Info."Id" = $2) AS foo
+      WHERE foo."IsBanned" = $1 
+        AND foo."OwnerId" = $2;
       `,
-      [banStatus],
+      [banStatus, userId],
     );
   }
 }

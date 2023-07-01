@@ -47,12 +47,12 @@ export class BanUnbanUserBySuperAdminUseCase
       ),
     );
 
-    // await this.commandBus.execute(
-    //   new UpdateBanStatusForPostsOwnerCommand(
-    //     command.userId,
-    //     command.banInfo.isBanned,
-    //   ),
-    // );
+    await this.commandBus.execute(
+      new UpdateBanStatusForPostsOwnerCommand(
+        command.userId,
+        command.banInfo.isBanned,
+      ),
+    );
     //
     //
     // await this.commandBus.execute(

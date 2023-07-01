@@ -19,6 +19,7 @@ export class UpdateBanStatusForBlogsByOwnerUseCase
       date,
       command.banStatus,
     );
+    await this.blogRepository;
     return true;
   }
 }

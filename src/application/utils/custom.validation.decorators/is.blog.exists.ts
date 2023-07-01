@@ -6,7 +6,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
-import { BlogQ } from '../../infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { BlogsQueryRepository } from '../../infrastructure/blogs/blogs.query.repository';
 
 @ValidatorConstraint({ name: 'IsBlogExists', async: true })

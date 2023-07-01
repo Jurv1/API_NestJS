@@ -5,7 +5,6 @@ import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
 import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
-import { BanInfo } from '../../schemas/users/schemas/ban.info.schema';
 
 @Injectable()
 export class BlogsRepository {
@@ -78,11 +77,13 @@ export class BlogsRepository {
   ) {
     await this.dataSource.query(
       `
-      UPDATE public."Blogs"
-      SET "IsBanned" = $1, "BanDate" = $2
-      FROM public."Blogs" AS Blogs
-      LEFT JOIN public."BlogsOwnerInfo" AS Info 
-      ON Info."OwnerId" = $3;
+      UPDATE public."Blogs" AS Blogs
+        SET "IsBanned" = $1, "BanDate" = $2
+      FROM (SELECT Blogs2."Id" FROM public."Blogs" AS Blogs2
+                LEFT JOIN public."BlogsOwnerInfo" AS Infos 
+                    ON Infos."BlogId" = Blogs2."Id"
+                WHERE Infos."OwnerId" = $3) AS foo
+      WHERE Blogs."Id" = foo."Id";
       `,
       [isBanned, date, userId],
     );

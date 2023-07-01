@@ -14,7 +14,6 @@ import { BindBlogToUserCommand } from './use-cases/bind.blog.to.user.use-case';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
-import { BlogWithPaginationDto } from '../../../application/dto/blogs/dto/view/blog.with.pagination.dto';
 import { BlogMapper } from '../../../application/utils/mappers/blog.mapper';
 import { BlogBanBody } from '../../../application/dto/blogs/dto/body/blog.ban.body';
 import { BanUnbanBlogByIdCommand } from './use-cases/ban.unban.blog.by.id.use-case';

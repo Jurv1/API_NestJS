@@ -13,6 +13,7 @@ export class UpdateBanStatusForPostsOwnerUseCase
 
   async execute(command: UpdateBanStatusForPostsOwnerCommand) {
     await this.postRepository.updateBanStatusForPostByOwnerId(
+      command.userId,
       command.banStatus,
     );
     return true;
