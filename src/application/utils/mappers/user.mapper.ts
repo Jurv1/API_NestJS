@@ -38,7 +38,7 @@ export class UserMapper {
         id: el.Id.toString(),
         login: el.Login,
         banInfo: {
-          isBanned: el.IsBanned,
+          isBanned: true,
           banDate: el.BanDate,
           banReason: el.BanReason,
         },

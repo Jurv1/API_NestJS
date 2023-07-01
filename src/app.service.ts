@@ -38,6 +38,10 @@ export class AppService {
     await this.commentModel.deleteMany();
     await this.dataSource.query(
       `
+      DELETE FROM public."Posts";
+      DELETE FROM public."BannedUsersByAdmin";
+      DELETE FROM public."BlogsOwnerInfo";
+      DELETE FROM public."Blogs";
       DELETE FROM public."Devices";
       DELETE FROM public."BansForUsersByAdmin";
       DELETE FROM public."EmailConfirmationForUsers";
