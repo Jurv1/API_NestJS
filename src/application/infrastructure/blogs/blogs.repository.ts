@@ -149,7 +149,7 @@ export class BlogsRepository {
   }
 
   async banUserInBlog(blogId: string, bannedUser: BannedUserDto) {
-    const result = await this.dataSource.query(
+    return await this.dataSource.query(
       `
       INSERT INTO public."BannedUsersByBlogger" 
         ("BlogId", "UserId", "BanReason", "BanDate")
@@ -162,8 +162,6 @@ export class BlogsRepository {
         bannedUser.banInfo.banDate,
       ],
     );
-
-    return result;
   }
 
   async unbanUserInBlog(blogId: string, userId: string) {
