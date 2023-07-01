@@ -39,7 +39,7 @@ export class AppService {
     await this.dataSource.query(
       `
       DELETE FROM public."Posts";
-      DELETE FROM public."BannedUsersByAdmin";
+      DELETE FROM public."BannedUsersByBlogger";
       DELETE FROM public."BlogsOwnerInfo";
       DELETE FROM public."Blogs";
       DELETE FROM public."Devices";
