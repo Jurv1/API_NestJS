@@ -12,7 +12,7 @@ import { CommentService } from '../../application/infrastructure/comments/commen
 import { CommentMapper } from '../../application/utils/mappers/comment.mapper';
 import { JwtService } from '@nestjs/jwt';
 import { PostQ } from '../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { LikesRepository } from '../../application/infrastructure/likes/likes.repository';
+import { LikesRepository } from '../../application/infrastructure/likes/_Mongo/likes.repository';
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
 import {
   Post,

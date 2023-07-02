@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostQ } from '../../../../application/infrastructure/posts/_Mongo/posts.query.repository';
 import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
-import { LikesRepository } from '../../../../application/infrastructure/likes/likes.repository';
+import { LikesRepository } from '../../../../application/infrastructure/likes/_Mongo/likes.repository';
 import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
 import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';

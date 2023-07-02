@@ -11,7 +11,7 @@ import {
   CommentSchema,
   DBComment,
 } from '../../application/schemas/comments/schemas/comments.database.schema';
-import { LikesRepository } from '../../application/infrastructure/likes/likes.repository';
+import { LikesRepository } from '../../application/infrastructure/likes/_Mongo/likes.repository';
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
 import { CommentMapper } from '../../application/utils/mappers/comment.mapper';
 import {

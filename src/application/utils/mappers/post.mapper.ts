@@ -1,6 +1,6 @@
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { PostViewModel } from '../../schemas/posts/schemas/post-view.model';
-import { LikesRepository } from '../../infrastructure/likes/likes.repository';
+import { LikesRepository } from '../../infrastructure/likes/_Mongo/likes.repository';
 import { LikeDocument } from '../../schemas/likes/schemas/like.database.schema';
 import { mapLikes } from './like.mapper';
 import { NewestLike } from '../../schemas/posts/schemas/likes.schemas/newest.likes';

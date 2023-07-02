@@ -4,11 +4,11 @@ import {
   Like,
   LikeDocument,
   LikeModelType,
-} from '../../schemas/likes/schemas/like.database.schema';
-import { LikeCreationDto } from '../../dto/likes/dto/like-creation.dto';
+} from '../../../schemas/likes/schemas/like.database.schema';
+import { LikeCreationDto } from '../../../dto/likes/dto/like-creation.dto';
 
 @Injectable()
-export class LikesRepository {
+export class _MongoLikesRepository {
   constructor(
     @InjectModel(Like.name) private readonly likeModel: LikeModelType,
   ) {}

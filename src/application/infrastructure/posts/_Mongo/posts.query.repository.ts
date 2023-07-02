@@ -10,7 +10,7 @@ import {
   CommentDocument,
   DBComment,
 } from '../../../schemas/comments/schemas/comments.database.schema';
-import { LikesRepository } from '../../likes/likes.repository';
+import { LikesRepository } from '../../likes/_Mongo/likes.repository';
 import { PostMapper } from '../../../utils/mappers/post.mapper';
 import { CommentMapper } from '../../../utils/mappers/comment.mapper';
 

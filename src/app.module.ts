@@ -46,7 +46,7 @@ import {
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot(configForTypeOrm),
+    TypeOrmModule.forRoot(defaultTypeOrm),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },

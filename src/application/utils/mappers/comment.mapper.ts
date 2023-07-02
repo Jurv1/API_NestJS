@@ -1,4 +1,4 @@
-import { LikesRepository } from '../../infrastructure/likes/likes.repository';
+import { LikesRepository } from '../../infrastructure/likes/_Mongo/likes.repository';
 import { LikeDocument } from '../../schemas/likes/schemas/like.database.schema';
 import { CommentDocument } from '../../schemas/comments/schemas/comments.database.schema';
 import { CommentViewModel } from '../../schemas/comments/schemas/comment-view.model';

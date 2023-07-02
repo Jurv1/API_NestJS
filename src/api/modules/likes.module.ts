@@ -5,8 +5,8 @@ import {
   Like,
   LikeSchema,
 } from '../../application/schemas/likes/schemas/like.database.schema';
-import { LikesRepository } from '../../application/infrastructure/likes/likes.repository';
-import { UpdateBanStatusForLikesOwnerUseCase } from '../../application/infrastructure/likes/use-cases/update.ban.status.for.likes.owner.use-case';
+import { LikesRepository } from '../../application/infrastructure/likes/_Mongo/likes.repository';
+import { UpdateBanStatusForLikesOwnerUseCase } from '../../application/infrastructure/likes/_Mongo/use-cases/update.ban.status.for.likes.owner.use-case';
 
 @Module({
   imports: [
