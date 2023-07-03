@@ -1,8 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { CommentQ } from '../../../../application/infrastructure/comments/_Mongo/comments.query.repository';
 import { CommentService } from '../../../../application/infrastructure/comments/comments.service';
 import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';
+import { CommentsQueryRepository } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { errorIfNan } from '../../../../application/utils/funcs/is.Nan';
 
 export class DeleteCommentCommand {
   constructor(public commentId: string, public userId: string) {}
@@ -13,15 +15,14 @@ export class DeleteCommentUseCase
   implements ICommandHandler<DeleteCommentCommand>
 {
   constructor(
-    private readonly commentQ: CommentQ,
+    private readonly commentQ: CommentsQueryRepository,
     private readonly commentService: CommentService,
   ) {}
   async execute(command: DeleteCommentCommand) {
-    const comment: CommentDocument = await this.commentQ.getOneComment(
-      command.commentId,
-    );
-    if (!comment) throw new Errors.NOT_FOUND();
-    if (comment.commentatorInfo.userId !== command.userId) {
+    errorIfNan(command.commentId);
+    const comment: any = await this.commentQ.getOneComment(command.commentId);
+    if (comment.length === 0) throw new Errors.NOT_FOUND();
+    if (comment[0].CommentatorId != command.userId) {
       throw new Errors.FORBIDDEN();
     }
     const result = await this.commentService.deleteOneCommentById(

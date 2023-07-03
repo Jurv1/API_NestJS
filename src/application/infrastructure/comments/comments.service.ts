@@ -1,24 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { LikesRepository } from '../likes/_Mongo/likes.repository';
-import { CommentRepository } from './comments.repository';
+import { CommentsRepository } from './comments.repository';
+import { PostsLikesRepository } from '../likes/posts.likes.repository';
+import { CommentsLikesRepository } from '../likes/comments.likes.repository';
 
 @Injectable()
 export class CommentService {
   constructor(
-    private readonly commentsRepository: CommentRepository,
-    private readonly likesRepo: LikesRepository,
+    private readonly commentsRepository: CommentsRepository,
+    private readonly postsLikesRepo: PostsLikesRepository,
+    private readonly commentsLikesRepo: CommentsLikesRepository,
   ) {}
 
   async deleteOneCommentById(id: string): Promise<boolean> {
     return await this.commentsRepository.deleteOne(id);
   }
 
-  async deleteLikeDislike(
+  async deleteLikeDislikeForPost(
+    userId: string,
+    postId: string,
+    userStatus: string,
+  ) {
+    return await this.postsLikesRepo.deleteLikeDislikeForPost(
+      userId,
+      postId,
+      userStatus,
+    );
+  }
+
+  async deleteLikeDislikeForComment(
     userId: string,
     commentId: string,
     userStatus: string,
   ) {
-    return await this.likesRepo.deleteLikeDislike(
+    return this.commentsLikesRepo.deleteLikeDislikeForComment(
       userId,
       commentId,
       userStatus,

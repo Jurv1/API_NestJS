@@ -33,7 +33,7 @@ import {
   LikeSchema,
 } from '../../application/schemas/likes/schemas/like.database.schema';
 import { PublicBlogController } from '../_public/blogs.public/blogs.public.controller';
-import { CommentQ } from '../../application/infrastructure/comments/comments.query.repository';
+import { CommentQ } from '../../application/infrastructure/comments/_Mongo/comments.query.repository';
 
 @Module({
   imports: [

@@ -30,7 +30,7 @@ import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/command.use-ca
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { BlogQueryForComments } from '../../../application/dto/blogs/dto/queries/blog.query.for.comments';
-import { CommentQ } from '../../../application/infrastructure/comments/comments.query.repository';
+import { CommentQ } from '../../../application/infrastructure/comments/_Mongo/comments.query.repository';
 import { CommentsWithPagination } from '../../../application/dto/comments/dto/comments.with.pagination';
 import { CommentMapper } from '../../../application/utils/mappers/comment.mapper';
 import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';

@@ -9,7 +9,7 @@ export class PostsLikesRepository {
 
   async deleteLikeDislikeForPost(
     userId: string,
-    commentId: string,
+    postId: string,
     userStatus: string,
   ): Promise<boolean> {
     const result = await this.dataSource.query(
@@ -19,7 +19,7 @@ export class PostsLikesRepository {
         AND "PostId" = $2
          AND "UserStatus" = $3
       `,
-      [userId, commentId, userStatus],
+      [userId, postId, userStatus],
     );
 
     return result[1] === 1;
@@ -27,7 +27,7 @@ export class PostsLikesRepository {
 
   async getUserStatusForPost(
     userId: string,
-    commentId: string,
+    postId: string,
   ): Promise<any | null> {
     await this.dataSource.query(
       `
@@ -35,7 +35,7 @@ export class PostsLikesRepository {
       WHERE "UserId" = $1
         AND "PostId" = $2;
       `,
-      [userId, commentId],
+      [userId, postId],
     );
   }
 
@@ -54,7 +54,7 @@ export class PostsLikesRepository {
     );
   }
 
-  async countAllLikesForComment(id: string) {
+  async countAllLikesForPost(id: string) {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."PostsLikes"
@@ -68,7 +68,7 @@ export class PostsLikesRepository {
     return counts[0].count;
   }
 
-  async countAllDislikesForComment(id: string) {
+  async countAllDislikesForPost(id: string) {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."PostsLikes"
@@ -82,7 +82,7 @@ export class PostsLikesRepository {
     return counts[0].count;
   }
 
-  async findLatestThreeLikes(commentId: string) {
+  async findLatestThreeLikes(postId: string) {
     return await this.dataSource.query(
       `
       SELECT Users."Id", Likes."AddedAt", Users."Id" FROM public."PostsLikes" AS Likes
@@ -94,7 +94,7 @@ export class PostsLikesRepository {
       ORDER BY Likes."AddedAt" desc
       LIMIT 3 OFFSET 0;
       `,
-      [commentId],
+      [postId],
     );
   }
 

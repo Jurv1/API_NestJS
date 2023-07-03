@@ -1,4 +1,4 @@
-import { CommentRepository } from '../../../application/infrastructure/comments/comments.repository';
+import { CommentRepository } from '../../../application/infrastructure/comments/_Mongo/comments.repository';
 import { LikesRepository } from '../../../application/infrastructure/likes/_Mongo/likes.repository';
 import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';

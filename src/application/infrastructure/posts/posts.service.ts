@@ -2,18 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PostUpdateBody } from '../../dto/posts/dto/post.update.body';
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../utils/handle.error';
-import {
-  CommentDocument,
-  CommentModelType,
-  DBComment,
-} from '../../schemas/comments/schemas/comments.database.schema';
+import { CommentDocument } from '../../schemas/comments/schemas/comments.database.schema';
 import { CommentCreatingDto } from '../../dto/comments/dto/comment.creating.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { UserIdAndLogin } from '../../../api/_public/auth/dto/user-id.and.login';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
 import { BlogsQueryRepository } from '../blogs/blogs.query.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsQueryRepository } from './posts.query.repository';
+import { CommentsRepository } from '../comments/comments.repository';
 
 @Injectable()
 export class PostService {
@@ -21,8 +17,7 @@ export class PostService {
     protected readonly blogQ: BlogsQueryRepository,
     protected readonly postsRepository: PostsRepository,
     protected readonly postQ: PostsQueryRepository,
-    @InjectModel(DBComment.name)
-    private readonly commentModel: CommentModelType,
+    private readonly commentsRepository: CommentsRepository,
   ) {}
   async createOnePost(
     title: string,
@@ -84,9 +79,9 @@ export class PostService {
     content: string,
     userId: string,
     userLogin: string,
-  ): Promise<CommentDocument | null> {
-    const foundedEl: PostDocument = await this.postQ.getOnePost(postId);
-    if (foundedEl) {
+  ): Promise<any | null> {
+    const foundedEl: any = await this.postQ.getOnePost(postId);
+    if (foundedEl.length !== 0) {
       const newCommentTmp: CommentCreatingDto = {
         content: content,
         commentatorInfo: {
@@ -106,12 +101,8 @@ export class PostService {
           blogOwnerId: foundedEl.ownerInfo.userId,
         },
       };
-      const comment: CommentDocument = await this.commentModel.createComment(
-        newCommentTmp,
-        this.commentModel,
-      );
-      await comment.save();
-      return comment;
+
+      return await this.commentsRepository.createComment(newCommentTmp);
     } else return null;
   }
 }

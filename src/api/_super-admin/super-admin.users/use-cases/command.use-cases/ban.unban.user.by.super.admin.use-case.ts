@@ -4,7 +4,7 @@ import { Errors } from '../../../../../application/utils/handle.error';
 import { UpdateBanStatusForLikesOwnerCommand } from '../../../../../application/infrastructure/likes/_Mongo/use-cases/update.ban.status.for.likes.owner.use-case';
 import { UpdateBanStatusForPostsOwnerCommand } from '../../../../../application/infrastructure/posts/_Mongo/use-cases/update.ban.status.for.posts.owner.use-case';
 import { UpdateBanStatusForBlogsByOwnerCommand } from '../../../../../application/infrastructure/blogs/use-cases/update.ban.status.for.blogs.by.owner.use-case';
-import { UpdateBanStatusForCommentOwnerCommand } from '../../../../../application/infrastructure/comments/use-cases/update.ban.status.for.comment.owner.use-case';
+import { UpdateBanStatusForCommentOwnerCommand } from '../../../../../application/infrastructure/comments/_Mongo/use-cases/update.ban.status.for.comment.owner.use-case';
 import { UsersQueryRepository } from '../../../../../application/infrastructure/users/users.query.repository';
 import { UsersRepository } from '../../../../../application/infrastructure/users/users.repository';
 import { DevicesRepository } from '../../../../../application/infrastructure/devices/devices.repository';

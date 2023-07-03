@@ -30,7 +30,7 @@ import { PostsRepository } from '../src/application/infrastructure/posts/_Mongo/
 import { PostQ } from '../src/application/infrastructure/posts/_Mongo/posts.query.repository';
 import { UsersRepository } from '../src/application/infrastructure/users/_MongoDB/users.repository';
 import { UserQ } from '../src/application/infrastructure/users/_MongoDB/users.query.repository';
-import { CommentQ } from '../src/application/infrastructure/comments/comments.query.repository';
+import { CommentQ } from '../src/application/infrastructure/comments/_Mongo/comments.query.repository';
 
 export const appTestingModule = {
   imports: [

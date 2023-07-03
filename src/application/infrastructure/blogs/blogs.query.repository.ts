@@ -153,6 +153,22 @@ export class BlogsQueryRepository {
     );
   }
 
+  async getAllBannedForBlogWithoutFilters(blogId: string) {
+    return await this.dataSource.query(
+      `
+      SELECT 
+        Users."Id",
+        Users."Login",
+        BannedUsers."BanReason",
+        BannedUsers."BanDate"
+      FROM public."BannedUsersByBlogger" AS BannedUsers
+       LEFT JOIN public."Users" AS Users 
+        ON BannedUsers."UserId" = Users."Id"
+      WHERE BannedUsers."BlogId" = $1
+      `[blogId],
+    );
+  }
+
   async countAllBannedUsers(
     filter: { [key: string]: string | boolean },
     blogId: string,

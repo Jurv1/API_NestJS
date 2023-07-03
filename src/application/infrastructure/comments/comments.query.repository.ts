@@ -1,31 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import {
-  CommentDocument,
-  CommentModelType,
-  DBComment,
-} from '../../schemas/comments/schemas/comments.database.schema';
-import { SortOrder } from 'mongoose';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Injectable()
-export class CommentQ {
-  constructor(
-    @InjectModel(DBComment.name) private commentModel: CommentModelType,
-  ) {}
-  async getOneComment(id: string): Promise<CommentDocument | null> {
-    return this.commentModel.findOne({
-      $and: [
-        {
-          _id: id,
-        },
-        { isUserBanned: false },
-      ],
-    });
+export class CommentsQueryRepository {
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
+  async getOneComment(id: string): Promise<any | null> {
+    await this.dataSource.query(
+      `
+      SELECT * FROM public."Comments"
+      WHERE "Id" = $1
+        AND "UserStatus" = false
+      `,
+      [id],
+    );
   }
 
   async getCommentsForBlog(
     blogOwnerId: string,
-    sort: { [key: string]: SortOrder },
+    sort: { [key: string]: string },
     pagination: {
       skipValue: number;
       limitValue: number;
@@ -33,23 +27,39 @@ export class CommentQ {
       pageNumber: number;
     },
   ) {
-    const allComments: CommentDocument[] = await this.commentModel
-      .find({ 'postInfo.blogOwnerId': blogOwnerId })
-      .sort(sort)
-      .skip(pagination['skipValue'])
-      .limit(pagination['limitValue'])
-      .lean();
+    return await this.dataSource.query(
+      `
+      SELECT * FROM public."Comments" AS Comments
+      LEFT JOIN public."Posts" AS Posts
+        ON Posts."Id" = Comments."PostId"
+      LEFT JOIN public."Blogs" AS Blogs
+        ON Blogs."Id" = Posts."BlogId"
+      LEFT JOIN public."BlogsOwnerInfo" AS BlogInfo
+        ON BlogInfo."BlogId" = Blogs."Id"
+      WHERE 
+        BlogInfo."OwnerId" = $1
+      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
+      `,
+    );
+  }
 
-    const countDocs = await this.commentModel.countDocuments({
-      'postInfo.blogOwnerId': blogOwnerId,
-    });
-    const pagesCount = Math.ceil(countDocs / pagination['pageSize']);
-    return {
-      pagesCount: pagesCount,
-      page: pagination['pageNumber'],
-      pageSize: pagination['pageSize'],
-      totalCount: countDocs,
-      items: allComments,
-    };
+  async countAllComments(blogOwnerId: string) {
+    const counts = await this.dataSource.query(
+      `
+      SELECT COUNT(*) FROM public."Comments" AS Comments
+      LEFT JOIN public."Posts" AS Posts
+        ON Posts."Id" = Comments."PostId"
+      LEFT JOIN public."Blogs" AS Blogs
+        ON Blogs."Id" = Posts."BlogId"
+      LEFT JOIN public."BlogsOwnerInfo" AS BlogInfo
+        ON BlogInfo."BlogId" = Blogs."Id"
+      WHERE 
+        BlogInfo."OwnerId" = $1
+      `,
+      [blogOwnerId],
+    );
+
+    return counts[0].count;
   }
 }

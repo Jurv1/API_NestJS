@@ -1,13 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostService } from '../../../../../application/infrastructure/posts/posts.service';
 import { CommentMapper } from '../../../../../application/utils/mappers/comment.mapper';
-import { CommentDocument } from '../../../../../application/schemas/comments/schemas/comments.database.schema';
 import { Errors } from '../../../../../application/utils/handle.error';
-import { PostQ } from '../../../../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { PostDocument } from '../../../../../application/schemas/posts/schemas/posts.database.schema';
-import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
-import { BlogQ } from '../../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
-import { BannedUserDto } from '../../../../../application/dto/blogs/dto/banned.user.dto';
+import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
+import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 
 export class CreateCommentForPostCommand {
   constructor(
@@ -24,24 +21,27 @@ export class CreateCommentForPostUseCase
 {
   constructor(
     private readonly postService: PostService,
-    private readonly postQ: PostQ,
-    private readonly blogQ: BlogQ,
+    private readonly postQ: PostsQueryRepository,
+    private readonly blogQ: BlogsQueryRepository,
     private readonly commentMapper: CommentMapper,
   ) {}
   async execute(command: CreateCommentForPostCommand) {
-    const post: PostDocument = await this.postQ.getOnePost(command.postId);
-    const blog: BlogDocument = await this.blogQ.getOneBlog(post.blogId);
-    blog.bannedUsersForBlog.forEach((el: BannedUserDto) => {
-      if (el.id == command.userId) throw new Errors.FORBIDDEN();
+    errorIfNan(command.postId);
+
+    const post: any = await this.postQ.getOnePost(command.postId);
+    const bannedUsers = await this.blogQ.getAllBannedForBlogWithoutFilters(
+      post[0].BlogId,
+    );
+    bannedUsers.forEach((el) => {
+      if (el.Id == command.userId) throw new Errors.FORBIDDEN();
     });
-    const result: CommentDocument =
-      await this.postService.createOneCommentByPostId(
-        command.postId,
-        command.content,
-        command.userId,
-        command.userLogin,
-      );
-    if (!result) throw new Errors.NOT_FOUND();
+    const result: any = await this.postService.createOneCommentByPostId(
+      command.postId,
+      command.content,
+      command.userId,
+      command.userLogin,
+    );
+    if (result.length === 0) throw new Errors.NOT_FOUND();
     return await this.commentMapper.mapComment(result);
   }
 }

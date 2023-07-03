@@ -1,10 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostQ } from '../../../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { CommentQ } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { CommentQ } from '../../../../application/infrastructure/comments/_Mongo/comments.query.repository';
 import { LikesRepository } from '../../../../application/infrastructure/likes/_Mongo/likes.repository';
 import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
 import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../../../application/utils/handle.error';
+import { PostsQueryRepository } from '../../../../application/infrastructure/posts/posts.query.repository';
+import { CommentsQueryRepository } from '../../../../application/infrastructure/comments/comments.query.repository';
+import { CommentsLikesRepository } from '../../../../application/infrastructure/likes/comments.likes.repository';
 
 export class LikeCommentOrPostCommand {
   constructor(
@@ -21,9 +24,9 @@ export class LikeCommentOrPostUseCase
   implements ICommandHandler<LikeCommentOrPostCommand>
 {
   constructor(
-    private readonly postQ: PostQ,
-    private readonly commentQ: CommentQ,
-    private readonly likesRepo: LikesRepository,
+    private readonly postQ: PostsQueryRepository,
+    private readonly commentQ: CommentsQueryRepository,
+    private readonly likesRepo: CommentsLikesRepository,
   ) {}
   async execute(command: LikeCommentOrPostCommand) {
     let commentOrPost: CommentDocument | PostDocument;
@@ -37,12 +40,12 @@ export class LikeCommentOrPostUseCase
     }
     if (!commentOrPost) throw new Errors.NOT_FOUND();
     ////////////////
-    const userStatus = await this.likesRepo.getUserStatusForCommentOrPost(
+    const userStatus = await this.likesRepo.getUserStatusForComment(
       command.userId,
       command.commentOrPostId,
     );
     if (command.likeStatus === 'None') {
-      const result: boolean = await this.likesRepo.deleteLikeDislike(
+      const result: boolean = await this.likesRepo.deleteLikeDislikeForComment(
         command.userId,
         command.commentOrPostId,
         userStatus?.userStatus,
@@ -55,7 +58,7 @@ export class LikeCommentOrPostUseCase
     if (command.likeStatus === 'Like') {
       if (userStatus?.userStatus === 'Dislike') {
         //remove dislike and create like
-        await this.likesRepo.deleteLikeDislike(
+        await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
           command.commentOrPostId,
           userStatus.userStatus,
@@ -64,7 +67,7 @@ export class LikeCommentOrPostUseCase
       } else if (userStatus?.userStatus === 'Like') {
         return;
       } else {
-        const result = await this.likesRepo.likePostOrComment(
+        const result = await this.likesRepo.likeComment(
           command.commentOrPostId,
           command.likeStatus,
           command.userId,
@@ -78,12 +81,12 @@ export class LikeCommentOrPostUseCase
     }
     if (command.likeStatus === 'Dislike') {
       if (userStatus?.userStatus === 'Like') {
-        await this.likesRepo.deleteLikeDislike(
+        await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
           command.commentOrPostId,
           userStatus.userStatus,
         );
-        const result = await this.likesRepo.likePostOrComment(
+        const result = await this.likesRepo.likeComment(
           command.commentOrPostId,
           command.likeStatus,
           command.userId,
@@ -98,7 +101,7 @@ export class LikeCommentOrPostUseCase
         return;
       } else {
         //create Dislike
-        const result = await this.likesRepo.likePostOrComment(
+        const result = await this.likesRepo.likeComment(
           command.commentOrPostId,
           command.likeStatus,
           command.userId,
