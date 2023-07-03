@@ -12,7 +12,6 @@ import { CommentService } from '../../application/infrastructure/comments/commen
 import { CommentMapper } from '../../application/utils/mappers/comment.mapper';
 import { JwtService } from '@nestjs/jwt';
 import { PostQ } from '../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { LikesRepository } from '../../application/infrastructure/likes/_Mongo/likes.repository';
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
 import {
   Post,
@@ -22,6 +21,7 @@ import {
   Like,
   LikeSchema,
 } from '../../application/schemas/likes/schemas/like.database.schema';
+import { CommentsLikesRepository } from '../../application/infrastructure/likes/comments.likes.repository';
 
 @Module({
   imports: [
@@ -40,8 +40,6 @@ import {
     CommentMapper,
     PostMapper,
     JwtService,
-    PostQ,
-    LikesRepository,
   ],
 })
 export class CommentsModule {}

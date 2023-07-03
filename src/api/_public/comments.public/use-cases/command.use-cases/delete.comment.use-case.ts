@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentQ } from '../../../../application/infrastructure/comments/_Mongo/comments.query.repository';
-import { CommentService } from '../../../../application/infrastructure/comments/comments.service';
-import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
-import { Errors } from '../../../../application/utils/handle.error';
-import { CommentsQueryRepository } from '../../../../application/infrastructure/comments/comments.query.repository';
-import { errorIfNan } from '../../../../application/utils/funcs/is.Nan';
+import { CommentQ } from '../../../../../application/infrastructure/comments/_Mongo/comments.query.repository';
+import { CommentService } from '../../../../../application/infrastructure/comments/comments.service';
+import { CommentDocument } from '../../../../../application/schemas/comments/schemas/comments.database.schema';
+import { Errors } from '../../../../../application/utils/handle.error';
+import { CommentsQueryRepository } from '../../../../../application/infrastructure/comments/comments.query.repository';
+import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 
 export class DeleteCommentCommand {
   constructor(public commentId: string, public userId: string) {}

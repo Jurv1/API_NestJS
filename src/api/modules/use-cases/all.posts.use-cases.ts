@@ -2,10 +2,12 @@ import { UpdateBanStatusForPostsOwnerUseCase } from '../../../application/infras
 import { GetAllPostsQueryUseCase } from '../../_public/posts.public/use-cases/query.use-cases/get.all.posts.query.use-case';
 import { GetOnePostQueryUseCase } from '../../_public/posts.public/use-cases/query.use-cases/get.one.post.query.use-case';
 import { GetAllPostsByBlogIdUseCase } from '../../_public/blogs.public/use-cases/query.use-cases/get.all.posts.by.blog.id.use-case';
+import { LikePostUseCase } from '../../_public/posts.public/use-cases/command.use-cases/like.post.use-case';
 
 export const allPostsUseCases = [
   GetAllPostsQueryUseCase,
   GetAllPostsByBlogIdUseCase,
   GetOnePostQueryUseCase,
+  LikePostUseCase,
   UpdateBanStatusForPostsOwnerUseCase,
 ];

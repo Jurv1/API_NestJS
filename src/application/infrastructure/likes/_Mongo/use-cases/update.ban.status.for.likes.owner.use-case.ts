@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { LikesRepository } from '../likes.repository';
+import { PostsLikesRepository } from '../../posts.likes.repository';
+import { CommentsLikesRepository } from '../../comments.likes.repository';
 
 export class UpdateBanStatusForLikesOwnerCommand {
   constructor(public userId: string, public banStatus: boolean) {}
@@ -9,12 +10,22 @@ export class UpdateBanStatusForLikesOwnerCommand {
 export class UpdateBanStatusForLikesOwnerUseCase
   implements ICommandHandler<UpdateBanStatusForLikesOwnerCommand>
 {
-  constructor(private readonly likeRepository: LikesRepository) {}
+  constructor(
+    private readonly postsLikeRepository: PostsLikesRepository,
+    private readonly commentsLikesRepository: CommentsLikesRepository,
+  ) {}
 
   async execute(command: UpdateBanStatusForLikesOwnerCommand) {
-    return await this.likeRepository.findAllLikesByUserIdAndSetBanStatus(
+    await this.postsLikeRepository.findAllLikesByUserIdAndSetBanStatus(
       command.userId,
       command.banStatus,
     );
+
+    await this.commentsLikesRepository.findAllLikesByUserIdAndSetBanStatus(
+      command.userId,
+      command.banStatus,
+    );
+
+    return true;
   }
 }

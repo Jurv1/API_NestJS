@@ -17,10 +17,10 @@ import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CurrentUserIdAndLogin } from '../auth/decorators/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommandBus } from '@nestjs/cqrs';
-import { GetCommentByIdCommand } from './use-cases/get.all.comments.use-case';
-import { UpdateCommentCommand } from './use-cases/update.comment.use-case';
-import { DeleteCommentCommand } from './use-cases/delete.comment.use-case';
-import { LikeCommentOrPostCommand } from './use-cases/like.comment.use-case';
+import { GetCommentByIdCommand } from './use-cases/query.use-cases/get.all.comments.use-case';
+import { UpdateCommentCommand } from './use-cases/command.use-cases/update.comment.use-case';
+import { DeleteCommentCommand } from './use-cases/command.use-cases/delete.comment.use-case';
+import { LikeCommentCommand } from './use-cases/command.use-cases/like.comment.use-case';
 
 @Controller('comments')
 export class PublicCommentController {
@@ -79,13 +79,7 @@ export class PublicCommentController {
     const userLogin: string = user.userLogin;
 
     return await this.commandBus.execute(
-      new LikeCommentOrPostCommand(
-        id,
-        likeStatus,
-        userId,
-        userLogin,
-        'comment',
-      ),
+      new LikeCommentCommand(id, likeStatus, userId, userLogin),
     );
   }
 }

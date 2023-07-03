@@ -34,12 +34,12 @@ export class BanUnbanUserBySuperAdminUseCase
       command.banInfo.banReason = null;
     }
     await this.usersRepo.updateBanInfoForUser(user[0].Id, command.banInfo);
-    // await this.commandBus.execute(
-    //   new UpdateBanStatusForLikesOwnerCommand(
-    //     command.userId,
-    //     command.banInfo.isBanned,
-    //   ),
-    // );
+    await this.commandBus.execute(
+      new UpdateBanStatusForLikesOwnerCommand(
+        command.userId,
+        command.banInfo.isBanned,
+      ),
+    );
     await this.commandBus.execute(
       new UpdateBanStatusForBlogsByOwnerCommand(
         command.userId,
@@ -53,14 +53,13 @@ export class BanUnbanUserBySuperAdminUseCase
         command.banInfo.isBanned,
       ),
     );
-    //
-    //
-    // await this.commandBus.execute(
-    //   new UpdateBanStatusForCommentOwnerCommand(
-    //     command.userId,
-    //     command.banInfo.isBanned,
-    //   ),
-    // );
+
+    await this.commandBus.execute(
+      new UpdateBanStatusForCommentOwnerCommand(
+        command.userId,
+        command.banInfo.isBanned,
+      ),
+    );
     return true;
   }
 }

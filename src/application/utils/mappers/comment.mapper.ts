@@ -119,7 +119,7 @@ export class CommentMapper {
 
         return {
           id: el.Id.toString(),
-          content: el.content,
+          content: el.Content,
           commentatorInfo: {
             userId: el.CommentatorId,
             userLogin: el.CommentatorLogin,

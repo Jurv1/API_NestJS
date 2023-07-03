@@ -13,7 +13,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { PostMapper } from '../../../application/utils/mappers/post.mapper';
 import { PostQuery } from '../../../application/dto/posts/dto/post.query';
-import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { Errors } from '../../../application/utils/handle.error';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -23,7 +22,6 @@ import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateCommentForPostCommand } from './use-cases/command.use-cases/create.comment.for.post.use-case';
-import { LikeCommentOrPostCommand } from '../comments.public/use-cases/like.comment.use-case';
 import { PostsQueryRepository } from '../../../application/infrastructure/posts/posts.query.repository';
 import { BlogsQueryRepository } from '../../../application/infrastructure/blogs/blogs.query.repository';
 import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
@@ -31,6 +29,9 @@ import { ultimateSort } from '../../../application/utils/sorts/ultimate.sort';
 import { EnumForPosts } from '../../../application/enums/enum.for.posts';
 import { GetAllPostsQueryCommand } from './use-cases/query.use-cases/get.all.posts.query.use-case';
 import { GetOnePostQueryCommand } from './use-cases/query.use-cases/get.one.post.query.use-case';
+import { LikePostCommand } from './use-cases/command.use-cases/like.post.use-case';
+import { EnumForComments } from '../../../application/enums/enum.for.comments';
+import { GetAllCommentsByPostIdQueryCommand } from './use-cases/query.use-cases/get.all.comments.by.post-id.use-case';
 
 @Controller('posts')
 export class PublicPostController {
@@ -100,7 +101,7 @@ export class PublicPostController {
   ) {
     const { sortBy, sortDirection, pageNumber, pageSize } = query;
 
-    const sort = queryValidator(sortBy, sortDirection);
+    const sort = ultimateSort(sortBy, sortDirection, EnumForComments);
     const pagination = makePagination(pageNumber, pageSize);
 
     let userId = null;
@@ -114,18 +115,14 @@ export class PublicPostController {
       if (payload) {
         userId = payload.userId;
       }
-      // const allComments = await this.postQ.getAllCommentsByPostId(
-      //   id,
-      //   sort,
-      //   pagination,
-      //   userId,
-      // );
-      // if (allComments.items.length !== 0) return allComments;
-      throw new Errors.NOT_FOUND();
     } catch (err) {
       console.log(err);
       throw new Errors.NOT_FOUND();
     }
+
+    return await this.queryBus.execute(
+      new GetAllCommentsByPostIdQueryCommand(id, sort, pagination, userId),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -157,7 +154,7 @@ export class PublicPostController {
     const userLogin = user.userLogin;
 
     return await this.commandBus.execute(
-      new LikeCommentOrPostCommand(id, likeStatus, userId, userLogin, 'post'),
+      new LikePostCommand(id, likeStatus, userId, userLogin),
     );
   }
 }

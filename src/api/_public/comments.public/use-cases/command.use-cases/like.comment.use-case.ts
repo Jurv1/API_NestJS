@@ -1,43 +1,30 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostQ } from '../../../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { CommentQ } from '../../../../application/infrastructure/comments/_Mongo/comments.query.repository';
-import { LikesRepository } from '../../../../application/infrastructure/likes/_Mongo/likes.repository';
-import { CommentDocument } from '../../../../application/schemas/comments/schemas/comments.database.schema';
-import { PostDocument } from '../../../../application/schemas/posts/schemas/posts.database.schema';
-import { Errors } from '../../../../application/utils/handle.error';
-import { PostsQueryRepository } from '../../../../application/infrastructure/posts/posts.query.repository';
-import { CommentsQueryRepository } from '../../../../application/infrastructure/comments/comments.query.repository';
-import { CommentsLikesRepository } from '../../../../application/infrastructure/likes/comments.likes.repository';
+import { Errors } from '../../../../../application/utils/handle.error';
+import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
+import { CommentsQueryRepository } from '../../../../../application/infrastructure/comments/comments.query.repository';
+import { CommentsLikesRepository } from '../../../../../application/infrastructure/likes/comments.likes.repository';
 
-export class LikeCommentOrPostCommand {
+export class LikeCommentCommand {
   constructor(
     public commentOrPostId: string,
     public likeStatus: string,
     public userId: string,
     public userLogin: string,
-    public commentOrPost: string,
   ) {}
 }
 
-@CommandHandler(LikeCommentOrPostCommand)
-export class LikeCommentOrPostUseCase
-  implements ICommandHandler<LikeCommentOrPostCommand>
-{
+@CommandHandler(LikeCommentCommand)
+export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
   constructor(
     private readonly postQ: PostsQueryRepository,
     private readonly commentQ: CommentsQueryRepository,
     private readonly likesRepo: CommentsLikesRepository,
   ) {}
-  async execute(command: LikeCommentOrPostCommand) {
-    let commentOrPost: CommentDocument | PostDocument;
+  async execute(command: LikeCommentCommand) {
     if (!command.commentOrPostId) throw new Errors.NOT_FOUND();
-    if (command.commentOrPost === 'post') {
-      commentOrPost = await this.postQ.getOnePost(command.commentOrPostId);
-    } else {
-      commentOrPost = await this.commentQ.getOneComment(
-        command.commentOrPostId,
-      );
-    }
+    const commentOrPost = await this.commentQ.getOneComment(
+      command.commentOrPostId,
+    );
     if (!commentOrPost) throw new Errors.NOT_FOUND();
     ////////////////
     const userStatus = await this.likesRepo.getUserStatusForComment(

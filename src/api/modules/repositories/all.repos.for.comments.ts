@@ -1,4 +1,9 @@
-import { CommentQ } from '../../../application/infrastructure/comments/_Mongo/comments.query.repository';
-import { CommentRepository } from '../../../application/infrastructure/comments/_Mongo/comments.repository';
+import { CommentsLikesRepository } from '../../../application/infrastructure/likes/comments.likes.repository';
+import { CommentsQueryRepository } from '../../../application/infrastructure/comments/comments.query.repository';
+import { CommentsRepository } from '../../../application/infrastructure/comments/comments.repository';
 
-export const allReposForComments = [CommentQ, CommentRepository];
+export const allReposForComments = [
+  CommentsRepository,
+  CommentsLikesRepository,
+  CommentsQueryRepository,
+];

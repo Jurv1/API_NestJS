@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentRepository } from '../comments.repository';
+import { CommentsRepository } from '../../comments.repository';
 
 export class UpdateBanStatusForCommentOwnerCommand {
   constructor(public userId: string, public banStatus: boolean) {}
@@ -9,7 +9,7 @@ export class UpdateBanStatusForCommentOwnerCommand {
 export class UpdateBanStatusForCommentOwnerUseCase
   implements ICommandHandler<UpdateBanStatusForCommentOwnerCommand>
 {
-  constructor(private readonly commentRepository: CommentRepository) {}
+  constructor(private readonly commentRepository: CommentsRepository) {}
 
   async execute(command: UpdateBanStatusForCommentOwnerCommand) {
     return await this.commentRepository.updateBanStatusForCommentOwner(
