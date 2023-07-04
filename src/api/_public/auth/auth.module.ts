@@ -41,11 +41,6 @@ import { DevicesQueryRepository } from '../../../application/infrastructure/devi
       },
     }),
     MailModule,
-    MongooseModule.forFeature([
-      { name: RefreshTokenBlacklist.name, schema: RefreshTokenBlackListSchema },
-      { name: User.name, schema: UserSchema },
-      { name: Device.name, schema: DeviceSchema },
-    ]),
   ],
   controllers: [PublicAuthController],
   providers: [

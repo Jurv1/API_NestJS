@@ -1,26 +1,25 @@
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { PostViewModel } from '../../schemas/posts/schemas/post-view.model';
-import { LikesRepository } from '../../infrastructure/likes/_Mongo/likes.repository';
 import { LikeDocument } from '../../schemas/likes/schemas/like.database.schema';
 import { mapLikes } from './like.mapper';
 import { NewestLike } from '../../schemas/posts/schemas/likes.schemas/newest.likes';
 import { Inject } from '@nestjs/common';
+import { PostsLikesRepository } from '../../infrastructure/likes/posts.likes.repository';
 
 export class PostMapper {
   constructor(
-    @Inject(LikesRepository) protected readonly likesRepo: LikesRepository,
+    @Inject(PostsLikesRepository)
+    protected readonly likesRepo: PostsLikesRepository,
   ) {}
 
   async mapPost(obj: PostDocument, userId?: string): Promise<PostViewModel> {
     const postId = obj[0].Id.toString();
     let like: LikeDocument | null;
     let userStatus: string | undefined = 'None';
-    const allLikes = await this.likesRepo.countAllLikesForPostOrComment(postId);
-    const allDislikes = await this.likesRepo.countAllDislikesForPostOrComment(
-      postId,
-    );
+    const allLikes = await this.likesRepo.countAllLikesForPost(postId);
+    const allDislikes = await this.likesRepo.countAllDislikesForPost(postId);
     if (userId) {
-      like = await this.likesRepo.getUserStatusForCommentOrPost(
+      like = await this.likesRepo.getUserStatusForPost(
         userId.toString(),
         postId,
       );
@@ -48,26 +47,25 @@ export class PostMapper {
   }
 
   async mapPosts(objs: any, userId?: string | null): Promise<PostViewModel[]> {
-    let like: LikeDocument | null;
+    let like: any | null;
     let userStatus: string | undefined = 'None';
 
     return await Promise.all(
       objs.map(async (el) => {
         const postId = el.Id.toString();
-        const allLikes = await this.likesRepo.countAllLikesForPostOrComment(
+        const allLikes = await this.likesRepo.countAllLikesForPost(postId);
+        const allDislikes = await this.likesRepo.countAllDislikesForPost(
           postId,
         );
-        const allDislikes =
-          await this.likesRepo.countAllDislikesForPostOrComment(postId);
         const lastThreeLikes: any = await this.likesRepo.findLatestThreeLikes(
           postId,
         );
         if (userId) {
-          like = await this.likesRepo.getUserStatusForCommentOrPost(
+          like = await this.likesRepo.getUserStatusForPost(
             userId.toString(),
             postId,
           );
-          userStatus = like?.userStatus;
+          userStatus = like[0].LikeStatus;
         }
 
         const newestLikes: NewestLike[] = mapLikes(lastThreeLikes);

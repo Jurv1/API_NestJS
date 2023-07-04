@@ -21,8 +21,6 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly userQ: UsersQueryRepository,
     private readonly mailService: MailService,
-    @InjectModel(RefreshTokenBlacklist.name)
-    private readonly refreshModel: RefreshTokenBlackListModel,
   ) {}
   async validateUser(login: string, password: string) {
     const user: any = await this.userService.findUserByLogin(login);
@@ -141,13 +139,5 @@ export class AuthService {
     return await this.jwtService.verifyAsync(token, {
       secret: process.env.SECRET,
     });
-  }
-
-  async addRefreshToBlackList(token: string) {
-    await this.refreshModel.insertMany({ refresh: token });
-  }
-
-  async isRefreshInBlackList(token: string): Promise<TokenBlackListDocument> {
-    return this.refreshModel.findOne({ refresh: token });
   }
 }

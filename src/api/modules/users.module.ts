@@ -37,14 +37,7 @@ import { BlogsRepository } from '../../application/infrastructure/blogs/blogs.re
 import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blogs.query.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
-    MongooseModule.forFeature([
-      { name: DBComment.name, schema: CommentSchema },
-    ]),
-    MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
-    CqrsModule,
-  ],
+  imports: [CqrsModule],
   controllers: [SuperAdminUsersController, UsersBloggerController],
   providers: [
     ...allUsersUseCases,

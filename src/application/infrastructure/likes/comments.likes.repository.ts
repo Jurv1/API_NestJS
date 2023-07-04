@@ -46,10 +46,10 @@ export class CommentsLikesRepository {
   ): Promise<LikeDocument | null> {
     return await this.dataSource.query(
       `
-      INSERT INTO public."CommentsLikes" ("UserId", "CommentId", "LikeStatus", "AddedAt")
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO public."CommentsLikes" ("UserId", "CommentId", "LikeStatus", "AddedAt", "UserStatus")
+      VALUES ($1, $2, $3, $4, $5)
       `,
-      [userId, commentPostId, likeStatus, new Date().toISOString()],
+      [userId, commentPostId, likeStatus, new Date().toISOString(), false],
     );
   }
 
@@ -64,7 +64,7 @@ export class CommentsLikesRepository {
       [id],
     );
 
-    return counts[0].count;
+    return +counts[0].count;
   }
 
   async countAllDislikesForComment(id: string) {
@@ -78,7 +78,7 @@ export class CommentsLikesRepository {
       [id],
     );
 
-    return counts[0].count;
+    return +counts[0].count;
   }
 
   async findLatestThreeLikes(commentId: string) {
@@ -88,7 +88,7 @@ export class CommentsLikesRepository {
       LEFT JOIN public."Users" AS Users 
         ON Likes."UserId" = Users."Id"
       WHERE Likes."CommentId" = $1
-        AND Likes."UserStatus" = 'Like'
+        AND Likes."LikeStatus" = 'Like'
           AND Likes."UserStatus" = false
       ORDER BY Likes."AddedAt" desc
       LIMIT 3 OFFSET 0;

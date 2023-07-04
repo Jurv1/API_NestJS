@@ -27,14 +27,7 @@ import { DevicesQueryRepository } from '../../application/infrastructure/devices
 import { DeviceMapper } from '../../application/utils/mappers/device.mapper';
 
 @Module({
-  imports: [
-    CqrsModule,
-    MongooseModule.forFeature([
-      { name: Device.name, schema: DeviceSchema },
-      { name: RefreshTokenBlacklist.name, schema: RefreshTokenBlackListSchema },
-      { name: User.name, schema: UserSchema },
-    ]),
-  ],
+  imports: [CqrsModule],
   controllers: [PublicDeviceController],
   providers: [
     ...allDevicesUseCases,
@@ -42,7 +35,6 @@ import { DeviceMapper } from '../../application/utils/mappers/device.mapper';
     JwtService,
     AuthService,
     UsersQueryRepository,
-    DevicesQueryRepository,
     DevicesService,
     DeviceMapper,
     UsersService,

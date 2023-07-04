@@ -70,23 +70,23 @@ export class CommentMapper {
           userStatus = like?.userStatus;
         }
         return {
-          id: el._id,
-          content: el.content,
+          id: el.Id.toString(),
+          content: el.Content,
           commentatorInfo: {
-            userId: el.commentatorInfo.userId,
-            userLogin: el.commentatorInfo.userLogin,
+            userId: el.CommentatorId,
+            userLogin: el.CommentatorLogin,
           },
-          createdAt: el.createdAt,
+          createdAt: el.CreatedAt,
           likesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,
             myStatus: userStatus || 'None',
           },
           postInfo: {
-            id: el.postInfo.id,
-            title: el.postInfo.title,
-            blogId: el.postInfo.blogId,
-            blogName: el.postInfo.blogName,
+            id: el.PostId,
+            title: el.Title,
+            blogId: el.BlogId,
+            blogName: el.BlogName,
           },
         };
       }),

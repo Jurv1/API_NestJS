@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { BlogQueryParams } from '../../../application/dto/blogs/dto/queries/blog.query.params';
-import { queryValidator } from '../../../application/utils/sorts/_MongoSorts/sorting.func';
 import { makePagination } from '../../../application/utils/make.paggination';
 import { BlogBody } from '../../../application/dto/blogs/dto/body/blog.body';
 import { PostBody } from '../../../application/dto/posts/dto/post.body.without.blogId';
@@ -30,18 +29,20 @@ import { DeleteOnePostBySpecificBlogIdCommand } from './use-cases/command.use-ca
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { BlogQueryForComments } from '../../../application/dto/blogs/dto/queries/blog.query.for.comments';
-import { CommentQ } from '../../../application/infrastructure/comments/_Mongo/comments.query.repository';
 import { CommentsWithPagination } from '../../../application/dto/comments/dto/comments.with.pagination';
 import { CommentMapper } from '../../../application/utils/mappers/comment.mapper';
 import { filterForPublicBlogs } from '../../../application/utils/filters/filter.for.public.blogs';
 import { GetAllBlogsForBloggerQueryCommand } from './use-cases/query.use-cases/get.all.blogs.for.blogger.query.use-case';
 import { ultimateSort } from '../../../application/utils/sorts/ultimate.sort';
 import { EnumForBlogs } from '../../../application/enums/emun.for.blogs';
+import { CommentsQueryRepository } from '../../../application/infrastructure/comments/comments.query.repository';
+import { EnumForComments } from '../../../application/enums/enum.for.comments';
+import { GetAllCommentsForBloggerQueryCommand } from './use-cases/query.use-cases/get.all.comments.for.blogger.query.use-case';
 
 @Controller('blogger/blogs')
 export class BloggerBlogController {
   constructor(
-    private readonly commentQ: CommentQ,
+    private readonly commentQ: CommentsQueryRepository,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
@@ -76,15 +77,15 @@ export class BloggerBlogController {
     @Query() query: BlogQueryForComments,
     @CurrentUserId() userId: string,
   ) {
-    const sort = queryValidator(query.sortBy, query.sortDirection);
-    const pagination = makePagination(query.pageNumber, query.pageSize);
-    const comments: CommentsWithPagination =
-      await this.commentQ.getCommentsForBlog(userId, sort, pagination);
-    comments.items = await this.commentMapper.mapCommentsForBlogger(
-      comments.items,
-      userId,
+    const sort = ultimateSort(
+      query.sortBy,
+      query.sortDirection,
+      EnumForComments,
     );
-    return comments;
+    const pagination = makePagination(query.pageNumber, query.pageSize);
+    return await this.queryBus.execute(
+      new GetAllCommentsForBloggerQueryCommand(userId, sort, pagination),
+    );
   }
 
   @UseGuards(JwtAuthGuard)

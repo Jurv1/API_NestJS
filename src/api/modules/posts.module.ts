@@ -12,6 +12,8 @@ import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blo
 import { PostQ } from '../../application/infrastructure/posts/_Mongo/posts.query.repository';
 import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { PostsLikesRepository } from '../../application/infrastructure/likes/posts.likes.repository';
+import { CommentsRepository } from '../../application/infrastructure/comments/comments.repository';
+import { CommentsLikesRepository } from '../../application/infrastructure/likes/comments.likes.repository';
 
 @Module({
   imports: [CqrsModule],
@@ -21,10 +23,10 @@ import { PostsLikesRepository } from '../../application/infrastructure/likes/pos
     ...allReposForPosts,
     CreateCommentForPostUseCase,
     PostService,
-    PostQ,
-    BlogQ,
     BlogsQueryRepository,
     PostsLikesRepository,
+    CommentsRepository,
+    CommentsLikesRepository,
     PostMapper,
     CommentMapper,
     JwtService,

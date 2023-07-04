@@ -43,7 +43,10 @@ export class GetAllPostsByBlogIdUseCase
       command.userId,
     );
 
-    const mappedPosts = await this.postMapper.mapPosts(allPosts);
+    const mappedPosts = await this.postMapper.mapPosts(
+      allPosts,
+      command.userId,
+    );
     const counts = await this.postQ.countAllPostsByBlogId(command.blogId);
     return paginator(
       +counts,

@@ -1,11 +1,6 @@
 import { Module } from '@nestjs/common';
 import { allBlogsUseCases } from './use-cases/all.blogs.use-cases';
 import { allReposForBlogs } from './repositories/all.repos.for.blogs';
-import { MongooseModule } from '@nestjs/mongoose';
-import {
-  Blog,
-  BlogSchema,
-} from '../../application/schemas/blogs/schemas/blogs.database.schema';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SuperAdminBlogsController } from '../_super-admin/super-admin.blogs/super-admin.blogs.controller';
 import { BloggerBlogController } from '../_blogger/blogs.blogger/blogs.blogger.controller';
@@ -18,34 +13,15 @@ import { PostService } from '../../application/infrastructure/posts/posts.servic
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
 import { allReposForPosts } from './repositories/all.repos.for.posts';
 import { allPostsUseCases } from './use-cases/all.posts.use-cases';
-import {
-  Post,
-  PostSchema,
-} from '../../application/schemas/posts/schemas/posts.database.schema';
-import {
-  CommentSchema,
-  DBComment,
-} from '../../application/schemas/comments/schemas/comments.database.schema';
-import { LikesRepository } from '../../application/infrastructure/likes/_Mongo/likes.repository';
 import { CommentMapper } from '../../application/utils/mappers/comment.mapper';
-import {
-  Like,
-  LikeSchema,
-} from '../../application/schemas/likes/schemas/like.database.schema';
 import { PublicBlogController } from '../_public/blogs.public/blogs.public.controller';
-import { CommentQ } from '../../application/infrastructure/comments/_Mongo/comments.query.repository';
+import { PostsLikesRepository } from '../../application/infrastructure/likes/posts.likes.repository';
+import { CommentsLikesRepository } from '../../application/infrastructure/likes/comments.likes.repository';
+import { CommentsQueryRepository } from '../../application/infrastructure/comments/comments.query.repository';
+import { CommentsRepository } from '../../application/infrastructure/comments/comments.repository';
 
 @Module({
-  imports: [
-    CqrsModule,
-    MongooseModule.forFeature([
-      { name: Blog.name, schema: BlogSchema },
-      { name: Post.name, schema: PostSchema },
-      { name: DBComment.name, schema: CommentSchema },
-      { name: Like.name, schema: LikeSchema },
-    ]),
-    PostsModule,
-  ],
+  imports: [CqrsModule, PostsModule],
   controllers: [
     SuperAdminBlogsController,
     BloggerBlogController,
@@ -63,8 +39,10 @@ import { CommentQ } from '../../application/infrastructure/comments/_Mongo/comme
     BlogService,
     PostService,
     PostMapper,
-    LikesRepository,
-    CommentQ,
+    PostsLikesRepository,
+    CommentsLikesRepository,
+    CommentsQueryRepository,
+    CommentsRepository,
   ],
 })
 export class BlogsModule {}

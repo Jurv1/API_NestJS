@@ -29,9 +29,9 @@ export class PostsLikesRepository {
     userId: string,
     postId: string,
   ): Promise<any | null> {
-    await this.dataSource.query(
+    return await this.dataSource.query(
       `
-      SELECT "UserStatus" FROM public."PostsLikes"
+      SELECT "LikeStatus" FROM public."PostsLikes"
       WHERE "UserId" = $1
         AND "PostId" = $2;
       `,
@@ -47,10 +47,10 @@ export class PostsLikesRepository {
   ): Promise<LikeDocument | null> {
     return await this.dataSource.query(
       `
-      INSERT INTO public."PostsLikes" ("UserId", "PostId", "LikeStatus", "AddedAt")
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO public."PostsLikes" ("UserId", "PostId", "LikeStatus", "AddedAt", "UserStatus")
+      VALUES ($1, $2, $3, $4, $5)
       `,
-      [userId, commentPostId, likeStatus, new Date().toISOString()],
+      [userId, commentPostId, likeStatus, new Date().toISOString(), false],
     );
   }
 
@@ -65,7 +65,7 @@ export class PostsLikesRepository {
       [id],
     );
 
-    return counts[0].count;
+    return +counts[0].count;
   }
 
   async countAllDislikesForPost(id: string) {
@@ -79,7 +79,7 @@ export class PostsLikesRepository {
       [id],
     );
 
-    return counts[0].count;
+    return +counts[0].count;
   }
 
   async findLatestThreeLikes(postId: string) {
@@ -89,7 +89,7 @@ export class PostsLikesRepository {
       LEFT JOIN public."Users" AS Users 
         ON Likes."UserId" = Users."Id"
       WHERE Likes."PostId" = $1
-        AND Likes."UserStatus" = 'Like'
+        AND Likes."LikeStatus" = 'Like'
           AND Likes."UserStatus" = false
       ORDER BY Likes."AddedAt" desc
       LIMIT 3 OFFSET 0;
