@@ -23,7 +23,7 @@ export class PostMapper {
         userId.toString(),
         postId,
       );
-      userStatus = like?.userStatus;
+      userStatus = like[0]?.LikeStatus;
     }
     const lastThreeLikes: any = await this.likesRepo.findLatestThreeLikes(
       postId,
