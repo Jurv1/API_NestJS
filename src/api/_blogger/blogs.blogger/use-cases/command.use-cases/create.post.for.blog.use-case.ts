@@ -2,11 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostService } from '../../../../../application/infrastructure/posts/posts.service';
 import { Errors } from '../../../../../application/utils/handle.error';
 import { PostMapper } from '../../../../../application/utils/mappers/post.mapper';
-import { PostDocument } from '../../../../../application/schemas/posts/schemas/posts.database.schema';
 import { PostViewModel } from '../../../../../application/schemas/posts/schemas/post-view.model';
 import { UserIdAndLogin } from '../../../../_public/auth/dto/user-id.and.login';
-import { BlogQ } from '../../../../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
-import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 export class CreatePostForBlogCommand {

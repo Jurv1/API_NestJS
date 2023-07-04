@@ -82,7 +82,7 @@ export class PostMapper {
             myStatus: userStatus || 'None',
             newestLikes: newestLikes || [],
           },
-          createdAt: el.createdAt,
+          createdAt: el.CreatedAt,
         };
       }),
     );
