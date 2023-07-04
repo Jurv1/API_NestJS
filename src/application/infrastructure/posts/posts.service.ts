@@ -87,11 +87,6 @@ export class PostService {
           userId: userId.toString(),
           userLogin: userLogin,
         },
-        likesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: 'None',
-        },
         postInfo: {
           id: postId,
           title: foundedEl[0].Title,
@@ -100,7 +95,6 @@ export class PostService {
           blogOwnerId: foundedEl[0].OwnerId.toString(),
         },
       };
-
       return await this.commentsRepository.createComment(newCommentTmp);
     } else return null;
   }

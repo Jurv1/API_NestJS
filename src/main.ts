@@ -17,7 +17,9 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  useContainer(app.select(AppModule), {
+    fallbackOnErrors: true,
+  });
   await app.listen(3003);
 }
 bootstrap();

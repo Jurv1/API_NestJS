@@ -28,7 +28,7 @@ export class DBComment {
     const createdComment = {
       content: commentDto.content,
       commentatorInfo: commentDto.commentatorInfo,
-      likesInfo: commentDto.likesInfo,
+      //likesInfo: commentDto.likesInfo,
       postInfo: commentDto.postInfo,
       isUserBanned: false,
       createdAt: new Date().toISOString(),

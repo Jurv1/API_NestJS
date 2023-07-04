@@ -164,8 +164,9 @@ export class BlogsQueryRepository {
       FROM public."BannedUsersByBlogger" AS BannedUsers
        LEFT JOIN public."Users" AS Users 
         ON BannedUsers."UserId" = Users."Id"
-      WHERE BannedUsers."BlogId" = $1
-      `[blogId],
+      WHERE BannedUsers."BlogId" = $1;
+      `,
+      [blogId],
     );
   }
 
@@ -187,19 +188,6 @@ export class BlogsQueryRepository {
 
     return counts[0].count;
   }
-
-  // async getSlicedBannedUsers(
-  //   filter: any,
-  //   sort: any,
-  //   from: number,
-  //   size: number,
-  // ): Promise<BlogDocument | null> {
-  //   return this.blogModel
-  //     .find(filter, {}, { bannedUsersForBlog: { $slice: [from, size] } })
-  //     .sort(sort)
-  //     .limit(size)
-  //     .lean();
-  // }
 
   async getOneBlog(id: string): Promise<any | null> {
     return this.dataSource.query(
