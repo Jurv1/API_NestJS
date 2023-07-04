@@ -10,20 +10,7 @@ import { MailService } from '../../../mail/mail.service';
 import { MailModule } from '../../../mail/mail.module';
 import { jwtConstants } from '../../../application/config/consts';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { MongooseModule } from '@nestjs/mongoose';
-import {
-  RefreshTokenBlacklist,
-  RefreshTokenBlackListSchema,
-} from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
-import {
-  User,
-  UserSchema,
-} from '../../../application/schemas/users/schemas/users.database.schema';
 import { PublicAuthController } from './auth.controller';
-import {
-  Device,
-  DeviceSchema,
-} from '../../../application/schemas/devices/schemas/devices.database.schema';
 import { DevicesService } from '../../../application/infrastructure/devices/devices.service';
 import { UsersRepository } from '../../../application/infrastructure/users/users.repository';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';

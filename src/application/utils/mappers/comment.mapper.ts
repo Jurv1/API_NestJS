@@ -29,13 +29,13 @@ export class CommentMapper {
         userId.toString(),
         commentId,
       );
-      userStatus = like?.userStatus;
+      userStatus = like[0]?.LikeStatus;
     }
     return {
       id: obj[0].Id.toString(),
       content: obj[0].Content,
       commentatorInfo: {
-        userId: obj[0].CommentatorId,
+        userId: obj[0].CommentatorId.toString(),
         userLogin: obj[0].CommentatorLogin,
       },
       createdAt: obj[0].CreatedAt,
@@ -55,7 +55,7 @@ export class CommentMapper {
     let userStatus: string | undefined = 'None';
     return await Promise.all(
       objs.map(async (el) => {
-        const commentId = el._id.toString();
+        const commentId = el.Id.toString();
         const allLikes = await this.likesRepo.countAllLikesForComment(
           commentId,
         );
@@ -67,14 +67,14 @@ export class CommentMapper {
             userId.toString(),
             commentId,
           );
-          userStatus = like?.userStatus;
+          userStatus = like[0]?.LikeStatus;
         }
         return {
           id: el.Id.toString(),
           content: el.Content,
           commentatorInfo: {
-            userId: el.CommentatorId,
-            userLogin: el.CommentatorLogin,
+            userId: el.CommentatorId.toString(),
+            userLogin: el.commentatorlogin,
           },
           createdAt: el.CreatedAt,
           likesInfo: {
@@ -83,9 +83,9 @@ export class CommentMapper {
             myStatus: userStatus || 'None',
           },
           postInfo: {
-            id: el.PostId,
+            id: el.postid.toString(),
             title: el.Title,
-            blogId: el.BlogId,
+            blogId: el.BlogId.toString(),
             blogName: el.BlogName,
           },
         };
@@ -114,14 +114,14 @@ export class CommentMapper {
             userId.toString(),
             commentId,
           );
-          userStatus = like?.userStatus;
+          userStatus = like[0]?.LikeStatus;
         }
 
         return {
           id: el.Id.toString(),
           content: el.Content,
           commentatorInfo: {
-            userId: el.CommentatorId,
+            userId: el.CommentatorId.toString(),
             userLogin: el.CommentatorLogin,
           },
           createdAt: el.CreatedAt,

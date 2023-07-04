@@ -6,12 +6,6 @@ import * as bcrypt from 'bcrypt';
 import { MailService } from '../../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../../../application/config/consts';
-import { InjectModel } from '@nestjs/mongoose';
-import {
-  RefreshTokenBlacklist,
-  RefreshTokenBlackListModel,
-  TokenBlackListDocument,
-} from '../../../application/schemas/devices/schemas/refresh-token.blacklist';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
 
 @Injectable()

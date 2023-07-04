@@ -12,15 +12,32 @@ export class AppService {
   async deleteAll() {
     await this.dataSource.query(
       `
-      DELETE FROM public."Posts";
-      DELETE FROM public."BannedUsersByBlogger";
-      DELETE FROM public."BlogsOwnerInfo";
-      DELETE FROM public."Blogs";
-      DELETE FROM public."Devices";
-      DELETE FROM public."BansForUsersByAdmin";
-      DELETE FROM public."EmailConfirmationForUsers";
-      DELETE FROM public."PasswordRecoveryForUsers";
-      DELETE FROM public."Users";
+       DELETE FROM
+       public."BannedUsersByBlogger";
+       DELETE FROM
+       public."CommentsLikes";
+       DELETE FROM
+       public."PostsLikes";
+       DELETE FROM
+       public."BansForUsersByAdmin";
+       DELETE FROM
+       public."BlogsOwnerInfo";
+       DELETE FROM
+       public."BannedUsersByBlogger";
+       DELETE FROM
+       public."Devices";
+       DELETE FROM
+       public."EmailConfirmationForUsers";
+       DELETE FROM
+       public."PasswordRecoveryForUsers";
+       DELETE FROM
+       public."Comments";
+       DELETE FROM
+       public."Blogs";
+       DELETE FROM
+       public."Posts";
+       DELETE FROM
+       public."Users";
       `,
     );
   }

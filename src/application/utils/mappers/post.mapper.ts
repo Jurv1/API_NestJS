@@ -65,7 +65,7 @@ export class PostMapper {
             userId.toString(),
             postId,
           );
-          userStatus = like[0].LikeStatus;
+          userStatus = like[0]?.LikeStatus;
         }
 
         const newestLikes: NewestLike[] = mapLikes(lastThreeLikes);

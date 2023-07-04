@@ -1,6 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
-import { Errors } from '../../../../../application/utils/handle.error';
 import { CommentMapper } from '../../../../../application/utils/mappers/comment.mapper';
 import { paginator } from '../../../../../application/utils/paginator/paginator';
 

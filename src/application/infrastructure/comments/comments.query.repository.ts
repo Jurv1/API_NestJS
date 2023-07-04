@@ -7,7 +7,7 @@ export class CommentsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async getOneComment(id: string): Promise<any | null> {
-    await this.dataSource.query(
+    return await this.dataSource.query(
       `
       SELECT * FROM public."Comments"
       WHERE "Id" = $1
@@ -29,7 +29,17 @@ export class CommentsQueryRepository {
   ) {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Comments" AS Comments
+      SELECT
+       Comments."Id",
+       Comments."Content",
+       Comments."CommentatorId",
+       BlogInfo."OwnerLogin" AS CommentatorLogin,
+       Comments."CreatedAt",
+       Posts."Id" AS PostId,
+       Posts."Title",
+       Posts."BlogId",
+       Posts."BlogName"  
+      FROM public."Comments" AS Comments
       LEFT JOIN public."Posts" AS Posts
         ON Posts."Id" = Comments."PostId"
       LEFT JOIN public."Blogs" AS Blogs
@@ -38,9 +48,10 @@ export class CommentsQueryRepository {
         ON BlogInfo."BlogId" = Blogs."Id"
       WHERE 
         BlogInfo."OwnerId" = $1
-      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      ORDER BY Comments."${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
+      [blogOwnerId],
     );
   }
 

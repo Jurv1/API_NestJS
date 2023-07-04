@@ -9,8 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateCommentForPostUseCase } from '../_public/posts.public/use-cases/command.use-cases/create.comment.for.post.use-case';
 import { PostService } from '../../application/infrastructure/posts/posts.service';
 import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blogs.query.repository';
-import { PostQ } from '../../application/infrastructure/posts/_Mongo/posts.query.repository';
-import { BlogQ } from '../../application/infrastructure/blogs/_MongoDB/blogs.query.repository';
 import { PostsLikesRepository } from '../../application/infrastructure/likes/posts.likes.repository';
 import { CommentsRepository } from '../../application/infrastructure/comments/comments.repository';
 import { CommentsLikesRepository } from '../../application/infrastructure/likes/comments.likes.repository';

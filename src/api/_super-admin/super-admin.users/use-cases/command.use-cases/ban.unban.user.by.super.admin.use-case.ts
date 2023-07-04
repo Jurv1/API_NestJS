@@ -8,7 +8,6 @@ import { UpdateBanStatusForCommentOwnerCommand } from '../../../../../applicatio
 import { UsersQueryRepository } from '../../../../../application/infrastructure/users/users.query.repository';
 import { UsersRepository } from '../../../../../application/infrastructure/users/users.repository';
 import { DevicesRepository } from '../../../../../application/infrastructure/devices/devices.repository';
-import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 
 export class BanUnbanUserBySuperAdminCommand {
   constructor(public userId: string, public banInfo: BanBody) {}

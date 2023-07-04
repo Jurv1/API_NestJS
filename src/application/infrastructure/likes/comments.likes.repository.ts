@@ -16,7 +16,7 @@ export class CommentsLikesRepository {
       DELETE FROM public."CommentsLikes"
       WHERE "UserId" = $1
         AND "CommentId" = $2
-         AND "UserStatus" = $3
+         AND "LikeStatus" = $3
       `,
       [userId, commentId, userStatus],
     );
@@ -28,9 +28,9 @@ export class CommentsLikesRepository {
     userId: string,
     commentId: string,
   ): Promise<any | null> {
-    await this.dataSource.query(
+    return await this.dataSource.query(
       `
-      SELECT "UserStatus" FROM public."CommentsLikes"
+      SELECT "LikeStatus" FROM public."CommentsLikes"
       WHERE "UserId" = $1
         AND "CommentId" = $2;
       `,

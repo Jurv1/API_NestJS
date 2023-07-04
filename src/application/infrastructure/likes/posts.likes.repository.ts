@@ -17,7 +17,7 @@ export class PostsLikesRepository {
       DELETE FROM public."PostsLikes"
       WHERE "UserId" = $1
         AND "PostId" = $2
-         AND "UserStatus" = $3
+         AND "LikeStatus" = $3
       `,
       [userId, postId, userStatus],
     );
@@ -85,7 +85,7 @@ export class PostsLikesRepository {
   async findLatestThreeLikes(postId: string) {
     return await this.dataSource.query(
       `
-      SELECT Users."Id", Likes."AddedAt", Users."Id" FROM public."PostsLikes" AS Likes
+      SELECT Users."Id", Likes."AddedAt", Users."Login" FROM public."PostsLikes" AS Likes
       LEFT JOIN public."Users" AS Users 
         ON Likes."UserId" = Users."Id"
       WHERE Likes."PostId" = $1

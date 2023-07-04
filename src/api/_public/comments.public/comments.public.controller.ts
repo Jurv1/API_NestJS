@@ -17,7 +17,7 @@ import { LikeBody } from '../../../application/dto/likes/dto/like.body';
 import { CurrentUserIdAndLogin } from '../auth/decorators/current-user.id.and.login';
 import { UserIdAndLogin } from '../auth/dto/user-id.and.login';
 import { CommandBus } from '@nestjs/cqrs';
-import { GetCommentByIdCommand } from './use-cases/query.use-cases/get.all.comments.use-case';
+import { GetCommentByIdCommand } from './use-cases/query.use-cases/get.comment.query.use-case';
 import { UpdateCommentCommand } from './use-cases/command.use-cases/update.comment.use-case';
 import { DeleteCommentCommand } from './use-cases/command.use-cases/delete.comment.use-case';
 import { LikeCommentCommand } from './use-cases/command.use-cases/like.comment.use-case';

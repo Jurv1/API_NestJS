@@ -3,6 +3,7 @@ import { Errors } from '../../../../../application/utils/handle.error';
 import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
 import { CommentsQueryRepository } from '../../../../../application/infrastructure/comments/comments.query.repository';
 import { CommentsLikesRepository } from '../../../../../application/infrastructure/likes/comments.likes.repository';
+import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 
 export class LikeCommentCommand {
   constructor(
@@ -21,11 +22,11 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
     private readonly likesRepo: CommentsLikesRepository,
   ) {}
   async execute(command: LikeCommentCommand) {
-    if (!command.commentOrPostId) throw new Errors.NOT_FOUND();
+    errorIfNan(command.commentOrPostId);
     const commentOrPost = await this.commentQ.getOneComment(
       command.commentOrPostId,
     );
-    if (!commentOrPost) throw new Errors.NOT_FOUND();
+    if (commentOrPost.length === 0) throw new Errors.NOT_FOUND();
     ////////////////
     const userStatus = await this.likesRepo.getUserStatusForComment(
       command.userId,
@@ -35,7 +36,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
       const result: boolean = await this.likesRepo.deleteLikeDislikeForComment(
         command.userId,
         command.commentOrPostId,
-        userStatus?.userStatus,
+        userStatus[0]?.LikeStatus,
       );
       if (result) {
         return;
@@ -43,15 +44,15 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
       throw new Errors.NOT_FOUND();
     }
     if (command.likeStatus === 'Like') {
-      if (userStatus?.userStatus === 'Dislike') {
+      if (userStatus[0]?.LikeStatus === 'Dislike') {
         //remove dislike and create like
         await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
           command.commentOrPostId,
-          userStatus.userStatus,
+          userStatus[0]?.LikeStatus,
         );
         return;
-      } else if (userStatus?.userStatus === 'Like') {
+      } else if (userStatus[0]?.LikeStatus === 'Like') {
         return;
       } else {
         const result = await this.likesRepo.likeComment(
@@ -67,11 +68,11 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
       }
     }
     if (command.likeStatus === 'Dislike') {
-      if (userStatus?.userStatus === 'Like') {
+      if (userStatus[0]?.LikeStatus === 'Like') {
         await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
           command.commentOrPostId,
-          userStatus.userStatus,
+          userStatus[0]?.LikeStatus,
         );
         const result = await this.likesRepo.likeComment(
           command.commentOrPostId,
@@ -84,7 +85,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
         }
         throw new Errors.NOT_FOUND();
         //remove like and create dislike
-      } else if (userStatus?.userStatus === 'Dislike') {
+      } else if (userStatus[0]?.LikeStatus === 'Dislike') {
         return;
       } else {
         //create Dislike

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PostUpdateBody } from '../../dto/posts/dto/post.update.body';
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { Errors } from '../../utils/handle.error';
-import { CommentDocument } from '../../schemas/comments/schemas/comments.database.schema';
 import { CommentCreatingDto } from '../../dto/comments/dto/comment.creating.dto';
 import { UserIdAndLogin } from '../../../api/_public/auth/dto/user-id.and.login';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
@@ -85,7 +84,7 @@ export class PostService {
       const newCommentTmp: CommentCreatingDto = {
         content: content,
         commentatorInfo: {
-          userId: userId,
+          userId: userId.toString(),
           userLogin: userLogin,
         },
         likesInfo: {
@@ -95,10 +94,10 @@ export class PostService {
         },
         postInfo: {
           id: postId,
-          title: foundedEl.title,
-          blogName: foundedEl.blogName,
-          blogId: foundedEl.blogId,
-          blogOwnerId: foundedEl.ownerInfo.userId,
+          title: foundedEl[0].Title,
+          blogName: foundedEl[0].BlogName,
+          blogId: foundedEl[0].BlogId.toString(),
+          blogOwnerId: foundedEl[0].OwnerId.toString(),
         },
       };
 
