@@ -91,7 +91,7 @@ export class PostsLikesRepository {
       WHERE Likes."PostId" = $1
         AND Likes."LikeStatus" = 'Like'
           AND Likes."UserStatus" = false
-      ORDER BY Likes."AddedAt" desc
+      ORDER BY Likes."AddedAt" ASC
       LIMIT 3 OFFSET 0;
       `,
       [postId],
