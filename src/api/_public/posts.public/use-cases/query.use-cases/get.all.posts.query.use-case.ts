@@ -33,7 +33,10 @@ export class GetAllPostsQueryUseCase
       command.userId,
     );
 
-    const mappedPosts = await this.postMapper.mapPosts(allPosts);
+    const mappedPosts = await this.postMapper.mapPosts(
+      allPosts,
+      command.userId,
+    );
     const countedPosts = await this.postQ.countAllPosts();
     return paginator(
       +countedPosts,
