@@ -11,9 +11,11 @@ import { DevicesService } from '../../application/infrastructure/devices/devices
 import { UsersRepository } from '../../application/infrastructure/users/users.repository';
 import { UsersQueryRepository } from '../../application/infrastructure/users/users.query.repository';
 import { DeviceMapper } from '../../application/utils/mappers/device.mapper';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Device } from '../../application/entities/devices/device.entity';
 
 @Module({
-  imports: [CqrsModule],
+  imports: [TypeOrmModule.forFeature([Device]), CqrsModule],
   controllers: [PublicDeviceController],
   providers: [
     ...allDevicesUseCases,

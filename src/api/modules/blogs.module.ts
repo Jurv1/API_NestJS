@@ -19,9 +19,20 @@ import { PostsLikesRepository } from '../../application/infrastructure/likes/pos
 import { CommentsLikesRepository } from '../../application/infrastructure/likes/comments.likes.repository';
 import { CommentsQueryRepository } from '../../application/infrastructure/comments/comments.query.repository';
 import { CommentsRepository } from '../../application/infrastructure/comments/comments.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Post } from '../../application/entities/posts/post.entity';
+import { Blog } from '../../application/entities/blogs/blog.entity';
+import { Comment } from '../../application/entities/comments/comment.entity';
+import { CommentsLike } from '../../application/entities/comments/comments.like.entity';
+import { PostsLike } from '../../application/entities/posts/posts.like.entity';
+import { User } from '../../application/entities/users/user.entity';
 
 @Module({
-  imports: [CqrsModule, PostsModule],
+  imports: [
+    TypeOrmModule.forFeature([Blog, Post, Comment, CommentsLike, PostsLike]),
+    CqrsModule,
+    PostsModule,
+  ],
   controllers: [
     SuperAdminBlogsController,
     BloggerBlogController,

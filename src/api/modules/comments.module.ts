@@ -9,9 +9,17 @@ import { JwtService } from '@nestjs/jwt';
 import { PostMapper } from '../../application/utils/mappers/post.mapper';
 import { PostsQueryRepository } from '../../application/infrastructure/posts/posts.query.repository';
 import { PostsLikesRepository } from '../../application/infrastructure/likes/posts.likes.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Post } from '../../application/entities/posts/post.entity';
+import { Comment } from '../../application/entities/comments/comment.entity';
+import { CommentsLike } from '../../application/entities/comments/comments.like.entity';
+import { PostsLike } from '../../application/entities/posts/posts.like.entity';
 
 @Module({
-  imports: [CqrsModule],
+  imports: [
+    TypeOrmModule.forFeature([Post, Comment, CommentsLike, PostsLike]),
+    CqrsModule,
+  ],
   controllers: [PublicCommentController],
   providers: [
     ...allReposForComments,

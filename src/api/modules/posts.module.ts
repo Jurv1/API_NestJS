@@ -12,9 +12,18 @@ import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blo
 import { PostsLikesRepository } from '../../application/infrastructure/likes/posts.likes.repository';
 import { CommentsRepository } from '../../application/infrastructure/comments/comments.repository';
 import { CommentsLikesRepository } from '../../application/infrastructure/likes/comments.likes.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Post } from '../../application/entities/posts/post.entity';
+import { PostsLike } from '../../application/entities/posts/posts.like.entity';
+import { Blog } from '../../application/entities/blogs/blog.entity';
+import { CommentsLike } from '../../application/entities/comments/comments.like.entity';
+import { Comment } from '../../application/entities/comments/comment.entity';
 
 @Module({
-  imports: [CqrsModule],
+  imports: [
+    TypeOrmModule.forFeature([Post, PostsLike, Blog, CommentsLike, Comment]),
+    CqrsModule,
+  ],
   controllers: [PublicPostController],
   providers: [
     ...allPostsUseCases,

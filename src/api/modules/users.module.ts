@@ -10,9 +10,24 @@ import { UsersBloggerController } from '../_blogger/users.blogger/users.blogger.
 import { allUserBloggerUseCases } from './use-cases/blogger/all.user-blogger.use-cases';
 import { BlogsRepository } from '../../application/infrastructure/blogs/blogs.repository';
 import { BlogsQueryRepository } from '../../application/infrastructure/blogs/blogs.query.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../../application/entities/users/user.entity';
+import { BannedUsersByBlogger } from '../../application/entities/users/banned.users.by.blogger.entity';
+import { BansForUserByAdmin } from '../../application/entities/users/bans.for.user.by.admin.entity';
+import { EmailConfirmationForUsers } from '../../application/entities/users/email.confirmation.for.users.entity';
+import { PasswordRecoveryForUsers } from '../../application/entities/users/password.recovery.for.users.entity';
 
 @Module({
-  imports: [CqrsModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      BannedUsersByBlogger,
+      BansForUserByAdmin,
+      EmailConfirmationForUsers,
+      PasswordRecoveryForUsers,
+    ]),
+    CqrsModule,
+  ],
   controllers: [SuperAdminUsersController, UsersBloggerController],
   providers: [
     ...allUsersUseCases,
