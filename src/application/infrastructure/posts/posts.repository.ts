@@ -14,33 +14,30 @@ export class PostsRepository {
   ): Promise<PostDocument | null> {
     return await this.dataSource.query(
       `
-      INSERT INTO public."Posts" (
-        "Title",
-        "ShortDescription",
-        "Content",
-        "BlogId",
-        "BlogName",
-        "UserStatus",
-        "OwnerId",
-        "CreatedAt"
+      INSERT INTO public."post" (
+        "title",
+        "shortDescription",
+        "content",
+        "blogId",
+        "userStatus",
+        "ownerId",
+        "createdAt"
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING 
-        "Id",
-        "Title",
-        "ShortDescription",
-        "Content",
-        "BlogId",
-        "BlogName",
-        "UserStatus",
-        "CreatedAt"
+        "id",
+        "title",
+        "shortDescription",
+        "content",
+        "blogId",
+        "userStatus",
+        "createdAt"
       `,
       [
         postDto.title,
         postDto.shortDescription,
         postDto.content,
         postDto.blogId,
-        postDto.blogName,
         false,
         postDto.ownerInfo.userId,
         new Date().toISOString(),
@@ -51,9 +48,9 @@ export class PostsRepository {
   async updatePost(id: string, postUpdateBody: PostUpdateBody) {
     const result = await this.dataSource.query(
       `
-      UPDATE public."Posts"
-      SET "Title" = $1, "ShortDescription" = $2, "Content" = $3
-      WHERE "Id" = $4 AND "BlogId" = $5;
+      UPDATE public."post"
+      SET "title" = $1, "shortDescription" = $2, "content" = $3
+      WHERE "id" = $4 AND "blogId" = $5;
       `,
       [
         postUpdateBody.title,
@@ -70,8 +67,8 @@ export class PostsRepository {
   async deleteOne(id: string): Promise<boolean> {
     const result = await this.dataSource.query(
       `
-      DELETE FROM public."Posts"
-      WHERE "Id" = $1;
+      DELETE FROM public."post"
+      WHERE "id" = $1;
       `,
       [id],
     );
@@ -81,9 +78,9 @@ export class PostsRepository {
   async deleteOnePostBySpecificBlogId(postId: string, blogId: string) {
     const result = await this.dataSource.query(
       `
-      DELETE FROM public."Posts"
-      WHERE "Id" = $1
-        AND "BlogId" = $2;
+      DELETE FROM public."post"
+      WHERE "id" = $1
+        AND "blogId" = $2;
       `,
       [postId, blogId],
     );
@@ -93,13 +90,13 @@ export class PostsRepository {
   async updateBanStatusForPostByOwnerId(userId: string, banStatus: boolean) {
     await this.dataSource.query(
       `
-      UPDATE public."Posts" AS Posts
-      SET "UserStatus" = $1
-      FROM (SELECT * FROM public."Posts" AS Posts2
-      LEFT JOIN public."Users" AS Info
-        ON Info."Id" = Posts2."OwnerId" WHERE Info."Id" = $2) AS foo
-      WHERE foo."IsBanned" = $1 
-        AND foo."OwnerId" = $2;
+      UPDATE public."post" AS Posts
+      SET "userStatus" = $1
+      FROM (SELECT * FROM public."post" AS Posts2
+      LEFT JOIN public."user" AS Info
+        ON Info."id" = Posts2."ownerId" WHERE Info."id" = $2) AS foo
+      WHERE foo."isBanned" = $1 
+        AND foo."ownerId" = $2;
       `,
       [banStatus, userId],
     );

@@ -18,8 +18,10 @@ export class PostsQueryRepository {
   ): Promise<any> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Posts"
-      WHERE "UserStatus" = false
+      SELECT * FROM public."post" AS Posts
+      LEFT JOIN public."blog" AS Blogs
+        ON Posts."blogId" = Blogs."id"
+      WHERE "userStatus" = false
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -29,7 +31,7 @@ export class PostsQueryRepository {
   async countAllPosts(): Promise<number> {
     const count = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Posts";
+      SELECT COUNT(*) FROM public."post";
       `,
     );
 
@@ -39,9 +41,11 @@ export class PostsQueryRepository {
   async getOnePost(id: string): Promise<any | null> {
     return this.dataSource.query(
       `
-      SELECT * FROM public."Posts"
-      WHERE "Id" = $1
-        AND "UserStatus" = false;
+      SELECT * FROM public."post"
+      LEFT JOIN public."blog" AS Blogs
+        ON Posts."blogId" = Blogs."id"
+      WHERE "id" = $1
+        AND "userStatus" = false;
       `,
       [id],
     );
@@ -52,10 +56,10 @@ export class PostsQueryRepository {
   ): Promise<PostDocument | null> {
     return this.dataSource.query(
       `
-      SELECT * FROM public."Posts" AS Posts
-      LEFT JOIN public."BlogsOwnerInfo" AS Info 
-        ON Info."BlogId" = Posts."BlogId"
-      WHERE Posts."Id" = $1 AND Posts."BlogId" = $2 AND Posts."UserStatus" = false;
+      SELECT * FROM public."post" AS Posts
+      LEFT JOIN public."blog" AS Info 
+        ON Info."id" = Posts."blogId"
+      WHERE Posts."id" = $1 AND Posts."blogId" = $2 AND Posts."userStatus" = false;
       `,
       [postId, blogId],
     );
@@ -73,8 +77,10 @@ export class PostsQueryRepository {
   ): Promise<any> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Posts"
-      WHERE "BlogId" = $1 AND "UserStatus" = false
+      SELECT * FROM public."post"
+      LEFT JOIN public."blog" AS Blogs
+        ON Posts."blogId" = Blogs."id"
+      WHERE "blogId" = $1 AND "userStatus" = false
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -85,8 +91,8 @@ export class PostsQueryRepository {
   async countAllPostsByBlogId(id: string) {
     const counts = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Posts"
-      WHERE "BlogId" = $1 AND "UserStatus" = false;
+      SELECT COUNT(*) FROM public."post"
+      WHERE "blogId" = $1 AND "userStatus" = false;
       `,
       [id],
     );
@@ -106,9 +112,9 @@ export class PostsQueryRepository {
   ): Promise<any> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Comments"
-      WHERE "PostId" = $1
-        AND "UserStatus" = false
+      SELECT * FROM public."comment"
+      WHERE "postId" = $1
+        AND "userStatus" = false
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -119,9 +125,9 @@ export class PostsQueryRepository {
   async countAllCommentsByPostId(postId: string) {
     const counts = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Comments"
-      WHERE "PostId" = $1
-        AND "UserStatus" = false;
+      SELECT COUNT(*) FROM public."comment"
+      WHERE "postId" = $1
+        AND "userStatus" = false;
       `,
       [postId],
     );

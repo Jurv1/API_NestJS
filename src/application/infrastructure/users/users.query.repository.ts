@@ -19,18 +19,18 @@ export class UsersQueryRepository {
     return await this.dataSource.query(
       `
       SELECT 
-        Users."Id",
-        Users."Login",
-        Users."Email",
-        Users."CreatedAt",
-        Users."IsBanned",
-        Bans."BanDate",
-        Bans."BanReason"
-      FROM public."Users" as Users
-      LEFT JOIN public."BansForUsersByAdmin" as Bans
-       ON Bans."UserId" = Users."Id"
-      WHERE ("Login" ILIKE $1 OR "Email" ILIKE $2)
-        AND ("IsBanned" = $3 OR "IsBanned" = $4)
+        Users."id",
+        Users."login",
+        Users."email",
+        Users."createdAt",
+        Users."isBanned",
+        Bans."banDate",
+        Bans."banReason"
+      FROM public."user" as Users
+      LEFT JOIN public."bans_for_user_by_admin" as Bans
+       ON Bans."userId" = Users."id"
+      WHERE ("login" ILIKE $1 OR "email" ILIKE $2)
+        AND ("isBanned" = $3 OR "isBanned" = $4)
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -48,9 +48,9 @@ export class UsersQueryRepository {
       `
       SELECT 
         COUNT(*)
-      FROM public."Users"
-      WHERE ("Login" ILIKE $1 OR "Email" ILIKE $2)
-        AND ("IsBanned" = $3 OR "IsBanned" = $4)  
+      FROM public."user"
+      WHERE ("login" ILIKE $1 OR "email" ILIKE $2)
+        AND ("isBanned" = $3 OR "isBanned" = $4)  
       `,
       [
         filter['loginTerm'],
@@ -60,64 +60,18 @@ export class UsersQueryRepository {
       ],
     );
   }
-  // async getAllUsers(
-  //   filter: any,
-  //   sort: { [key: string]: SortOrder },
-  //   pagination: {
-  //     skipValue: number;
-  //     limitValue: number;
-  //     pageSize: number;
-  //     pageNumber: number;
-  //   },
-  // ): Promise<any> {
-  //   const allUsers = await this.userModel
-  //     .find(filter)
-  //     .sort(sort)
-  //     .skip(pagination['skipValue'])
-  //     .limit(pagination['limitValue'])
-  //     .lean();
-  //
-  //   const countDocs = await this.userModel.countDocuments(filter);
-  //   const pagesCount = Math.ceil(countDocs / pagination['pageSize']);
-  //
-  //   return {
-  //     pagesCount: pagesCount,
-  //     page: pagination['pageNumber'],
-  //     pageSize: pagination['pageSize'],
-  //     totalCount: countDocs,
-  //     items: allUsers,
-  //   };
-  // }
-  //
-  // async getAllUsersInBannedBlog(
-  //   filter,
-  //   sort: { [key: string]: SortOrder },
-  //   pagination: {
-  //     skipValue: number;
-  //     limitValue: number;
-  //     pageSize: number;
-  //     pageNumber: number;
-  //   },
-  // ): Promise<UserDocument[]> {
-  //   return this.userModel
-  //     .find(filter)
-  //     .sort(sort)
-  //     .skip(pagination.skipValue)
-  //     .limit(pagination.limitValue)
-  //     .lean();
-  // }
 
   async getOneUserByLogin(login: string): Promise<UserDocument | null> {
     return await this.dataSource.query(
       `
     SELECT 
-      "Id",
-      "Login",
-      "Email",
-      "Password",
-      "IsBanned"
-    FROM public."Users"
-    WHERE "Login" = $1;
+      "id",
+      "login",
+      "email",
+      "password",
+      "isBanned"
+    FROM public."user"
+    WHERE "login" = $1;
 `,
       [login],
     );
@@ -128,10 +82,10 @@ export class UsersQueryRepository {
   ): Promise<UserDocument | null> {
     return await this.dataSource.query(
       `
-      SELECT "Id", "IsConfirmed", "Login", "Email"
-      FROM public."Users"
-      WHERE "Login" = $1
-        OR "Email" = $1;
+      SELECT "id", "isConfirmed", "login", "email"
+      FROM public."user"
+      WHERE "login" = $1
+        OR "email" = $1;
       `,
       [loginOrEmail],
     );
@@ -141,8 +95,8 @@ export class UsersQueryRepository {
     return this.dataSource.query(
       `
       SELECT * 
-      FROM public."Users"
-      WHERE "Id" = $1;
+      FROM public."user"
+      WHERE "id" = $1;
       `,
       [id],
     );
@@ -153,10 +107,10 @@ export class UsersQueryRepository {
   ): Promise<UserDocument | null> {
     return this.dataSource.query(
       `
-      SELECT Users."Id", "IsConfirmed", "ConfirmationCode", "ExpirationDate"
-      FROM public."EmailConfirmationForUsers" as Email
-          LEFT JOIN public."Users" as Users ON "ConfirmationCode" = $1
-      WHERE Users."Id" = Email."UserId";
+      SELECT Users."id", "isConfirmed", "confirmationCode", "expirationDate"
+      FROM public."email_confirmation_for_users" AS Email
+          LEFT JOIN public."user" AS Users ON "confirmationCode" = $1
+      WHERE Users."id" = Email."userId";
       `,
       [confirmationCode],
     );
@@ -165,10 +119,10 @@ export class UsersQueryRepository {
   async getOneByPassCode(code: string): Promise<UserDocument | null> {
     return this.dataSource.query(
       `
-      SELECT Users."Id", "RecoveryCode", "ExpirationDate"
-      FROM public."PasswordRecoveryForUsers" as Pass
-          LEFT JOIN public."Users" as Users ON "RecoveryCode" = $1
-      WHERE Users."Id" = Pass."UserId";
+      SELECT Users."id", "recoveryCode", "expirationDate"
+      FROM public."password_recovery_for_users" AS Pass
+          LEFT JOIN public."user" AS Users ON "RecoveryCode" = $1
+      WHERE Users."id" = Pass."userId";
       `,
       [code],
     );
@@ -177,10 +131,10 @@ export class UsersQueryRepository {
   async getConfirmationCodeByUserId(id: string) {
     return await this.dataSource.query(
       `
-      SELECT "ConfirmationCode" AS code
-      FROM public."EmailConfirmationForUsers"
+      SELECT "confirmationCode" AS code
+      FROM public."email_confirmation_for_users"
       WHERE
-        "UserId" = $1;  
+        "userId" = $1;  
       `,
       [id],
     );
