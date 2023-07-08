@@ -1,8 +1,8 @@
 export enum EnumForUserByAdminSorting {
-  'CreatedAt',
-  'Email',
-  'Login',
-  'IsConfirmed',
-  'IsBanned',
-  'Id',
+  'createdAt',
+  'email',
+  'login',
+  'isConfirmed',
+  'isBanned',
+  'id',
 }

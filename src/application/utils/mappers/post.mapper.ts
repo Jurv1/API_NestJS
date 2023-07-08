@@ -5,6 +5,7 @@ import { mapLikes } from './like.mapper';
 import { NewestLike } from '../../schemas/posts/schemas/likes.schemas/newest.likes';
 import { Inject } from '@nestjs/common';
 import { PostsLikesRepository } from '../../infrastructure/likes/posts.likes.repository';
+import { Post } from '../../entities/posts/post.entity';
 
 export class PostMapper {
   constructor(
@@ -12,8 +13,8 @@ export class PostMapper {
     protected readonly likesRepo: PostsLikesRepository,
   ) {}
 
-  async mapPost(obj: PostDocument, userId?: string): Promise<PostViewModel> {
-    const postId = obj[0].Id.toString();
+  async mapPost(obj: Post, userId?: string): Promise<PostViewModel> {
+    const postId = obj[0].id.toString();
     let like: LikeDocument | null;
     let userStatus: string | undefined = 'None';
     const allLikes = await this.likesRepo.countAllLikesForPost(postId);
@@ -30,19 +31,19 @@ export class PostMapper {
     );
     const newestLikes: NewestLike[] = mapLikes(lastThreeLikes);
     return {
-      id: obj[0].Id.toString(),
-      title: obj[0].Title,
-      shortDescription: obj[0].ShortDescription,
-      content: obj[0].Content,
-      blogId: obj[0].BlogId.toString(),
-      blogName: obj[0].BlogName,
+      id: obj[0].id.toString(),
+      title: obj[0].title,
+      shortDescription: obj[0].shortDescription,
+      content: obj[0].content,
+      blogId: obj[0].blogId.toString(),
+      blogName: obj[0].blogName,
       extendedLikesInfo: {
         likesCount: allLikes,
         dislikesCount: allDislikes,
         myStatus: userStatus || 'None',
         newestLikes: newestLikes || [],
       },
-      createdAt: obj[0].CreatedAt,
+      createdAt: obj[0].createdAt,
     };
   }
 
@@ -52,7 +53,7 @@ export class PostMapper {
 
     return await Promise.all(
       objs.map(async (el) => {
-        const postId = el.Id.toString();
+        const postId = el.id.toString();
         const allLikes = await this.likesRepo.countAllLikesForPost(postId);
         const allDislikes = await this.likesRepo.countAllDislikesForPost(
           postId,
@@ -71,18 +72,18 @@ export class PostMapper {
         const newestLikes: NewestLike[] = mapLikes(lastThreeLikes);
         return {
           id: postId,
-          title: el.Title,
-          shortDescription: el.ShortDescription,
-          content: el.Content,
-          blogId: el.BlogId.toString(),
-          blogName: el.BlogName,
+          title: el.title,
+          shortDescription: el.shortDescription,
+          content: el.content,
+          blogId: el.blogId.toString(),
+          blogName: el.blogName,
           extendedLikesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,
             myStatus: userStatus || 'None',
             newestLikes: newestLikes || [],
           },
-          createdAt: el.CreatedAt,
+          createdAt: el.createdAt,
         };
       }),
     );

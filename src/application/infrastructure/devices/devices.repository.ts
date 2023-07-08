@@ -6,7 +6,7 @@ export class DevicesRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async createNewDevice(deviceDto: DeviceCreateDto) {
-    const deviceId = await this.dataSource.query(
+    return await this.dataSource.query(
       `
       INSERT INTO public."device"
         ("ip", "title", "userId", "deviceId", "lastActiveDate")

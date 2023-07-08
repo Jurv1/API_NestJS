@@ -1,8 +1,8 @@
 export enum EnumForComments {
-  'Content',
-  'PostId',
-  'CommentatorId',
-  'CreatedAt',
-  'Id',
-  'CommentatorLogin',
+  'content',
+  'postId',
+  'commentatorId',
+  'createdAt',
+  'id',
+  'commentatorLogin',
 }

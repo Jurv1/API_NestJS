@@ -8,10 +8,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 export class PostsRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async createOne(
-    postDto: PostCreationDto,
-    blog: BlogDocument,
-  ): Promise<PostDocument | null> {
+  async createOne(postDto: PostCreationDto): Promise<PostDocument | null> {
     return await this.dataSource.query(
       `
       INSERT INTO public."post" (

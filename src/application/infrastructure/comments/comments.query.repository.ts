@@ -17,7 +17,6 @@ export class CommentsQueryRepository {
     );
   }
 
-  //todo join для blogName
   async getCommentsForBlog(
     blogOwnerId: string,
     sort: { [key: string]: string },

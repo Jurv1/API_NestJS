@@ -4,10 +4,10 @@ export class DeviceMapper {
   mapDevices(objs: any[]): DevicesViewDto[] {
     return objs.map((el) => {
       return {
-        ip: el.Ip,
-        title: el.Title,
-        lastActiveDate: el.LastActiveDate,
-        deviceId: el.DeviceId,
+        ip: el.ip,
+        title: el.title,
+        lastActiveDate: el.lastActiveDate,
+        deviceId: el.deviceId,
       };
     });
   }

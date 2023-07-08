@@ -4,14 +4,14 @@ import { UserViewDto } from '../../dto/users/dto/user.view.dto';
 export class UserMapper {
   mapUser(obj: UserDocument): UserViewDto {
     return {
-      id: obj[0].Id.toString(),
-      login: obj[0].Login,
-      email: obj[0].Email,
-      createdAt: obj[0].CreatedAt,
+      id: obj[0].id.toString(),
+      login: obj[0].login,
+      email: obj[0].email,
+      createdAt: obj[0].createdAt,
       banInfo: {
-        isBanned: obj[0].IsBanned,
-        banDate: obj[0].BanDate,
-        banReason: obj[0].BanReason,
+        isBanned: obj[0].isBanned,
+        banDate: obj[0].banDate,
+        banReason: obj[0].banReason,
       },
       //obj[0].banInfo,
     };
@@ -19,14 +19,14 @@ export class UserMapper {
   mapUsers(objs: any): any {
     return objs.map((el) => {
       return {
-        id: el.Id.toString(),
-        login: el.Login,
-        email: el.Email,
-        createdAt: el.CreatedAt,
+        id: el.id.toString(),
+        login: el.login,
+        email: el.email,
+        createdAt: el.createdAt,
         banInfo: {
-          isBanned: el.IsBanned,
-          banDate: el.BanDate,
-          banReason: el.BanReason,
+          isBanned: el.isBanned,
+          banDate: el.banDate,
+          banReason: el.banReason,
         },
       };
     });
@@ -35,12 +35,12 @@ export class UserMapper {
   mapUsersForBlogger(objs: any): any {
     return objs.map((el) => {
       return {
-        id: el.Id.toString(),
-        login: el.Login,
+        id: el.id.toString(),
+        login: el.login,
         banInfo: {
           isBanned: true,
-          banDate: el.BanDate,
-          banReason: el.BanReason,
+          banDate: el.banDate,
+          banReason: el.banReason,
         },
       };
     });

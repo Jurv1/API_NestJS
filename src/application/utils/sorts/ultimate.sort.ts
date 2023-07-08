@@ -6,11 +6,9 @@ export function ultimateSort(
   enumToCheck: enumType,
 ): { [key: string]: string } {
   if (typeof sortBy === 'undefined') {
-    sortBy = 'CreatedAt';
-  } else {
-    sortBy = sortBy.charAt(0).toUpperCase() + sortBy.slice(1);
+    sortBy = 'createdAt';
   }
-  if (!Object.values(enumToCheck).includes(sortBy)) sortBy = 'CreatedAt';
+  if (!Object.values(enumToCheck).includes(sortBy)) sortBy = 'createdAt';
   const sort: { [key: string]: string } = { [`${sortBy}`]: 'desc' };
 
   if (sortDirection === 'asc') {

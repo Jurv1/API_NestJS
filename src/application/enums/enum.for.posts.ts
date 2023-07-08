@@ -1,9 +1,9 @@
 export enum EnumForPosts {
-  'CreatedAt',
-  'Title',
-  'ShortDescription',
-  'Content',
-  'BlogId',
-  'BlogName',
-  'Id',
+  'createdAt',
+  'title',
+  'shortDescription',
+  'content',
+  'blogId',
+  'blogName',
+  'id',
 }

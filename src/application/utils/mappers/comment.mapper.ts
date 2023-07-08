@@ -17,7 +17,7 @@ export class CommentMapper {
   ): Promise<CommentViewModel> {
     let like: LikeDocument | null;
     let userStatus: string | undefined = 'None';
-    const commentId = obj[0].Id.toString();
+    const commentId = obj[0].id.toString();
     const allLikes: number = await this.likesRepo.countAllLikesForComment(
       commentId,
     );
@@ -32,13 +32,13 @@ export class CommentMapper {
       userStatus = like[0]?.LikeStatus;
     }
     return {
-      id: obj[0].Id.toString(),
-      content: obj[0].Content,
+      id: obj[0].id.toString(),
+      content: obj[0].content,
       commentatorInfo: {
-        userId: obj[0].CommentatorId.toString(),
-        userLogin: obj[0].CommentatorLogin,
+        userId: obj[0].commentatorId.toString(),
+        userLogin: obj[0].commentatorLogin,
       },
-      createdAt: obj[0].CreatedAt,
+      createdAt: obj[0].createdAt,
       likesInfo: {
         likesCount: allLikes,
         dislikesCount: allDislikes,
@@ -55,7 +55,7 @@ export class CommentMapper {
     let userStatus: string | undefined = 'None';
     return await Promise.all(
       objs.map(async (el) => {
-        const commentId = el.Id.toString();
+        const commentId = el.id.toString();
         const allLikes = await this.likesRepo.countAllLikesForComment(
           commentId,
         );
@@ -70,13 +70,13 @@ export class CommentMapper {
           userStatus = like[0]?.LikeStatus;
         }
         return {
-          id: el.Id.toString(),
-          content: el.Content,
+          id: el.id.toString(),
+          content: el.content,
           commentatorInfo: {
-            userId: el.CommentatorId.toString(),
+            userId: el.commentatorId.toString(),
             userLogin: el.commentatorlogin,
           },
-          createdAt: el.CreatedAt,
+          createdAt: el.createdAt,
           likesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,
@@ -84,9 +84,9 @@ export class CommentMapper {
           },
           postInfo: {
             id: el.postid.toString(),
-            title: el.Title,
-            blogId: el.BlogId.toString(),
-            blogName: el.BlogName,
+            title: el.title,
+            blogId: el.blogId.toString(),
+            blogName: el.blogName,
           },
         };
       }),
@@ -102,7 +102,7 @@ export class CommentMapper {
 
     return await Promise.all(
       objs.map(async (el) => {
-        const commentId = el.Id.toString();
+        const commentId = el.id.toString();
         const allLikes = await this.likesRepo.countAllLikesForComment(
           commentId,
         );
@@ -118,13 +118,13 @@ export class CommentMapper {
         }
 
         return {
-          id: el.Id.toString(),
-          content: el.Content,
+          id: el.id.toString(),
+          content: el.content,
           commentatorInfo: {
-            userId: el.CommentatorId.toString(),
-            userLogin: el.CommentatorLogin,
+            userId: el.commentatorId.toString(),
+            userLogin: el.commentatorLogin,
           },
-          createdAt: el.CreatedAt,
+          createdAt: el.createdAt,
           likesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,

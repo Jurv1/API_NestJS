@@ -1,8 +1,8 @@
 export enum EnumForBlogs {
-  'CreatedAt',
-  'Name',
-  'Description',
-  'WebsiteUrl',
-  'IsMembership',
-  'Id',
+  'createdAt',
+  'name',
+  'description',
+  'websiteUrl',
+  'isMembership',
+  'id',
 }
