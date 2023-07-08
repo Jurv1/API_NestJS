@@ -13,10 +13,10 @@ export class CommentsLikesRepository {
   ): Promise<boolean> {
     const result = await this.dataSource.query(
       `
-      DELETE FROM public."CommentsLikes"
-      WHERE "UserId" = $1
-        AND "CommentId" = $2
-         AND "LikeStatus" = $3
+      DELETE FROM public."comments_like"
+      WHERE "userId" = $1
+        AND "commentId" = $2
+         AND "likeStatus" = $3
       `,
       [userId, commentId, userStatus],
     );
@@ -30,9 +30,9 @@ export class CommentsLikesRepository {
   ): Promise<any | null> {
     return await this.dataSource.query(
       `
-      SELECT "LikeStatus" FROM public."CommentsLikes"
-      WHERE "UserId" = $1
-        AND "CommentId" = $2;
+      SELECT "likeStatus" FROM public."comments_like"
+      WHERE "userId" = $1
+        AND "commentId" = $2;
       `,
       [userId, commentId],
     );
@@ -46,7 +46,12 @@ export class CommentsLikesRepository {
   ): Promise<LikeDocument | null> {
     return await this.dataSource.query(
       `
-      INSERT INTO public."CommentsLikes" ("UserId", "CommentId", "LikeStatus", "AddedAt", "UserStatus")
+      INSERT INTO public."comments_like" (
+        "userId",
+        "commentId",
+        "likeStatus",
+        "addedAt",
+        "userStatus")
       VALUES ($1, $2, $3, $4, $5)
       `,
       [userId, commentPostId, likeStatus, new Date().toISOString(), false],
@@ -56,10 +61,10 @@ export class CommentsLikesRepository {
   async countAllLikesForComment(id: string) {
     const counts = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."CommentsLikes"
-      WHERE "CommentId" = $1
-        AND "LikeStatus" = 'Like'
-         AND "UserStatus" = false;
+      SELECT COUNT(*) FROM public."comments_like"
+      WHERE "commentId" = $1
+        AND "likeStatus" = 'Like'
+         AND "userStatus" = false;
       `,
       [id],
     );
@@ -70,10 +75,10 @@ export class CommentsLikesRepository {
   async countAllDislikesForComment(id: string) {
     const counts = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."CommentsLikes"
-      WHERE "CommentId" = $1
-        AND "LikeStatus" = 'Dislike'
-         AND "UserStatus" = false;
+      SELECT COUNT(*) FROM public."comments_like"
+      WHERE "commentId" = $1
+        AND "likeStatus" = 'Dislike'
+         AND "userStatus" = false;
       `,
       [id],
     );
@@ -84,13 +89,13 @@ export class CommentsLikesRepository {
   async findLatestThreeLikes(commentId: string) {
     return await this.dataSource.query(
       `
-      SELECT Users."Id", Likes."AddedAt", Users."Id" FROM public."CommentsLikes" AS Likes
-      LEFT JOIN public."Users" AS Users 
-        ON Likes."UserId" = Users."Id"
-      WHERE Likes."CommentId" = $1
-        AND Likes."LikeStatus" = 'Like'
-          AND Likes."UserStatus" = false
-      ORDER BY Likes."AddedAt" desc
+      SELECT Users."id", Likes."addedAt", Users."id" FROM public."comments_like" AS Likes
+      LEFT JOIN public."user" AS Users 
+        ON Likes."userId" = Users."Id"
+      WHERE Likes."commentId" = $1
+        AND Likes."likeStatus" = 'Like'
+          AND Likes."userStatus" = false
+      ORDER BY Likes."addedAt" desc
       LIMIT 3 OFFSET 0;
       `,
       [commentId],
@@ -103,9 +108,9 @@ export class CommentsLikesRepository {
   ) {
     return await this.dataSource.query(
       `
-      UPDATE public."CommentsLikes"
-        SET "UserStatus" = $1
-      WHERE "UserId" = $2;
+      UPDATE public."comments_like"
+        SET "userStatus" = $1
+      WHERE "userId" = $2;
       `,
       [banStatus, userId],
     );

@@ -9,9 +9,9 @@ export class DevicesQueryRepository {
     return this.dataSource.query(
       `
       SELECT * 
-      FROM public."Devices"
+      FROM public."device"
       WHERE
-        "UserId" = $1;
+        "userId" = $1;
       `,
       [userId],
     );
@@ -21,9 +21,9 @@ export class DevicesQueryRepository {
     return this.dataSource.query(
       `
       SELECT *
-      FROM public."Devices"
+      FROM public."device"
       WHERE
-        "DeviceId" = $1;
+        "deviceId" = $1;
       `,
       [deviceId],
     );

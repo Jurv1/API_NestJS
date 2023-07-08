@@ -13,17 +13,20 @@ export class BlogsRepository {
   async createOne(blogDto: BlogCreationDto): Promise<any | null> {
     const createdBlog: BlogDocument = await this.dataSource.query(
       `
-      INSERT INTO public."Blogs" (
-        "Name",
-        "Description",
-        "WebsiteUrl",
-        "IsMembership",
-        "IsBanned",
-        "CreatedAt"
+      INSERT INTO public."blog" (
+        "name",
+        "description",
+        "websiteUrl",
+        "isMembership",
+        "isBanned",
+        "ownerId",
+        "ownerLogin",
+        "ownerStatus",
+        "createdAt"
       )
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING "Id", "Name", "Description", "WebsiteUrl", "CreatedAt",
-        "IsMembership";
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING "id", "name", "description", "websiteUrl", "createdAt",
+        "isMembership";
       `,
       [
         blogDto.name,
@@ -31,27 +34,21 @@ export class BlogsRepository {
         blogDto.websiteUrl,
         false,
         false,
+        blogDto.userId,
+        blogDto.userLogin,
+        false,
         new Date().toISOString(),
       ],
     );
-
-    await this.dataSource.query(
-      `
-      INSERT INTO public."BlogsOwnerInfo" ("BlogId", "OwnerId", "OwnerLogin")
-      VALUES($1, $2, $3);
-      `,
-      [createdBlog[0].Id, blogDto.userId, blogDto.userLogin],
-    );
-
     return createdBlog;
   }
 
   async updateOne(blogId: string, blogBody: BlogBody): Promise<boolean> {
     const result = await this.dataSource.query(
       `
-      UPDATE public."Blogs"
-      SET "Name" = $1, "Description" = $2, "WebsiteUrl" = $3
-      WHERE "Id" = $4;
+      UPDATE public."blog"
+      SET "name" = $1, "description" = $2, "websiteUrl" = $3
+      WHERE "id" = $4;
       `,
       [blogBody.name, blogBody.description, blogBody.websiteUrl, blogId],
     );
@@ -66,9 +63,9 @@ export class BlogsRepository {
   ) {
     await this.dataSource.query(
       `
-      UPDATE public."Blogs"
-      SET "IsBanned" = $1, "BanDate" = $2
-      WHERE "Id" = $3;
+      UPDATE public."blog"
+      SET "isBanned" = $1, "banDate" = $2
+      WHERE "id" = $3;
       `,
       [isBanned, date, blogId],
     );
@@ -81,7 +78,7 @@ export class BlogsRepository {
   ) {
     await this.dataSource.query(
       `
-      UPDATE public."Blogs" AS Blogs
+      UPDATE public."blog" AS Blogs
         SET "IsBanned" = $1, "BanDate" = $2
       FROM (SELECT Blogs2."Id" FROM public."Blogs" AS Blogs2
                 LEFT JOIN public."BlogsOwnerInfo" AS Infos 

@@ -9,14 +9,15 @@ export class CommentsQueryRepository {
   async getOneComment(id: string): Promise<any | null> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Comments"
-      WHERE "Id" = $1
-        AND "UserStatus" = false
+      SELECT * FROM public."comment"
+      WHERE "id" = $1
+        AND "userStatus" = false
       `,
       [id],
     );
   }
 
+  //todo join для blogName
   async getCommentsForBlog(
     blogOwnerId: string,
     sort: { [key: string]: string },
@@ -30,24 +31,22 @@ export class CommentsQueryRepository {
     return await this.dataSource.query(
       `
       SELECT
-       Comments."Id",
-       Comments."Content",
-       Comments."CommentatorId",
-       BlogInfo."OwnerLogin" AS CommentatorLogin,
-       Comments."CreatedAt",
-       Posts."Id" AS PostId,
-       Posts."Title",
-       Posts."BlogId",
-       Posts."BlogName"  
-      FROM public."Comments" AS Comments
-      LEFT JOIN public."Posts" AS Posts
-        ON Posts."Id" = Comments."PostId"
-      LEFT JOIN public."Blogs" AS Blogs
-        ON Blogs."Id" = Posts."BlogId"
-      LEFT JOIN public."BlogsOwnerInfo" AS BlogInfo
-        ON BlogInfo."BlogId" = Blogs."Id"
+       Comments."id",
+       Comments."content",
+       Comments."commentatorId",
+       Blogs."ownerLogin" AS CommentatorLogin,
+       Comments."createdAt",
+       Posts."id" AS PostId,
+       Posts."title",
+       Posts."blogId",
+       Blogs."blogName"  
+      FROM public."comment" AS Comments
+      LEFT JOIN public."post" AS Posts
+        ON Posts."id" = Comments."postId"
+      LEFT JOIN public."blog" AS Blogs
+        ON Blogs."id" = Posts."blogId"
       WHERE 
-        BlogInfo."OwnerId" = $1
+        Blogs."ownerId" = $1
       ORDER BY Comments."${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -58,15 +57,13 @@ export class CommentsQueryRepository {
   async countAllComments(blogOwnerId: string) {
     const counts = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Comments" AS Comments
-      LEFT JOIN public."Posts" AS Posts
-        ON Posts."Id" = Comments."PostId"
-      LEFT JOIN public."Blogs" AS Blogs
-        ON Blogs."Id" = Posts."BlogId"
-      LEFT JOIN public."BlogsOwnerInfo" AS BlogInfo
-        ON BlogInfo."BlogId" = Blogs."Id"
+      SELECT COUNT(*) FROM public."comment" AS Comments
+      LEFT JOIN public."post" AS Posts
+        ON Posts."id" = Comments."postId"
+      LEFT JOIN public."blog" AS Blogs
+        ON Blogs."id" = Posts."blogId"
       WHERE 
-        BlogInfo."OwnerId" = $1
+        Blogs."ownerId" = $1
       `,
       [blogOwnerId],
     );

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -35,7 +36,7 @@ export class Blog {
   @Column({ type: 'bool' })
   ownerStatus: boolean;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   banDate: Date;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
@@ -50,6 +51,10 @@ export class Blog {
   @OneToMany(() => Post, (post) => post.blog)
   posts: Post[];
 
-  @ManyToOne(() => User, (user) => user.blogs)
+  @ManyToOne(() => User, (user) => user.blogs, { onDelete: 'CASCADE' })
   owner: User;
+
+  @ManyToOne(() => User, (user) => user.login, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'ownerLogin', referencedColumnName: 'login' })
+  ownerLogin: string;
 }

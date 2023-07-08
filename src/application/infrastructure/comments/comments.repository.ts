@@ -10,20 +10,20 @@ export class CommentsRepository {
   async createComment(commentCreationDTO: CommentCreatingDto) {
     return await this.dataSource.query(
       `
-      INSERT INTO public."Comments" (
-        "Content",
-        "PostId",
-        "CommentatorId",
-        "CommentatorLogin",
-        "UserStatus",
-        "CreatedAt")
+      INSERT INTO public."comment" (
+        "content",
+        "postId",
+        "commentatorId",
+        "commentatorLogin",
+        "userStatus",
+        "createdAt")
       VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING "Id",
-        "Content",
-        "PostId",
-        "CommentatorId",
-        "CommentatorLogin",
-        "CreatedAt" 
+      RETURNING "id",
+        "content",
+        "postId",
+        "commentatorId",
+        "commentatorLogin",
+        "createdAt" 
       `,
       [
         commentCreationDTO.content,
@@ -39,8 +39,8 @@ export class CommentsRepository {
   async deleteOne(id: string): Promise<boolean> {
     const result = await this.dataSource.query(
       `
-      DELETE FROM public."Comments"
-      WHERE "Id" = $1;
+      DELETE FROM public."comment"
+      WHERE "id" = $1;
       `,
       [id],
     );
@@ -50,9 +50,9 @@ export class CommentsRepository {
   async updateBanStatusForCommentOwner(userId: string, banStatus: boolean) {
     return await this.dataSource.query(
       `
-      UPDATE public."Comments"
-      SET "UserStatus" = $1
-      WHERE "CommentatorId" = $2;
+      UPDATE public."comment"
+      SET "userStatus" = $1
+      WHERE "commentatorId" = $2;
       `,
       [banStatus, userId],
     );
@@ -61,9 +61,9 @@ export class CommentsRepository {
   async updateCommentById(id: string, content: string) {
     const result = await this.dataSource.query(
       `
-      UPDATE public."Comments"
-      SET "Content" = $1
-      WHERE "Id" = $2;
+      UPDATE public."comments"
+      SET "content" = $1
+      WHERE "id" = $2;
       `,
       [content, id],
     );

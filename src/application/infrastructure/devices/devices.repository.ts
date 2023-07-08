@@ -8,10 +8,10 @@ export class DevicesRepository {
   async createNewDevice(deviceDto: DeviceCreateDto) {
     const deviceId = await this.dataSource.query(
       `
-      INSERT INTO public."Devices"
-        ("Ip", "Title", "UserId", "DeviceId", "LastActiveDate")
+      INSERT INTO public."device"
+        ("ip", "title", "userId", "deviceId", "lastActiveDate")
       VALUES($1, $2, $3, $4, $5)
-      RETURNING "DeviceId";
+      RETURNING "deviceId", "ip", "title", "userId", "lastActiveDate";
       `,
       [
         deviceDto.ip,
@@ -21,16 +21,6 @@ export class DevicesRepository {
         deviceDto.lastActiveDate,
       ],
     );
-
-    return await this.dataSource.query(
-      `
-      SELECT *
-      FROM public."Devices"
-      WHERE
-        "DeviceId" = $1;
-      `,
-      [deviceId[0].DeviceId],
-    );
   }
   async deleteAllExceptActive(
     userId: string,
@@ -39,10 +29,10 @@ export class DevicesRepository {
     const result = await this.dataSource.query(
       `
       DELETE
-      FROM public."Devices"
+      FROM public."device"
       WHERE
-        "UserId" = $1 
-            AND "DeviceId" != $2;
+        "userId" = $1 
+            AND "deviceId" != $2;
       `,
       [userId, deviceId],
     );
@@ -54,9 +44,9 @@ export class DevicesRepository {
     const result = await this.dataSource.query(
       `
       DELETE 
-      FROM public."Devices"
+      FROM public."device"
       WHERE
-        "DeviceId" = $1;
+        "deviceId" = $1;
       `,
       [id],
     );
@@ -68,8 +58,8 @@ export class DevicesRepository {
     return this.dataSource.query(
       `
       DELETE 
-      FROM public."Devices"
-      WHERE "UserId" = $1;
+      FROM public."device"
+      WHERE "userId" = $1;
       `,
       [userId],
     );
@@ -78,11 +68,11 @@ export class DevicesRepository {
   async updateDevice(oldDeviceId: string, newDeviceId: string, newIat: number) {
     await this.dataSource.query(
       `
-      UPDATE public."Devices"
-        SET "DeviceId" = $1, 
-                "LastActiveDate" = $2
+      UPDATE public."device"
+        SET "deviceId" = $1, 
+                "lastActiveDate" = $2
       WHERE
-        "DeviceId" = $3;
+        "deviceId" = $3;
       `,
       [newDeviceId, new Date(newIat * 1000).toISOString(), oldDeviceId],
     );
@@ -91,9 +81,9 @@ export class DevicesRepository {
   async updateDeviceIat(deviceId: string, iat: number): Promise<boolean> {
     const result = await this.dataSource.query(
       `
-      UPDATE public."Devices"
-        SET "LastActiveDate" = $1
-      WHERE "DeviceId" = $2;
+      UPDATE public."device"
+        SET "lastActiveDate" = $1
+      WHERE "deviceId" = $2;
       `,
       [new Date(iat * 1000).toISOString(), deviceId],
     );

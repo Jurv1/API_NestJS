@@ -21,9 +21,9 @@ export class BlogsQueryRepository {
   ): Promise<BlogWithPaginationDto> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Blogs" 
-      WHERE "IsBanned" = false
-        AND "Name" ILIKE $1
+      SELECT * FROM public."blog" 
+      WHERE "isBanned" = false
+        AND "name" ILIKE $1
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -36,9 +36,9 @@ export class BlogsQueryRepository {
   }): Promise<number> {
     const result = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Blogs"
-      WHERE "IsBanned" = false
-        AND "Name" ILIKE $1;
+      SELECT COUNT(*) FROM public."blog"
+      WHERE "isBanned" = false
+        AND "name" ILIKE $1;
       `,
       [filter['nameTerm']],
     );
@@ -58,10 +58,8 @@ export class BlogsQueryRepository {
   ) {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Blogs" AS Blogs
-      LEFT JOIN public."BlogsOwnerInfo" AS Info
-        ON Blogs."Id" = Info."BlogId"
-      WHERE "Name" ILIKE $1
+      SELECT * FROM public."blog" AS Blogs
+      WHERE "name" ILIKE $1
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};  
       `,
@@ -72,8 +70,8 @@ export class BlogsQueryRepository {
   async countAllBlogsForAdmin(filter: { [key: string]: string | boolean }) {
     const result = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Blogs"
-      WHERE "Name" ILIKE $1;
+      SELECT COUNT(*) FROM public."blog"
+      WHERE "name" ILIKE $1;
       `,
       [filter['nameTerm']],
     );
@@ -110,7 +108,7 @@ export class BlogsQueryRepository {
   ) {
     const result = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."blogs" AS Blogs
+      SELECT COUNT(*) FROM public."blog" AS Blogs
       WHERE Info."ownerId" = $1
         AND "name" ILIKE $2;
       `,
@@ -140,7 +138,7 @@ export class BlogsQueryRepository {
         BannedUsers."banDate"
       FROM public."banned_users_by_blogger" AS BannedUsers
        LEFT JOIN public."user" AS Users 
-        ON BannedUsers."userId" = Users."Id"
+        ON BannedUsers."userId" = Users."id"
       WHERE BannedUsers."blogId" = $1
         AND Users."login" ILIKE $2
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
@@ -202,8 +200,8 @@ export class BlogsQueryRepository {
   ): Promise<BlogDocument | null> {
     return this.dataSource.query(
       `
-      SELECT "ownerId", "id" FROM public."Blog"
-      WHERE Blogs."Id" = $1;
+      SELECT "ownerId", "id" FROM public."blog"
+      WHERE "id" = $1;
       `,
       [id],
     );
@@ -212,7 +210,7 @@ export class BlogsQueryRepository {
   async getOneBlogForAdmin(id: string): Promise<BlogDocument | null> {
     return this.dataSource.query(
       `
-      SELECT * FROM public."Blog"
+      SELECT * FROM public."blog"
       WHERE "id" = $1;
       `,
       [id],
