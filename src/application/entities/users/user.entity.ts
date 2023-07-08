@@ -61,7 +61,7 @@ export class User {
   @OneToMany(() => Device, (device) => device.user)
   device: Device[];
 
-  @OneToMany(() => Blog, (blog) => blog.user)
+  @OneToMany(() => Blog, (blog) => blog.owner)
   blogs: Blog[];
 
   @OneToMany(() => Post, (post) => post.owner)

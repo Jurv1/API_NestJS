@@ -15,9 +15,6 @@ export class BansForUserByAdmin {
   @Column({ type: 'timestamp with time zone', nullable: true })
   banDate: Date | null;
 
-  @Column({ type: 'bool' })
-  isBanned: boolean;
-
   @Column({ type: 'varchar', nullable: true })
   banReason: string | null;
 

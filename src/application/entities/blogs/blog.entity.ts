@@ -10,6 +10,7 @@ import {
 import { BannedUsersByBlogger } from '../users/banned.users.by.blogger.entity';
 import { Post } from '../posts/post.entity';
 import { User } from '../users/user.entity';
+import { BlogBansByAdmin } from './blog.bans.by.admin.entity';
 
 @Entity()
 export class Blog {
@@ -38,7 +39,10 @@ export class Blog {
   banDate: Date;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  createAt: Date;
+  createdAt: Date;
+
+  @OneToOne(() => BlogBansByAdmin, (ban) => ban.blog)
+  blogBanByAdmin: BlogBansByAdmin;
 
   @OneToMany(() => BannedUsersByBlogger, (ban) => ban.blog)
   bannedUsersByBlogger: BannedUsersByBlogger[];
@@ -47,5 +51,5 @@ export class Blog {
   posts: Post[];
 
   @ManyToOne(() => User, (user) => user.blogs)
-  user: User;
+  owner: User;
 }

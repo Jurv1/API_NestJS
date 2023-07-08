@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogWithPaginationDto } from '../../dto/blogs/dto/view/blog.with.pagination.dto';
+import { Blog } from '../../entities/blogs/blog.entity';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -90,14 +91,12 @@ export class BlogsQueryRepository {
       pageNumber: number;
     },
     userId: string,
-  ) {
+  ): Promise<Blog[]> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."Blogs" AS Blogs
-      LEFT JOIN public."BlogsOwnerInfo" AS Info 
-        ON Blogs."Id" = Info."BlogId"
-      WHERE "Name" ILIKE $1
-        AND Info."OwnerId" = $2
+      SELECT * FROM public."blog" AS Blogs
+      WHERE "name" ILIKE $1
+        AND Info."ownerId" = $2
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -111,11 +110,9 @@ export class BlogsQueryRepository {
   ) {
     const result = await this.dataSource.query(
       `
-      SELECT COUNT(*) FROM public."Blogs" AS Blogs
-      LEFT JOIN public."BlogsOwnerInfo" AS Info 
-        ON Blogs."Id" = Info."BlogId"
-      WHERE Info."OwnerId" = $1
-        AND "Name" ILIKE $2;
+      SELECT COUNT(*) FROM public."blogs" AS Blogs
+      WHERE Info."ownerId" = $1
+        AND "name" ILIKE $2;
       `,
       [userId, filter['nameTerm']],
     );
@@ -137,15 +134,15 @@ export class BlogsQueryRepository {
     return this.dataSource.query(
       `
       SELECT 
-        Users."Id",
-        Users."Login",
-        BannedUsers."BanReason",
-        BannedUsers."BanDate"
-      FROM public."BannedUsersByBlogger" AS BannedUsers
-       LEFT JOIN public."Users" AS Users 
-        ON BannedUsers."UserId" = Users."Id"
-      WHERE BannedUsers."BlogId" = $1
-        AND Users."Login" ILIKE $2
+        Users."id",
+        Users."login",
+        BannedUsers."banReason",
+        BannedUsers."banDate"
+      FROM public."banned_users_by_blogger" AS BannedUsers
+       LEFT JOIN public."user" AS Users 
+        ON BannedUsers."userId" = Users."Id"
+      WHERE BannedUsers."blogId" = $1
+        AND Users."login" ILIKE $2
       ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
@@ -157,14 +154,14 @@ export class BlogsQueryRepository {
     return await this.dataSource.query(
       `
       SELECT 
-        Users."Id",
-        Users."Login",
-        BannedUsers."BanReason",
-        BannedUsers."BanDate"
-      FROM public."BannedUsersByBlogger" AS BannedUsers
-       LEFT JOIN public."Users" AS Users 
-        ON BannedUsers."UserId" = Users."Id"
-      WHERE BannedUsers."BlogId" = $1;
+        Users."id",
+        Users."login",
+        BannedUsers."banReason",
+        BannedUsers."banDate"
+      FROM public."banned_users_by_blogger" AS BannedUsers
+       LEFT JOIN public."user" AS Users 
+        ON BannedUsers."userId" = Users."Id"
+      WHERE BannedUsers."blogId" = $1;
       `,
       [blogId],
     );
@@ -177,11 +174,11 @@ export class BlogsQueryRepository {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*)
-      FROM public."BannedUsersByBlogger" AS BannedUsers
-       LEFT JOIN public."Users" AS Users 
-        ON BannedUsers."UserId" = Users."Id"
-      WHERE BannedUsers."BlogId" = $1
-        AND Users."Login" ILIKE $2
+      FROM public."banned_users_by_blogger" AS BannedUsers
+       LEFT JOIN public."user" AS Users 
+        ON BannedUsers."userId" = Users."Id"
+      WHERE BannedUsers."blogId" = $1
+        AND Users."login" ILIKE $2
       `,
       [blogId, filter['loginTerm']],
     );
@@ -192,9 +189,9 @@ export class BlogsQueryRepository {
   async getOneBlog(id: string): Promise<any | null> {
     return this.dataSource.query(
       `
-      SELECT * FROM public."Blogs"
-      WHERE "Id" = $1 
-        AND "IsBanned" = false;
+      SELECT * FROM public."blog"
+      WHERE "id" = $1 
+        AND "isBanned" = false;
       `,
       [id],
     );
@@ -205,9 +202,7 @@ export class BlogsQueryRepository {
   ): Promise<BlogDocument | null> {
     return this.dataSource.query(
       `
-      SELECT Info."OwnerId", Blogs."Id" FROM public."Blogs" as Blogs
-      LEFT JOIN public."BlogsOwnerInfo" as Info
-        ON Blogs."Id" = Info."BlogId"
+      SELECT "ownerId", "id" FROM public."Blog"
       WHERE Blogs."Id" = $1;
       `,
       [id],
@@ -217,8 +212,8 @@ export class BlogsQueryRepository {
   async getOneBlogForAdmin(id: string): Promise<BlogDocument | null> {
     return this.dataSource.query(
       `
-      SELECT * FROM public."Blogs"
-      WHERE "Id" = $1;
+      SELECT * FROM public."Blog"
+      WHERE "id" = $1;
       `,
       [id],
     );

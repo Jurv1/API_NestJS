@@ -4,6 +4,7 @@ import { BlogMapper } from '../../../../../application/utils/mappers/blog.mapper
 import { FilterQuery } from 'mongoose';
 import { BlogDocument } from '../../../../../application/schemas/blogs/schemas/blogs.database.schema';
 import { paginator } from '../../../../../application/utils/paginator/paginator';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
 
 export class GetAllBlogsForBloggerQueryCommand {
   constructor(
@@ -28,7 +29,7 @@ export class GetAllBlogsForBloggerQueryUseCase
     private readonly blogMapper: BlogMapper,
   ) {}
   async execute(command: GetAllBlogsForBloggerQueryCommand) {
-    const allBlogs = await this.blogQ.getAllBlogsForBlogger(
+    const allBlogs: Blog[] = await this.blogQ.getAllBlogsForBlogger(
       command.filter,
       command.sort,
       command.pagination,

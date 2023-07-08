@@ -25,11 +25,18 @@ import { Blog } from '../../application/entities/blogs/blog.entity';
 import { Comment } from '../../application/entities/comments/comment.entity';
 import { CommentsLike } from '../../application/entities/comments/comments.like.entity';
 import { PostsLike } from '../../application/entities/posts/posts.like.entity';
-import { User } from '../../application/entities/users/user.entity';
+import { BlogBansByAdmin } from '../../application/entities/blogs/blog.bans.by.admin.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Blog, Post, Comment, CommentsLike, PostsLike]),
+    TypeOrmModule.forFeature([
+      Blog,
+      BlogBansByAdmin,
+      Post,
+      Comment,
+      CommentsLike,
+      PostsLike,
+    ]),
     CqrsModule,
     PostsModule,
   ],

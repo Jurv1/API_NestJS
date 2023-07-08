@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -28,7 +29,12 @@ export class Comment {
   like: CommentsLike[];
 
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'commentatorId' })
   user: User;
+
+  @ManyToOne(() => User, (user) => user.login, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'commentatorLogin', referencedColumnName: 'login' })
+  commentatorLogin: string;
 
   @ManyToOne(() => Post, (post) => post.comment, { onDelete: 'CASCADE' })
   post: Post;
