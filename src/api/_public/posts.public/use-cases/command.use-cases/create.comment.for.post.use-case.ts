@@ -30,7 +30,7 @@ export class CreateCommentForPostUseCase
 
     const post: any = await this.postQ.getOnePost(command.postId);
     const bannedUsers = await this.blogQ.getAllBannedForBlogWithoutFilters(
-      post[0].BlogId,
+      post[0].blogId,
     );
     bannedUsers.forEach((el) => {
       if (el.Id == command.userId) throw new Errors.FORBIDDEN();

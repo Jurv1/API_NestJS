@@ -31,7 +31,7 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
       const result: boolean = await this.likesRepo.deleteLikeDislikeForPost(
         command.userId,
         command.commentOrPostId,
-        userStatus[0].LikeStatus,
+        userStatus[0].likeStatus,
       );
       if (result) {
         return;
@@ -39,15 +39,15 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
       throw new Errors.NOT_FOUND();
     }
     if (command.likeStatus === 'Like') {
-      if (userStatus[0]?.LikeStatus === 'Dislike') {
+      if (userStatus[0]?.likeStatus === 'Dislike') {
         //remove dislike and create like
         await this.likesRepo.deleteLikeDislikeForPost(
           command.userId,
           command.commentOrPostId,
-          userStatus[0]?.LikeStatus,
+          userStatus[0]?.likeStatus,
         );
         return;
-      } else if (userStatus[0]?.LikeStatus === 'Like') {
+      } else if (userStatus[0]?.likeStatus === 'Like') {
         return;
       } else {
         const result = await this.likesRepo.likeComment(
@@ -63,11 +63,11 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
       }
     }
     if (command.likeStatus === 'Dislike') {
-      if (userStatus[0]?.LikeStatus === 'Like') {
+      if (userStatus[0]?.likeStatus === 'Like') {
         await this.likesRepo.deleteLikeDislikeForPost(
           command.userId,
           command.commentOrPostId,
-          userStatus[0]?.LikeStatus,
+          userStatus[0]?.likeStatus,
         );
         const result = await this.likesRepo.likeComment(
           command.commentOrPostId,
@@ -80,7 +80,7 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
         }
         throw new Errors.NOT_FOUND();
         //remove like and create dislike
-      } else if (userStatus[0]?.LikeStatus === 'Dislike') {
+      } else if (userStatus[0]?.likeStatus === 'Dislike') {
         return;
       } else {
         //create Dislike

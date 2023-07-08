@@ -68,8 +68,8 @@ export class PublicAuthController {
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
     const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
     return {
-      email: user[0].Email,
-      login: user[0].Login,
+      email: user[0].email,
+      login: user[0].login,
       userId: currentUserId.toString(),
     };
   }
@@ -224,12 +224,12 @@ export class PublicAuthController {
       );
       const accessToken = await this.authService.createAccessToken(
         userId,
-        user[0].Login,
+        user[0].login,
         '10s',
       );
       const newRefreshToken = await this.authService.createRefreshToken(
         userId,
-        user[0].Login,
+        user[0].login,
         deviceId,
         '20s',
       );

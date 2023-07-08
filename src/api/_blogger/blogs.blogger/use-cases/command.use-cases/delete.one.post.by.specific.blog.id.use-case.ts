@@ -29,7 +29,7 @@ export class DeleteOnePostBySpecificBlogIdUseCase
       command.blogId,
     );
     if (post.length === 0) throw new Errors.NOT_FOUND();
-    if (post[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
+    if (post[0].ownerId !== command.userId) throw new Errors.FORBIDDEN();
     return await this.postRepository.deleteOnePostBySpecificBlogId(
       command.postId,
       command.blogId,

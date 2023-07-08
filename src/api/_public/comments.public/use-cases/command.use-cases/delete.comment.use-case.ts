@@ -20,7 +20,7 @@ export class DeleteCommentUseCase
     errorIfNan(command.commentId);
     const comment: any = await this.commentQ.getOneComment(command.commentId);
     if (comment.length === 0) throw new Errors.NOT_FOUND();
-    if (comment[0].CommentatorId != command.userId) {
+    if (comment[0].commentatorId != command.userId) {
       throw new Errors.FORBIDDEN();
     }
     const result = await this.commentService.deleteOneCommentById(

@@ -23,7 +23,7 @@ export class DeleteOneBlogUseCase
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
-    if (blog[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
+    if (blog[0].ownerId !== command.userId) throw new Errors.FORBIDDEN();
     const result: boolean = await this.blogService.deleteOneBlog(
       command.blogId,
     );

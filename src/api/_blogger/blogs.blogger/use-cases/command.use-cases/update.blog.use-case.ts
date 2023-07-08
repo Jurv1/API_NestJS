@@ -21,15 +21,14 @@ export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
     private readonly blogService: BlogService,
   ) {}
   async execute(command: UpdateBlogCommand) {
-    //todo вставить вместо getOneBlog getOneBlogByBlogger
     errorIfNan(command.blogId);
     const foundedBlog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.blogId,
     );
     if (foundedBlog.length === 0) throw new Errors.NOT_FOUND();
-    if (foundedBlog[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
+    if (foundedBlog[0].ownerId !== command.userId) throw new Errors.FORBIDDEN();
     const result = await this.blogService.updateOneBlog(
-      foundedBlog[0].Id,
+      foundedBlog[0].id,
       command.name,
       command.description,
       command.websiteUrl,

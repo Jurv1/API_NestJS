@@ -23,10 +23,10 @@ export class BindBlogToUserUseCase
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
-    if (blog[0].OwnerId) throw new Errors.BAD_REQUEST();
+    if (blog[0].ownerId) throw new Errors.BAD_REQUEST();
     const user: any = await this.userQ.getOneUserById(command.userId);
     if (user.length === 0) throw new Errors.NOT_FOUND();
-    await this.blogService.bindUser(user[0].Id, user[0].Login, blog[0].Id);
+    await this.blogService.bindUser(user[0].id, user[0].login, blog[0].id);
     return;
   }
 }

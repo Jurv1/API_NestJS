@@ -32,7 +32,7 @@ export class BanUnbanUserBySuperAdminUseCase
     } else {
       command.banInfo.banReason = null;
     }
-    await this.usersRepo.updateBanInfoForUser(user[0].Id, command.banInfo);
+    await this.usersRepo.updateBanInfoForUser(user[0].id, command.banInfo);
     await this.commandBus.execute(
       new UpdateBanStatusForLikesOwnerCommand(
         command.userId,

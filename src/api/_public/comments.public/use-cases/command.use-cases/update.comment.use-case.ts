@@ -26,7 +26,7 @@ export class UpdateCommentUseCase
       throw new Errors.NOT_FOUND();
     }
 
-    if (comment[0].CommentatorId !== command.userId) {
+    if (comment[0].commentatorId !== command.userId) {
       throw new Errors.FORBIDDEN();
     }
     return await this.commentsRepo.updateCommentById(

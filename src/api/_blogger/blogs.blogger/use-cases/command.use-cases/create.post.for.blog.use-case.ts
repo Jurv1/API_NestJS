@@ -32,7 +32,7 @@ export class CreatePostForBlogUseCase
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
-    if (blog[0].OwnerId !== command.userData.userId)
+    if (blog[0].ownerId !== command.userData.userId)
       throw new Errors.FORBIDDEN();
     const result: any = await this.postService.createOnePost(
       command.title,

@@ -5,11 +5,9 @@ export function sortingForUsersByAdmin(
   sortDirection: string,
 ): { [key: string]: string } {
   if (typeof sortBy === 'undefined') {
-    sortBy = 'CreatedAt';
-  } else {
-    sortBy = sortBy.charAt(0).toUpperCase() + sortBy.slice(1);
+    sortBy = 'createdAt';
   }
-  if (!(sortBy in EnumForUserByAdminSorting)) sortBy = 'CreatedAt';
+  if (!(sortBy in EnumForUserByAdminSorting)) sortBy = 'createdAt';
   const sort: { [key: string]: string } = { [`${sortBy}`]: 'desc' };
 
   if (sortDirection === 'asc') {

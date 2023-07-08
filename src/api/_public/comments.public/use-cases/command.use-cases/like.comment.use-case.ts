@@ -36,7 +36,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
       const result: boolean = await this.likesRepo.deleteLikeDislikeForComment(
         command.userId,
         command.commentOrPostId,
-        userStatus[0]?.LikeStatus,
+        userStatus[0]?.likeStatus,
       );
       if (result) {
         return;
@@ -44,7 +44,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
       throw new Errors.NOT_FOUND();
     }
     if (command.likeStatus === 'Like') {
-      if (userStatus[0]?.LikeStatus === 'Dislike') {
+      if (userStatus[0]?.likeStatus === 'Dislike') {
         //remove dislike and create like
         await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
@@ -52,7 +52,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
           userStatus[0]?.LikeStatus,
         );
         return;
-      } else if (userStatus[0]?.LikeStatus === 'Like') {
+      } else if (userStatus[0]?.likeStatus === 'Like') {
         return;
       } else {
         const result = await this.likesRepo.likeComment(
@@ -68,11 +68,11 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
       }
     }
     if (command.likeStatus === 'Dislike') {
-      if (userStatus[0]?.LikeStatus === 'Like') {
+      if (userStatus[0]?.likeStatus === 'Like') {
         await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
           command.commentOrPostId,
-          userStatus[0]?.LikeStatus,
+          userStatus[0]?.likeStatus,
         );
         const result = await this.likesRepo.likeComment(
           command.commentOrPostId,
@@ -85,7 +85,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
         }
         throw new Errors.NOT_FOUND();
         //remove like and create dislike
-      } else if (userStatus[0]?.LikeStatus === 'Dislike') {
+      } else if (userStatus[0]?.likeStatus === 'Dislike') {
         return;
       } else {
         //create Dislike

@@ -40,7 +40,7 @@ export class PostService {
         blogId: blogId,
         blogName: blogName,
       };
-      return await this.postsRepository.createOne(postDto, foundedEl);
+      return await this.postsRepository.createOne(postDto);
     } else {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [

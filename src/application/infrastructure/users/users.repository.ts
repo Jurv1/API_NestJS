@@ -44,7 +44,7 @@ export class UsersRepository {
       `
       SELECT Users."id", Users."login", Users."email", Users."isBanned",
             Users."createdAt", Bans."banDate", Bans."banReason"
-      FROM public."users" as Users
+      FROM public."user" as Users
       LEFT JOIN public."bans_for_user_by_admin" as Bans
         ON Bans."userId" = Users."id"
       WHERE Users."id" = $1;

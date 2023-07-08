@@ -23,7 +23,7 @@ export class GetOnePostQueryUseCase
     const result = await this.postQ.getOnePost(command.postId);
     if (result.length === 0) throw new Errors.NOT_FOUND();
 
-    const blog = await this.blogQ.getOneBlog(result[0].BlogId);
+    const blog = await this.blogQ.getOneBlog(result[0].blogId);
     if (blog.length === 0) throw new Errors.NOT_FOUND();
     return await this.postMapper.mapPost(result, command.userId);
   }
