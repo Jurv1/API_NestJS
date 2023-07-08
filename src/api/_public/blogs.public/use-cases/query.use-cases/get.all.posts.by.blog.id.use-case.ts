@@ -5,6 +5,7 @@ import { PostsQueryRepository } from '../../../../../application/infrastructure/
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 import { PostMapper } from '../../../../../application/utils/mappers/post.mapper';
 import { paginator } from '../../../../../application/utils/paginator/paginator';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
 
 export class GetAllPostsByBlogIdQueryCommand {
   constructor(
@@ -31,7 +32,7 @@ export class GetAllPostsByBlogIdUseCase
   ) {}
   async execute(command: GetAllPostsByBlogIdQueryCommand) {
     errorIfNan(command.blogId);
-    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+    const blog: Blog[] = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();

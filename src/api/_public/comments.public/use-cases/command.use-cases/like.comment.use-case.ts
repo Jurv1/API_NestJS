@@ -49,7 +49,7 @@ export class LikeCommentUseCase implements ICommandHandler<LikeCommentCommand> {
         await this.likesRepo.deleteLikeDislikeForComment(
           command.userId,
           command.commentOrPostId,
-          userStatus[0]?.LikeStatus,
+          userStatus[0]?.likeStatus,
         );
         return;
       } else if (userStatus[0]?.likeStatus === 'Like') {

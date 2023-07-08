@@ -3,6 +3,7 @@ import { CommentService } from '../../../../../application/infrastructure/commen
 import { Errors } from '../../../../../application/utils/handle.error';
 import { CommentsQueryRepository } from '../../../../../application/infrastructure/comments/comments.query.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { Comment } from '../../../../../application/entities/comments/comment.entity';
 
 export class DeleteCommentCommand {
   constructor(public commentId: string, public userId: string) {}
@@ -18,9 +19,11 @@ export class DeleteCommentUseCase
   ) {}
   async execute(command: DeleteCommentCommand) {
     errorIfNan(command.commentId);
-    const comment: any = await this.commentQ.getOneComment(command.commentId);
+    const comment: Comment[] = await this.commentQ.getOneComment(
+      command.commentId,
+    );
     if (comment.length === 0) throw new Errors.NOT_FOUND();
-    if (comment[0].commentatorId != command.userId) {
+    if (comment[0].user.id.toString() != command.userId) {
       throw new Errors.FORBIDDEN();
     }
     const result = await this.commentService.deleteOneCommentById(

@@ -9,6 +9,9 @@ import { BlogsQueryRepository } from '../blogs/blogs.query.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsQueryRepository } from './posts.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
+import { Post } from '../../entities/posts/post.entity';
+import { Comment } from '../../entities/comments/comment.entity';
+import { Blog } from '../../entities/blogs/blog.entity';
 
 @Injectable()
 export class PostService {
@@ -24,11 +27,11 @@ export class PostService {
     content: string,
     blogId: string,
     userData: UserIdAndLogin,
-  ): Promise<PostDocument | null> {
-    const foundedEl: any = await this.blogQ.getOneBlog(blogId);
+  ): Promise<Post[] | null> {
+    const foundedEl: Blog[] = await this.blogQ.getOneBlog(blogId);
 
     if (foundedEl.length > 0) {
-      const blogName: string = foundedEl[0].Name;
+      const blogName: string = foundedEl[0].name;
       const postDto: PostCreationDto = {
         title: title,
         shortDescription: shortDescription,
@@ -78,7 +81,7 @@ export class PostService {
     content: string,
     userId: string,
     userLogin: string,
-  ): Promise<any | null> {
+  ): Promise<Comment[] | null> {
     const foundedEl: any = await this.postQ.getOnePost(postId);
     if (foundedEl.length !== 0) {
       const newCommentTmp: CommentCreatingDto = {

@@ -3,6 +3,7 @@ import { Errors } from '../../../../../application/utils/handle.error';
 import { CommentsQueryRepository } from '../../../../../application/infrastructure/comments/comments.query.repository';
 import { CommentsRepository } from '../../../../../application/infrastructure/comments/comments.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { Comment } from '../../../../../application/entities/comments/comment.entity';
 export class UpdateCommentCommand {
   constructor(
     public commentId: string,
@@ -21,12 +22,14 @@ export class UpdateCommentUseCase
   ) {}
   async execute(command: UpdateCommentCommand) {
     errorIfNan(command.commentId);
-    const comment = await this.commentQ.getOneComment(command.commentId);
+    const comment: Comment[] = await this.commentQ.getOneComment(
+      command.commentId,
+    );
     if (comment.length === 0) {
       throw new Errors.NOT_FOUND();
     }
 
-    if (comment[0].commentatorId !== command.userId) {
+    if (comment[0].user.id.toString() !== command.userId) {
       throw new Errors.FORBIDDEN();
     }
     return await this.commentsRepo.updateCommentById(

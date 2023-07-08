@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { LikeDocument } from '../../schemas/likes/schemas/like.database.schema';
+import { CommentsLike } from '../../entities/comments/comments.like.entity';
 
 @Injectable()
 export class CommentsLikesRepository {
@@ -27,7 +28,7 @@ export class CommentsLikesRepository {
   async getUserStatusForComment(
     userId: string,
     commentId: string,
-  ): Promise<any | null> {
+  ): Promise<CommentsLike[] | null> {
     return await this.dataSource.query(
       `
       SELECT "likeStatus" FROM public."comments_like"
@@ -43,7 +44,7 @@ export class CommentsLikesRepository {
     likeStatus: string,
     userId: string,
     userLogin: string,
-  ): Promise<LikeDocument | null> {
+  ): Promise<CommentsLike[] | null> {
     return await this.dataSource.query(
       `
       INSERT INTO public."comments_like" (
@@ -58,7 +59,7 @@ export class CommentsLikesRepository {
     );
   }
 
-  async countAllLikesForComment(id: string) {
+  async countAllLikesForComment(id: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."comments_like"
@@ -72,7 +73,7 @@ export class CommentsLikesRepository {
     return +counts[0].count;
   }
 
-  async countAllDislikesForComment(id: string) {
+  async countAllDislikesForComment(id: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."comments_like"
@@ -105,7 +106,7 @@ export class CommentsLikesRepository {
   async findAllLikesByUserIdAndSetBanStatus(
     userId: string,
     banStatus: boolean,
-  ) {
+  ): Promise<CommentsLike[] | null> {
     return await this.dataSource.query(
       `
       UPDATE public."comments_like"

@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CommentViewModel } from '../../../../../application/schemas/comments/schemas/comment-view.model';
 import { Errors } from '../../../../../application/utils/handle.error';
 import { CommentsQueryRepository } from '../../../../../application/infrastructure/comments/comments.query.repository';
+import { Comment } from '../../../../../application/entities/comments/comment.entity';
 
 export class GetCommentByIdCommand {
   constructor(public commentId: string, public token: string) {}
@@ -22,7 +23,9 @@ export class GetCommentByIdUseCase
     let userId = null;
     const payload: any | null =
       (await this.jwtService.decode(command.token)) || null;
-    const comment: any = await this.commentQ.getOneComment(command.commentId);
+    const comment: Comment[] = await this.commentQ.getOneComment(
+      command.commentId,
+    );
 
     if (comment.length === 0) {
       throw new Errors.NOT_FOUND();

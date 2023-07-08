@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { Device } from '../../entities/devices/device.entity';
 
 @Injectable()
 export class DevicesQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-  async getAllDevicesByUserId(userId: string) {
+  async getAllDevicesByUserId(userId: string): Promise<Device[] | null> {
     return this.dataSource.query(
       `
       SELECT * 
@@ -17,7 +18,7 @@ export class DevicesQueryRepository {
     );
   }
 
-  async getOneDeviceById(deviceId: string) {
+  async getOneDeviceById(deviceId: string): Promise<Device[] | null> {
     return this.dataSource.query(
       `
       SELECT *

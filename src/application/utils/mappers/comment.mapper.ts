@@ -4,6 +4,8 @@ import { CommentViewModel } from '../../schemas/comments/schemas/comment-view.mo
 import { Inject } from '@nestjs/common';
 import { CommentsViewForBloggerDto } from '../../dto/comments/dto/comments.view.for.blogger.dto';
 import { CommentsLikesRepository } from '../../infrastructure/likes/comments.likes.repository';
+import { Comment } from '../../entities/comments/comment.entity';
+import { CommentsLike } from '../../entities/comments/comments.like.entity';
 
 export class CommentMapper {
   constructor(
@@ -12,10 +14,10 @@ export class CommentMapper {
   ) {}
 
   async mapComment(
-    obj: any,
+    obj: Comment[],
     userId?: string | null,
   ): Promise<CommentViewModel> {
-    let like: LikeDocument | null;
+    let like: CommentsLike[] | null;
     let userStatus: string | undefined = 'None';
     const commentId = obj[0].id.toString();
     const allLikes: number = await this.likesRepo.countAllLikesForComment(
@@ -29,16 +31,16 @@ export class CommentMapper {
         userId.toString(),
         commentId,
       );
-      userStatus = like[0]?.LikeStatus;
+      userStatus = like[0]?.likeStatus;
     }
     return {
       id: obj[0].id.toString(),
       content: obj[0].content,
       commentatorInfo: {
-        userId: obj[0].commentatorId.toString(),
+        userId: obj[0].user.id.toString(),
         userLogin: obj[0].commentatorLogin,
       },
-      createdAt: obj[0].createdAt,
+      createdAt: obj[0].createdAt.toISOString(),
       likesInfo: {
         likesCount: allLikes,
         dislikesCount: allDislikes,
@@ -48,10 +50,10 @@ export class CommentMapper {
   }
 
   async mapCommentsForBlogger(
-    objs: CommentsViewForBloggerDto[] | CommentDocument[],
+    objs: Comment[] | CommentDocument[],
     userId?: string,
   ): Promise<CommentsViewForBloggerDto[]> {
-    let like: LikeDocument | null;
+    let like: CommentsLike[] | null;
     let userStatus: string | undefined = 'None';
     return await Promise.all(
       objs.map(async (el) => {
@@ -67,7 +69,7 @@ export class CommentMapper {
             userId.toString(),
             commentId,
           );
-          userStatus = like[0]?.LikeStatus;
+          userStatus = like[0]?.likeStatus;
         }
         return {
           id: el.id.toString(),
@@ -97,7 +99,7 @@ export class CommentMapper {
     objs: any,
     userId?: string | null,
   ): Promise<CommentViewModel[]> {
-    let like: LikeDocument | null;
+    let like: CommentsLike[] | null;
     let userStatus: string | undefined = 'None';
 
     return await Promise.all(
@@ -114,7 +116,7 @@ export class CommentMapper {
             userId.toString(),
             commentId,
           );
-          userStatus = like[0]?.LikeStatus;
+          userStatus = like[0]?.likeStatus;
         }
 
         return {

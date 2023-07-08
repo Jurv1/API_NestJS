@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
 import { BlogsRepository } from './blogs.repository';
+import { Blog } from '../../entities/blogs/blog.entity';
 
 @Injectable()
 export class BlogService {
@@ -11,7 +12,7 @@ export class BlogService {
     websiteUrl: string,
     userId: string,
     userLogin: string,
-  ): Promise<any | null> {
+  ): Promise<Blog[] | null> {
     const blogDto: BlogCreationDto = {
       name: name,
       description: description,

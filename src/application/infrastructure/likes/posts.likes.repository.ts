@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { LikeDocument } from '../../schemas/likes/schemas/like.database.schema';
+import { PostsLike } from '../../entities/posts/posts.like.entity';
 
 @Injectable()
 export class PostsLikesRepository {
@@ -28,7 +29,7 @@ export class PostsLikesRepository {
   async getUserStatusForPost(
     userId: string,
     postId: string,
-  ): Promise<any | null> {
+  ): Promise<PostsLike[] | null> {
     return await this.dataSource.query(
       `
       SELECT "likeStatus" FROM public."posts_like"
@@ -44,7 +45,7 @@ export class PostsLikesRepository {
     likeStatus: string,
     userId: string,
     userLogin: string,
-  ): Promise<LikeDocument | null> {
+  ): Promise<PostsLike[] | null> {
     return await this.dataSource.query(
       `
       INSERT INTO public."posts_like" (
@@ -59,7 +60,7 @@ export class PostsLikesRepository {
     );
   }
 
-  async countAllLikesForPost(id: string) {
+  async countAllLikesForPost(id: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."posts_like"
@@ -73,7 +74,7 @@ export class PostsLikesRepository {
     return +counts[0].count;
   }
 
-  async countAllDislikesForPost(id: string) {
+  async countAllDislikesForPost(id: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."posts_like"
@@ -87,7 +88,7 @@ export class PostsLikesRepository {
     return +counts[0].count;
   }
 
-  async findLatestThreeLikes(postId: string) {
+  async findLatestThreeLikes(postId: string): Promise<PostsLike[] | null> {
     return await this.dataSource.query(
       `
       SELECT Users."id", Likes."addedAt", Users."login" FROM public."posts_like" AS Likes
@@ -106,7 +107,7 @@ export class PostsLikesRepository {
   async findAllLikesByUserIdAndSetBanStatus(
     userId: string,
     banStatus: boolean,
-  ) {
+  ): Promise<PostsLike[] | null> {
     return await this.dataSource.query(
       `
       UPDATE public."posts_like"

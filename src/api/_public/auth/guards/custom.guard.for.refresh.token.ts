@@ -3,6 +3,8 @@ import { Errors } from '../../../../application/utils/handle.error';
 import { AuthService } from '../auth.service';
 import { DevicesQueryRepository } from '../../../../application/infrastructure/devices/devices.query.repository';
 import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
+import { Device } from '../../../../application/entities/devices/device.entity';
+import { User } from '../../../../application/entities/users/user.entity';
 
 @Injectable()
 export class CustomGuardForRefreshToken implements CanActivate {
@@ -21,9 +23,9 @@ export class CustomGuardForRefreshToken implements CanActivate {
         refreshToken,
       );
       if (!tokenPayload) throw new Errors.UNAUTHORIZED();
-      const user: any = await this.userQ.getOneUserById(tokenPayload.userId);
+      const user: User[] = await this.userQ.getOneUserById(tokenPayload.userId);
       if (user.length === 0) throw new Errors.UNAUTHORIZED();
-      const activeDevice = await this.deviceQ.getOneDeviceById(
+      const activeDevice: Device[] = await this.deviceQ.getOneDeviceById(
         tokenPayload.deviceId,
       );
       if (activeDevice.length === 0) {
@@ -31,7 +33,7 @@ export class CustomGuardForRefreshToken implements CanActivate {
       }
       if (
         new Date(tokenPayload.iat * 1000).toISOString() <
-        activeDevice[0].LastActiveDate
+        activeDevice[0].LastActiveDate.toISOString()
       ) {
         throw new Errors.UNAUTHORIZED();
       }

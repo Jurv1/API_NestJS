@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { UserDocument } from '../../schemas/users/schemas/users.database.schema';
+import { User } from '../../entities/users/user.entity';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -15,7 +15,7 @@ export class UsersQueryRepository {
       pageSize: number;
       pageNumber: number;
     },
-  ) {
+  ): Promise<User[]> {
     return await this.dataSource.query(
       `
       SELECT 
@@ -26,8 +26,8 @@ export class UsersQueryRepository {
         Users."isBanned",
         Bans."banDate",
         Bans."banReason"
-      FROM public."user" as Users
-      LEFT JOIN public."bans_for_user_by_admin" as Bans
+      FROM public."user" AS Users
+      LEFT JOIN public."bans_for_user_by_admin" AS Bans
        ON Bans."userId" = Users."id"
       WHERE ("login" ILIKE $1 OR "email" ILIKE $2)
         AND ("isBanned" = $3 OR "isBanned" = $4)
@@ -61,7 +61,7 @@ export class UsersQueryRepository {
     );
   }
 
-  async getOneUserByLogin(login: string): Promise<UserDocument | null> {
+  async getOneUserByLogin(login: string): Promise<User[] | null> {
     return await this.dataSource.query(
       `
     SELECT 
@@ -77,9 +77,7 @@ export class UsersQueryRepository {
     );
   }
 
-  async getOneByLoginOrEmail(
-    loginOrEmail: string,
-  ): Promise<UserDocument | null> {
+  async getOneByLoginOrEmail(loginOrEmail: string): Promise<User[] | null> {
     return await this.dataSource.query(
       `
       SELECT "id", "isConfirmed", "login", "email"
@@ -91,7 +89,7 @@ export class UsersQueryRepository {
     );
   }
 
-  async getOneUserById(id: string): Promise<UserDocument | null> {
+  async getOneUserById(id: string): Promise<User[] | null> {
     return this.dataSource.query(
       `
       SELECT * 
@@ -104,7 +102,7 @@ export class UsersQueryRepository {
 
   async getOneByConfirmationCode(
     confirmationCode: string,
-  ): Promise<UserDocument | null> {
+  ): Promise<User[] | null> {
     return this.dataSource.query(
       `
       SELECT Users."id", "isConfirmed", "confirmationCode", "expirationDate"
@@ -116,7 +114,7 @@ export class UsersQueryRepository {
     );
   }
 
-  async getOneByPassCode(code: string): Promise<UserDocument | null> {
+  async getOneByPassCode(code: string): Promise<User[] | null> {
     return this.dataSource.query(
       `
       SELECT Users."id", "recoveryCode", "expirationDate"

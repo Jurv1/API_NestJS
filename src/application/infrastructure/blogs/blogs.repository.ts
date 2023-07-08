@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
-import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
 import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
+import { Blog } from '../../entities/blogs/blog.entity';
 
 @Injectable()
 export class BlogsRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async createOne(blogDto: BlogCreationDto): Promise<any | null> {
-    const createdBlog: BlogDocument = await this.dataSource.query(
+  async createOne(blogDto: BlogCreationDto): Promise<Blog[] | null> {
+    return await this.dataSource.query(
       `
       INSERT INTO public."blog" (
         "name",
@@ -40,7 +40,6 @@ export class BlogsRepository {
         new Date().toISOString(),
       ],
     );
-    return createdBlog;
   }
 
   async updateOne(blogId: string, blogBody: BlogBody): Promise<boolean> {
@@ -79,12 +78,8 @@ export class BlogsRepository {
     await this.dataSource.query(
       `
       UPDATE public."blog" AS Blogs
-        SET "IsBanned" = $1, "BanDate" = $2
-      FROM (SELECT Blogs2."Id" FROM public."Blogs" AS Blogs2
-                LEFT JOIN public."BlogsOwnerInfo" AS Infos 
-                    ON Infos."BlogId" = Blogs2."Id"
-                WHERE Infos."OwnerId" = $3) AS foo
-      WHERE Blogs."Id" = foo."Id";
+        SET "isBanned" = $1, "banDate" = $2
+      WHERE Blogs."ownerId" = $3;
       `,
       [isBanned, date, userId],
     );
@@ -93,7 +88,7 @@ export class BlogsRepository {
   async addBlogToBan(blogId: string) {
     await this.dataSource.query(
       `
-      INSERT INTO public."BlogsBansByAdmin" ("BlogId", "BanDate")
+      INSERT INTO public."blogs_bans_by_admin" ("blogId", "banDate")
       VALUES  ($1, $2);
       `,
       [blogId, new Date().toISOString()],
@@ -103,8 +98,8 @@ export class BlogsRepository {
   async removeBlogToBan(blogId: string) {
     await this.dataSource.query(
       `
-      DELETE FROM public."BlogsBansByAdmin"
-      WHERE "BlogId" = $1;
+      DELETE FROM public."blogs_bans_by_admin"
+      WHERE "blogId" = $1;
       `,
       [blogId],
     );
@@ -113,8 +108,8 @@ export class BlogsRepository {
   async deleteOne(id: string): Promise<boolean> {
     const result = await this.dataSource.query(
       `
-      DELETE FROM public."Blogs"
-      WHERE "Id" = $1;
+      DELETE FROM public."blog"
+      WHERE "id" = $1;
       `,
       [id],
     );
@@ -132,24 +127,24 @@ export class BlogsRepository {
     );
   }
 
-  async updateBanStatusForBlogsByOwnerId(blogId: string) {
-    return await this.dataSource.query(
-      `
-      INSERT INTO public."BlogsBansByAdmin" ("BlogId", "BanDate")
-        VALUES ($1, $2)
-      ON CONFLICT("BlogId") DO
-        UPDATE public."BlogsBansByAdmin" 
-            SET "BanDate" = EXCLUDED.BanDate;
-      `,
-      [blogId, new Date().toISOString()],
-    );
-  }
+  // async updateBanStatusForBlogsByOwnerId(blogId: string) {
+  //   return await this.dataSource.query(
+  //     `
+  //     INSERT INTO public."BlogsBansByAdmin" ("BlogId", "BanDate")
+  //       VALUES ($1, $2)
+  //     ON CONFLICT("BlogId") DO
+  //       UPDATE public."BlogsBansByAdmin"
+  //           SET "BanDate" = EXCLUDED.BanDate;
+  //     `,
+  //     [blogId, new Date().toISOString()],
+  //   );
+  // }
 
   async banUserInBlog(blogId: string, bannedUser: BannedUserDto) {
     return await this.dataSource.query(
       `
-      INSERT INTO public."BannedUsersByBlogger" 
-        ("BlogId", "UserId", "BanReason", "BanDate")
+      INSERT INTO public."banned_users_by_blogger" 
+        ("blogId", "userId", "banReason", "banDate")
       VALUES ($1, $2, $3, $4);
       `,
       [
@@ -164,9 +159,9 @@ export class BlogsRepository {
   async unbanUserInBlog(blogId: string, userId: string) {
     await this.dataSource.query(
       `
-      DELETE FROM public."BannedUsersByBlogger" 
-      WHERE "BlogId" = $1
-        AND "UserId" = $2;
+      DELETE FROM public."banned_users_by_blogger" 
+      WHERE "blogId" = $1
+        AND "userId" = $2;
       `,
       [blogId, userId],
     );

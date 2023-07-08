@@ -3,6 +3,7 @@ import { PostsQueryRepository } from '../../../../../application/infrastructure/
 import { PostsLikesRepository } from '../../../../../application/infrastructure/likes/posts.likes.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 import { Errors } from '../../../../../application/utils/handle.error';
+import { Post } from '../../../../../application/entities/posts/post.entity';
 
 export class LikePostCommand {
   constructor(
@@ -21,7 +22,7 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
   ) {}
   async execute(command: LikePostCommand) {
     errorIfNan(command.commentOrPostId);
-    const post: any = await this.postQ.getOnePost(command.commentOrPostId);
+    const post: Post[] = await this.postQ.getOnePost(command.commentOrPostId);
     if (post.length === 0) throw new Errors.NOT_FOUND();
     const userStatus = await this.likesRepo.getUserStatusForPost(
       command.userId,

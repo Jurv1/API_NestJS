@@ -37,7 +37,7 @@ export class GetAllBlogsForBloggerQueryUseCase
     );
     const mappedBlogsForBlogger = await this.blogMapper.mapBlogs(allBlogs);
 
-    const countedBlogs: number = await this.blogQ.countBlogsForBlogger(
+    const countedBlogs: string = await this.blogQ.countBlogsForBlogger(
       command.filter,
       command.userId,
     );

@@ -6,14 +6,13 @@ import { UserDocument } from '../../schemas/users/schemas/users.database.schema'
 import { BanBody } from '../../dto/users/dto/ban.body';
 import { add } from 'date-fns';
 import { getTimeForUserBan } from '../../utils/funcs/get.time.for.user-ban';
+import { User } from '../../entities/users/user.entity';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async createOne(
-    userCreationDto: UserCreationDto,
-  ): Promise<UserDocument | null> {
+  async createOne(userCreationDto: UserCreationDto): Promise<User[] | null> {
     const userId = await this.dataSource.query(
       `INSERT INTO public."user" 
                 ("login", "email", "password",
@@ -44,8 +43,8 @@ export class UsersRepository {
       `
       SELECT Users."id", Users."login", Users."email", Users."isBanned",
             Users."createdAt", Bans."banDate", Bans."banReason"
-      FROM public."user" as Users
-      LEFT JOIN public."bans_for_user_by_admin" as Bans
+      FROM public."user" AS Users
+      LEFT JOIN public."bans_for_user_by_admin" AS Bans
         ON Bans."userId" = Users."id"
       WHERE Users."id" = $1;
       `,

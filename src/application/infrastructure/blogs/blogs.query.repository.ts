@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { BlogWithPaginationDto } from '../../dto/blogs/dto/view/blog.with.pagination.dto';
 import { Blog } from '../../entities/blogs/blog.entity';
+import { User } from '../../entities/users/user.entity';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -18,7 +19,7 @@ export class BlogsQueryRepository {
       pageSize: number;
       pageNumber: number;
     },
-  ): Promise<BlogWithPaginationDto> {
+  ): Promise<Blog[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."blog" 
@@ -55,7 +56,7 @@ export class BlogsQueryRepository {
       pageSize: number;
       pageNumber: number;
     },
-  ) {
+  ): Promise<Blog[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."blog" AS Blogs
@@ -67,7 +68,9 @@ export class BlogsQueryRepository {
     );
   }
 
-  async countAllBlogsForAdmin(filter: { [key: string]: string | boolean }) {
+  async countAllBlogsForAdmin(filter: {
+    [key: string]: string | boolean;
+  }): Promise<number> {
     const result = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."blog"
@@ -89,7 +92,7 @@ export class BlogsQueryRepository {
       pageNumber: number;
     },
     userId: string,
-  ): Promise<Blog[]> {
+  ): Promise<Blog[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."blog" AS Blogs
@@ -105,7 +108,7 @@ export class BlogsQueryRepository {
   async countBlogsForBlogger(
     filter: { [key: string]: string | boolean },
     userId: string,
-  ) {
+  ): Promise<string> {
     const result = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."blog" AS Blogs
@@ -128,7 +131,7 @@ export class BlogsQueryRepository {
       pageNumber: number;
     },
     blogId: string,
-  ) {
+  ): Promise<User[] | null> {
     return this.dataSource.query(
       `
       SELECT 
@@ -148,7 +151,9 @@ export class BlogsQueryRepository {
     );
   }
 
-  async getAllBannedForBlogWithoutFilters(blogId: string) {
+  async getAllBannedForBlogWithoutFilters(
+    blogId: string,
+  ): Promise<User[] | null> {
     return await this.dataSource.query(
       `
       SELECT 
@@ -168,7 +173,7 @@ export class BlogsQueryRepository {
   async countAllBannedUsers(
     filter: { [key: string]: string | boolean },
     blogId: string,
-  ) {
+  ): Promise<string> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*)
@@ -184,7 +189,7 @@ export class BlogsQueryRepository {
     return counts[0].count;
   }
 
-  async getOneBlog(id: string): Promise<any | null> {
+  async getOneBlog(id: string): Promise<Blog[] | null> {
     return this.dataSource.query(
       `
       SELECT * FROM public."blog"
@@ -195,9 +200,7 @@ export class BlogsQueryRepository {
     );
   }
 
-  async getOwnerIdAndBlogIdForBlogger(
-    id: string,
-  ): Promise<BlogDocument | null> {
+  async getOwnerIdAndBlogIdForBlogger(id: string): Promise<Blog[] | null> {
     return this.dataSource.query(
       `
       SELECT "ownerId", "id" FROM public."blog"
@@ -207,7 +210,7 @@ export class BlogsQueryRepository {
     );
   }
 
-  async getOneBlogForAdmin(id: string): Promise<BlogDocument | null> {
+  async getOneBlogForAdmin(id: string): Promise<Blog[] | null> {
     return this.dataSource.query(
       `
       SELECT * FROM public."blog"

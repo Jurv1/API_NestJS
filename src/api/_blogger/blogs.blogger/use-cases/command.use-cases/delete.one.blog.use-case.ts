@@ -3,6 +3,7 @@ import { BlogService } from '../../../../../application/infrastructure/blogs/blo
 import { Errors } from '../../../../../application/utils/handle.error';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
 
 export class DeleteOneBlogCommand {
   constructor(public blogId: string, public userId: string) {}
@@ -19,11 +20,12 @@ export class DeleteOneBlogUseCase
 
   async execute(command: DeleteOneBlogCommand) {
     errorIfNan(command.blogId);
-    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+    const blog: Blog[] = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
-    if (blog[0].ownerId !== command.userId) throw new Errors.FORBIDDEN();
+    if (blog[0].owner.id.toString() !== command.userId)
+      throw new Errors.FORBIDDEN();
     const result: boolean = await this.blogService.deleteOneBlog(
       command.blogId,
     );

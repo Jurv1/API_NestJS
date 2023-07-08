@@ -5,6 +5,8 @@ import { Errors } from '../../../../../application/utils/handle.error';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
+import { Post } from '../../../../../application/entities/posts/post.entity';
+import { Comment } from '../../../../../application/entities/comments/comment.entity';
 
 export class CreateCommentForPostCommand {
   constructor(
@@ -28,14 +30,14 @@ export class CreateCommentForPostUseCase
   async execute(command: CreateCommentForPostCommand) {
     errorIfNan(command.postId);
 
-    const post: any = await this.postQ.getOnePost(command.postId);
+    const post: Post[] = await this.postQ.getOnePost(command.postId);
     const bannedUsers = await this.blogQ.getAllBannedForBlogWithoutFilters(
-      post[0].blogId,
+      post[0].blog.id.toString(),
     );
     bannedUsers.forEach((el) => {
-      if (el.Id == command.userId) throw new Errors.FORBIDDEN();
+      if (el.id.toString() == command.userId) throw new Errors.FORBIDDEN();
     });
-    const result: any = await this.postService.createOneCommentByPostId(
+    const result: Comment[] = await this.postService.createOneCommentByPostId(
       command.postId,
       command.content,
       command.userId,

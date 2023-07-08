@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { CommentCreatingDto } from '../../dto/comments/dto/comment.creating.dto';
+import { Comment } from '../../entities/comments/comment.entity';
 
 @Injectable()
 export class CommentsRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async createComment(commentCreationDTO: CommentCreatingDto) {
+  async createComment(
+    commentCreationDTO: CommentCreatingDto,
+  ): Promise<Comment[] | null> {
     return await this.dataSource.query(
       `
       INSERT INTO public."comment" (
@@ -58,7 +61,7 @@ export class CommentsRepository {
     );
   }
 
-  async updateCommentById(id: string, content: string) {
+  async updateCommentById(id: string, content: string): Promise<boolean> {
     const result = await this.dataSource.query(
       `
       UPDATE public."comments"

@@ -8,20 +8,21 @@ import {
 import { BlogBody } from '../../../dto/blogs/dto/body/blog.body';
 import { BlogCreationDto } from '../../../dto/blogs/dto/blog.creation.dto';
 import { BannedUserDto } from '../../../dto/blogs/dto/banned.user.dto';
+import { BlogViewDto } from '../../../dto/blogs/dto/view/blog.view.dto';
 
 @Injectable()
 export class _MongoBlogsRepository {
   constructor(
     @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
   ) {}
-  async createOne(blogDto: BlogCreationDto): Promise<any | null> {
+  async createOne(blogDto: BlogCreationDto): Promise<BlogViewDto | null> {
     const createdBlog: BlogDocument = await this.blogModel.createBlog(
       blogDto,
       this.blogModel,
     );
     await createdBlog.save();
     return {
-      id: createdBlog._id,
+      id: createdBlog._id.toString(),
       name: createdBlog.name,
       description: createdBlog.description,
       websiteUrl: createdBlog.websiteUrl,

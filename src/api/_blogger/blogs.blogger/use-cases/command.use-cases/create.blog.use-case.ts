@@ -3,6 +3,7 @@ import { BlogService } from '../../../../../application/infrastructure/blogs/blo
 import { Errors } from '../../../../../application/utils/handle.error';
 import { UserIdAndLogin } from '../../../../_public/auth/dto/user-id.and.login';
 import { BlogMapper } from '../../../../../application/utils/mappers/blog.mapper';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
 
 export class CreateBlogCommand {
   constructor(
@@ -20,7 +21,7 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
     private readonly blogMapper: BlogMapper,
   ) {}
   async execute(command: CreateBlogCommand) {
-    const result: any = await this.blogService.createOneBlog(
+    const result: Blog[] = await this.blogService.createOneBlog(
       command.name,
       command.description,
       command.websiteUrl,

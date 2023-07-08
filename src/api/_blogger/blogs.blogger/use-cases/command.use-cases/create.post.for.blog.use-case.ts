@@ -6,6 +6,8 @@ import { PostViewModel } from '../../../../../application/schemas/posts/schemas/
 import { UserIdAndLogin } from '../../../../_public/auth/dto/user-id.and.login';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
+import { Post } from '../../../../../application/entities/posts/post.entity';
 export class CreatePostForBlogCommand {
   constructor(
     public title: string,
@@ -28,13 +30,13 @@ export class CreatePostForBlogUseCase
 
   async execute(command: CreatePostForBlogCommand): Promise<PostViewModel> {
     errorIfNan(command.blogId);
-    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+    const blog: Blog[] = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
-    if (blog[0].ownerId !== command.userData.userId)
+    if (blog[0].owner.id.toString() !== command.userData.userId)
       throw new Errors.FORBIDDEN();
-    const result: any = await this.postService.createOnePost(
+    const result: Post[] = await this.postService.createOnePost(
       command.title,
       command.shortDescription,
       command.content,

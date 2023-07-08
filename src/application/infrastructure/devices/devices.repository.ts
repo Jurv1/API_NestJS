@@ -1,11 +1,12 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { DeviceCreateDto } from '../../dto/devices/dto/device-create.dto';
+import { Device } from '../../entities/devices/device.entity';
 
 export class DevicesRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async createNewDevice(deviceDto: DeviceCreateDto) {
+  async createNewDevice(deviceDto: DeviceCreateDto): Promise<Device[] | null> {
     return await this.dataSource.query(
       `
       INSERT INTO public."device"

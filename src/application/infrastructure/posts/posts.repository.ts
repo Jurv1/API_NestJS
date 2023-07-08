@@ -1,14 +1,14 @@
 import { DataSource } from 'typeorm';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
-import { BlogDocument } from '../../schemas/blogs/schemas/blogs.database.schema';
 import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { PostUpdateBody } from '../../dto/posts/dto/post.update.body';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { Post } from '../../entities/posts/post.entity';
 
 export class PostsRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async createOne(postDto: PostCreationDto): Promise<PostDocument | null> {
+  async createOne(postDto: PostCreationDto): Promise<Post[] | null> {
     return await this.dataSource.query(
       `
       INSERT INTO public."post" (
@@ -72,7 +72,10 @@ export class PostsRepository {
     return result[1] === 1;
   }
 
-  async deleteOnePostBySpecificBlogId(postId: string, blogId: string) {
+  async deleteOnePostBySpecificBlogId(
+    postId: string,
+    blogId: string,
+  ): Promise<boolean> {
     const result = await this.dataSource.query(
       `
       DELETE FROM public."post"

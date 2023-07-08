@@ -6,6 +6,8 @@ import { BlogsQueryRepository } from '../../../../../application/infrastructure/
 import { UsersQueryRepository } from '../../../../../application/infrastructure/users/users.query.repository';
 import { BlogsRepository } from '../../../../../application/infrastructure/blogs/blogs.repository';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
+import { User } from '../../../../../application/entities/users/user.entity';
 export class BanUnbanUserByBloggerCommand {
   constructor(
     public userId: string,
@@ -25,28 +27,35 @@ export class BanUnbanUserByBloggerUseCase
   ) {}
   async execute(command: BanUnbanUserByBloggerCommand) {
     errorIfNan(command.bloggerBanDto.blogId, command.userId, command.ownerId);
-    const blogInfo: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+    const blogInfo: Blog[] = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.bloggerBanDto.blogId,
     );
 
-    if (blogInfo[0].OwnerId !== command.ownerId) throw new Errors.FORBIDDEN();
+    if (blogInfo[0].owner.id.toString() !== command.ownerId)
+      throw new Errors.FORBIDDEN();
 
-    const user: any = await this.userQ.getOneUserById(command.userId);
+    const user: User[] = await this.userQ.getOneUserById(command.userId);
     if (user.length === 0) throw new Errors.NOT_FOUND();
 
     if (command.bloggerBanDto.isBanned) {
       const bannedUser: BannedUserDto = {
-        id: user[0].Id,
-        login: user[0].Login,
+        id: user[0].id.toString(),
+        login: user[0].login,
         banInfo: {
           isBanned: command.bloggerBanDto.isBanned,
           banReason: command.bloggerBanDto.banReason,
           banDate: new Date().toISOString(),
         },
       };
-      await this.blogRepository.banUserInBlog(blogInfo[0].Id, bannedUser);
+      await this.blogRepository.banUserInBlog(
+        blogInfo[0].id.toString(),
+        bannedUser,
+      );
     } else {
-      await this.blogRepository.unbanUserInBlog(blogInfo[0].Id, user[0].Id);
+      await this.blogRepository.unbanUserInBlog(
+        blogInfo[0].id.toString(),
+        user[0].id.toString(),
+      );
     }
   }
 }

@@ -49,7 +49,7 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDocs,
-      items: await this.postMapper.mapPosts(allPosts, userId),
+      //items: await this.postMapper.mapPosts(allPosts, userId),
     };
   }
 
@@ -92,7 +92,7 @@ export class PostQ {
       page: pagination['pageNumber'],
       pageSize: pagination['pageSize'],
       totalCount: countDoc,
-      items: await this.postMapper.mapPosts(allPosts, userId),
+      //items: await this.postMapper.mapPosts(allPosts, userId),
     };
   }
 

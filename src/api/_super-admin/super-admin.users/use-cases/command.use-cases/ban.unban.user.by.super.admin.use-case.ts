@@ -8,6 +8,7 @@ import { UpdateBanStatusForCommentOwnerCommand } from '../../../../../applicatio
 import { UsersQueryRepository } from '../../../../../application/infrastructure/users/users.query.repository';
 import { UsersRepository } from '../../../../../application/infrastructure/users/users.repository';
 import { DevicesRepository } from '../../../../../application/infrastructure/devices/devices.repository';
+import { User } from '../../../../../application/entities/users/user.entity';
 
 export class BanUnbanUserBySuperAdminCommand {
   constructor(public userId: string, public banInfo: BanBody) {}
@@ -25,14 +26,17 @@ export class BanUnbanUserBySuperAdminUseCase
   ) {}
 
   async execute(command: BanUnbanUserBySuperAdminCommand) {
-    const user: any = await this.userQ.getOneUserById(command.userId);
+    const user: User[] = await this.userQ.getOneUserById(command.userId);
     if (user.length === 0) throw new Errors.NOT_FOUND();
     if (command.banInfo.isBanned) {
       await this.deviceRepository.deleteAllDevices(command.userId);
     } else {
       command.banInfo.banReason = null;
     }
-    await this.usersRepo.updateBanInfoForUser(user[0].id, command.banInfo);
+    await this.usersRepo.updateBanInfoForUser(
+      user[0].id.toString(),
+      command.banInfo,
+    );
     await this.commandBus.execute(
       new UpdateBanStatusForLikesOwnerCommand(
         command.userId,

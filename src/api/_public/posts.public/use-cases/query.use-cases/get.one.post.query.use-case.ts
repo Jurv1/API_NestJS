@@ -4,6 +4,8 @@ import { PostMapper } from '../../../../../application/utils/mappers/post.mapper
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
 import { BlogsQueryRepository } from '../../../../../application/infrastructure/blogs/blogs.query.repository';
 import { Errors } from '../../../../../application/utils/handle.error';
+import { Post } from '../../../../../application/entities/posts/post.entity';
+import { Blog } from '../../../../../application/entities/blogs/blog.entity';
 
 export class GetOnePostQueryCommand {
   constructor(public postId: string, public userId?: string) {}
@@ -20,10 +22,12 @@ export class GetOnePostQueryUseCase
   ) {}
   async execute(command: GetOnePostQueryCommand) {
     errorIfNan(command.postId);
-    const result = await this.postQ.getOnePost(command.postId);
+    const result: Post[] = await this.postQ.getOnePost(command.postId);
     if (result.length === 0) throw new Errors.NOT_FOUND();
 
-    const blog = await this.blogQ.getOneBlog(result[0].blogId);
+    const blog: Blog[] = await this.blogQ.getOneBlog(
+      result[0].blog.id.toString(),
+    );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
     return await this.postMapper.mapPost(result, command.userId);
   }

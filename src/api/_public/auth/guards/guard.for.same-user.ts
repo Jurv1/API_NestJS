@@ -4,6 +4,8 @@ import { AuthService } from '../auth.service';
 import { Errors } from '../../../../application/utils/handle.error';
 import { UsersQueryRepository } from '../../../../application/infrastructure/users/users.query.repository';
 import { DevicesQueryRepository } from '../../../../application/infrastructure/devices/devices.query.repository';
+import { User } from '../../../../application/entities/users/user.entity';
+import { Device } from '../../../../application/entities/devices/device.entity';
 
 @Injectable()
 export class GuardForSameUser implements CanActivate {
@@ -20,11 +22,13 @@ export class GuardForSameUser implements CanActivate {
     const tokenPayload: any = await this.authService.getTokenPayload(
       refreshToken,
     );
-    const user: any = await this.userQ.getOneUserById(tokenPayload.userId);
+    const user: User[] = await this.userQ.getOneUserById(tokenPayload.userId);
     if (user.length === 0) throw new Errors.FORBIDDEN();
-    const device: any = await this.deviceQ.getOneDeviceById(request.params.id);
+    const device: Device[] = await this.deviceQ.getOneDeviceById(
+      request.params.id,
+    );
     if (device.length === 0) throw new Errors.NOT_FOUND();
-    if (device[0].UserId !== user[0].Id) throw new Errors.FORBIDDEN();
+    if (device[0].user.id !== user[0].id) throw new Errors.FORBIDDEN();
     return true;
   }
 }

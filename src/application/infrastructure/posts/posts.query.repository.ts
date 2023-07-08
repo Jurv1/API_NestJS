@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
-import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { Post } from '../../entities/posts/post.entity';
+import { Comment } from '../../entities/comments/comment.entity';
 
 export class PostsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
@@ -15,7 +16,7 @@ export class PostsQueryRepository {
       pageNumber: number;
     },
     userId?: string,
-  ): Promise<any> {
+  ): Promise<Post[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."post" AS Posts
@@ -38,7 +39,7 @@ export class PostsQueryRepository {
     return count[0].count;
   }
 
-  async getOnePost(id: string): Promise<any | null> {
+  async getOnePost(id: string): Promise<Post[] | null> {
     return this.dataSource.query(
       `
       SELECT * FROM public."post"
@@ -53,7 +54,7 @@ export class PostsQueryRepository {
   async getOnePostByPostAndBlogIds(
     postId: string,
     blogId: string,
-  ): Promise<PostDocument | null> {
+  ): Promise<Post[] | null> {
     return this.dataSource.query(
       `
       SELECT * FROM public."post" AS Posts
@@ -74,7 +75,7 @@ export class PostsQueryRepository {
       pageNumber: number;
     },
     userId?: string,
-  ): Promise<any> {
+  ): Promise<Post[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."post"
@@ -88,7 +89,7 @@ export class PostsQueryRepository {
     );
   }
 
-  async countAllPostsByBlogId(id: string) {
+  async countAllPostsByBlogId(id: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."post"
@@ -109,7 +110,7 @@ export class PostsQueryRepository {
       pageNumber: number;
     },
     userId?: string,
-  ): Promise<any> {
+  ): Promise<Comment[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."comment"
@@ -122,7 +123,7 @@ export class PostsQueryRepository {
     );
   }
 
-  async countAllCommentsByPostId(postId: string) {
+  async countAllCommentsByPostId(postId: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."comment"

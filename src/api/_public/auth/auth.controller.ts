@@ -25,6 +25,7 @@ import { NewPasswordDto } from './dto/new.password.dto';
 import { CustomGuardForRefreshToken } from './guards/custom.guard.for.refresh.token';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
+import { User } from '../../../application/entities/users/user.entity';
 
 @Controller('auth')
 export class PublicAuthController {
@@ -43,7 +44,7 @@ export class PublicAuthController {
     @CurrentUserData() currentUserData: UserLoginDataDto,
     @Response() res,
   ) {
-    const user: UserDocument = await this.userQ.getOneUserById(
+    const user: User[] = await this.userQ.getOneUserById(
       currentUserData.userId,
     );
 
@@ -66,7 +67,7 @@ export class PublicAuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
-    const user: UserDocument = await this.userQ.getOneUserById(currentUserId);
+    const user: User[] = await this.userQ.getOneUserById(currentUserId);
     return {
       email: user[0].email,
       login: user[0].login,
@@ -81,7 +82,7 @@ export class PublicAuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    const isLoginExists: any = await this.userQ.getOneByLoginOrEmail(login);
+    const isLoginExists: User[] = await this.userQ.getOneByLoginOrEmail(login);
     if (isLoginExists.length !== 0) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
@@ -93,7 +94,7 @@ export class PublicAuthController {
       });
     }
 
-    const isEmailExists: any = await this.userQ.getOneByLoginOrEmail(email);
+    const isEmailExists: User[] = await this.userQ.getOneByLoginOrEmail(email);
     if (isEmailExists.length !== 0) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
@@ -105,7 +106,7 @@ export class PublicAuthController {
       });
     }
 
-    const user: any = await this.userService.createOneUser(
+    const user: User[] = await this.userService.createOneUser(
       login,
       email,
       password,
@@ -218,7 +219,7 @@ export class PublicAuthController {
     }
     const userId = await this.authService.getUserIdByToken(refreshToken);
     if (userId) {
-      const user: any = await this.userQ.getOneUserById(userId.toString());
+      const user: User[] = await this.userQ.getOneUserById(userId.toString());
       const deviceId = await this.authService.getDeviceIdFromRefresh(
         refreshToken,
       );

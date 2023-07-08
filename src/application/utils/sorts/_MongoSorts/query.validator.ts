@@ -1,9 +1,12 @@
+import { FilterQuery } from 'mongoose';
+import { BlogDocument } from '../../../schemas/blogs/schemas/blogs.database.schema';
+
 export function filterQueryValid(
   searchNameTerm?: string,
   searchLoginTerm?: string,
   searchEmailTerm?: string,
-): Document {
-  const filter: any = {};
+): FilterQuery<BlogDocument> {
+  const filter: FilterQuery<BlogDocument> = {};
   console.log(searchNameTerm, searchLoginTerm, searchEmailTerm);
   typeof searchNameTerm === 'undefined'
     ? console.log('No Name Term')

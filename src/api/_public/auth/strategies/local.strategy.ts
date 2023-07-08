@@ -16,7 +16,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException();
     }
-    if (user[0].IsBanned) throw new UnauthorizedException();
+    if (user[0].isBanned) throw new UnauthorizedException();
     return user;
   }
 }

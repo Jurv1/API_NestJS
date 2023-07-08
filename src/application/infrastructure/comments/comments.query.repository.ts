@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { Comment } from '../../entities/comments/comment.entity';
 
 @Injectable()
 export class CommentsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async getOneComment(id: string): Promise<any | null> {
+  async getOneComment(id: string): Promise<Comment[] | null> {
     return await this.dataSource.query(
       `
       SELECT * FROM public."comment"
@@ -26,7 +27,7 @@ export class CommentsQueryRepository {
       pageSize: number;
       pageNumber: number;
     },
-  ) {
+  ): Promise<Comment[] | null> {
     return await this.dataSource.query(
       `
       SELECT
@@ -53,7 +54,7 @@ export class CommentsQueryRepository {
     );
   }
 
-  async countAllComments(blogOwnerId: string) {
+  async countAllComments(blogOwnerId: string): Promise<number> {
     const counts = await this.dataSource.query(
       `
       SELECT COUNT(*) FROM public."comment" AS Comments

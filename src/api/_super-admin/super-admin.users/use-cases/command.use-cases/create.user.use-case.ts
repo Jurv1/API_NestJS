@@ -4,6 +4,7 @@ import { UserDocument } from '../../../../../application/schemas/users/schemas/u
 import { Errors } from '../../../../../application/utils/handle.error';
 import { UserMapper } from '../../../../../application/utils/mappers/user.mapper';
 import { UserViewDto } from '../../../../../application/dto/users/dto/user.view.dto';
+import { User } from '../../../../../application/entities/users/user.entity';
 
 export class CreateUserCommand {
   constructor(
@@ -22,13 +23,13 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute(command: CreateUserCommand): Promise<UserViewDto> {
-    const user: UserDocument = await this.userService.createOneUser(
+    const user: User[] = await this.userService.createOneUser(
       command.login,
       command.email,
       command.password,
       command.confirmed,
     );
-    if (!user) throw new Errors.NOT_FOUND();
+    if (user.length === 0) throw new Errors.NOT_FOUND();
     return this.userMapper.mapUser(user);
   }
 }

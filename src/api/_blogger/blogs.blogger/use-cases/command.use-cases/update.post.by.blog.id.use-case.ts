@@ -3,6 +3,7 @@ import { Errors } from '../../../../../application/utils/handle.error';
 import { PostsQueryRepository } from '../../../../../application/infrastructure/posts/posts.query.repository';
 import { PostService } from '../../../../../application/infrastructure/posts/posts.service';
 import { errorIfNan } from '../../../../../application/utils/funcs/is.Nan';
+import { Post } from '../../../../../application/entities/posts/post.entity';
 
 export class UpdatePostByBlogIdCommand {
   constructor(
@@ -25,12 +26,13 @@ export class UpdatePostByBlogIdUseCase
   ) {}
   async execute(command: UpdatePostByBlogIdCommand) {
     errorIfNan(command.postId, command.blogId);
-    const post: any = await this.postQ.getOnePostByPostAndBlogIds(
+    const post: Post[] = await this.postQ.getOnePostByPostAndBlogIds(
       command.postId,
       command.blogId,
     );
     if (post.length === 0) throw new Errors.NOT_FOUND();
-    if (post[0].ownerId !== command.userId) throw new Errors.FORBIDDEN();
+    if (post[0].owner.toString() !== command.userId)
+      throw new Errors.FORBIDDEN();
     await this.postsService.updateOnePost(
       command.postId,
       command.title,

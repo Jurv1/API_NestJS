@@ -5,6 +5,7 @@ import { UsersQueryRepository } from '../../../../../../application/infrastructu
 import { UserMapper } from '../../../../../../application/utils/mappers/user.mapper';
 import { paginator } from '../../../../../../application/utils/paginator/paginator';
 import { errorIfNan } from '../../../../../../application/utils/funcs/is.Nan';
+import { Blog } from '../../../../../../application/entities/blogs/blog.entity';
 
 export class GetAllBannedUsersByBlogIdCommand {
   constructor(
@@ -32,11 +33,12 @@ export class GetAllBannedUsersByBlogIdUseCase
   ) {}
   async execute(command: GetAllBannedUsersByBlogIdCommand) {
     errorIfNan(command.blogId, command.userId);
-    const blog: any = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
+    const blog: Blog[] = await this.blogQ.getOwnerIdAndBlogIdForBlogger(
       command.blogId,
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
-    if (blog[0].OwnerId !== command.userId) throw new Errors.FORBIDDEN();
+    if (blog[0].owner.id.toString() !== command.userId)
+      throw new Errors.FORBIDDEN();
 
     const bannedUsers = await this.blogQ.getAllBannedUsersForBlogger(
       command.filter,
