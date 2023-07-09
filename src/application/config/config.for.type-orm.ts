@@ -7,8 +7,8 @@ export const configForTypeOrm: TypeOrmModuleOptions = {
   username: process.env.PGUSER,
   password: process.env.PGPASSWORD,
   database: process.env.PGDATABASE,
-  autoLoadEntities: false,
-  synchronize: false,
+  autoLoadEntities: true,
+  synchronize: true,
   ssl: true,
 };
 

@@ -1,8 +1,5 @@
 import { Test } from '@nestjs/testing';
-import {
-  configForTypeOrm,
-  defaultTypeOrm,
-} from '../../src/application/config/config.for.type-orm';
+import { defaultTypeOrm } from '../../src/application/config/config.for.type-orm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppModule } from '../../src/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';

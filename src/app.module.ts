@@ -21,7 +21,7 @@ import {
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot(defaultTypeOrm),
+    TypeOrmModule.forRoot(configForTypeOrm),
     AuthModule,
     MailModule,
     CqrsModule,

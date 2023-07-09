@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../../application/infrastructure/users/users.service';
-import { UserDocument } from '../../../application/schemas/users/schemas/users.database.schema';
 import * as bcrypt from 'bcrypt';
 import { MailService } from '../../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
