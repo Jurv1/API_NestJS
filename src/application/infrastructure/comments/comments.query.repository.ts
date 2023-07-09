@@ -33,7 +33,7 @@ export class CommentsQueryRepository {
        Comments."Id",
        Comments."Content",
        Comments."CommentatorId",
-       BlogInfo."OwnerLogin" AS CommentatorLogin,
+       Comments."CommentatorLogin",
        Comments."CreatedAt",
        Posts."Id" AS PostId,
        Posts."Title",
