@@ -34,11 +34,11 @@ export class CommentMapper {
     return {
       id: obj[0].Id.toString(),
       content: obj[0].Content,
+      createdAt: obj[0].CreatedAt,
       commentatorInfo: {
         userId: obj[0].CommentatorId.toString(),
         userLogin: obj[0].CommentatorLogin,
       },
-      createdAt: obj[0].CreatedAt,
       likesInfo: {
         likesCount: allLikes,
         dislikesCount: allDislikes,
@@ -72,21 +72,21 @@ export class CommentMapper {
         return {
           id: el.Id.toString(),
           content: el.Content,
+          createdAt: el.CreatedAt,
           commentatorInfo: {
             userId: el.CommentatorId.toString(),
             userLogin: el.commentatorlogin,
           },
-          createdAt: el.CreatedAt,
           likesInfo: {
             likesCount: allLikes,
             dislikesCount: allDislikes,
             myStatus: userStatus || 'None',
           },
           postInfo: {
-            id: el.postid.toString(),
-            title: el.Title,
             blogId: el.BlogId.toString(),
             blogName: el.BlogName,
+            title: el.Title,
+            id: el.postid.toString(),
           },
         };
       }),
