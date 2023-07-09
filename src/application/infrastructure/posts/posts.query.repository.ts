@@ -23,7 +23,7 @@ export class PostsQueryRepository {
       LEFT JOIN public."blog" AS Blogs
         ON Posts."blogId" = Blogs."id"
       WHERE "userStatus" = false
-      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      ORDER BY Posts."${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
     );
@@ -78,11 +78,11 @@ export class PostsQueryRepository {
   ): Promise<Post[] | null> {
     return await this.dataSource.query(
       `
-      SELECT * FROM public."post"
+      SELECT * FROM public."post" AS Posts
       LEFT JOIN public."blog" AS Blogs
         ON Posts."blogId" = Blogs."id"
-      WHERE "blogId" = $1 AND "userStatus" = false
-      ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
+      WHERE Posts."blogId" = $1 AND Posts."userStatus" = false
+      ORDER BY Posts."${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
       LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
       `,
       [id],

@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
-import { PostDocument } from '../../schemas/posts/schemas/posts.database.schema';
 import { PostUpdateBody } from '../../dto/posts/dto/post.update.body';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Post } from '../../entities/posts/post.entity';
