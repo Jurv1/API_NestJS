@@ -13,31 +13,29 @@ export class AppService {
     await this.dataSource.query(
       `
        DELETE FROM
-       public."BannedUsersByBlogger";
+       public."banned_users_by_blogger";
        DELETE FROM
-       public."CommentsLikes";
+       public."comments_like";
        DELETE FROM
-       public."PostsLikes";
+       public."posts_like";
        DELETE FROM
-       public."BansForUsersByAdmin";
+       public."bans_for_user_by_admin";
        DELETE FROM
-       public."BlogsOwnerInfo";
+       public."device";
        DELETE FROM
-       public."BannedUsersByBlogger";
+       public."email_confirmation_for_users";
        DELETE FROM
-       public."Devices";
+       public."password_recovery_for_users";
        DELETE FROM
-       public."EmailConfirmationForUsers";
+       public."comment";
        DELETE FROM
-       public."PasswordRecoveryForUsers";
+       public."blog_bans_by_admin";
        DELETE FROM
-       public."Comments";
+       public."blog";
        DELETE FROM
-       public."Blogs";
+       public."post";
        DELETE FROM
-       public."Posts";
-       DELETE FROM
-       public."Users";
+       public."user";
       `,
     );
   }
