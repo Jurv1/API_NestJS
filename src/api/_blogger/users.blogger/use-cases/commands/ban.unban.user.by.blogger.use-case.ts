@@ -34,8 +34,8 @@ export class BanUnbanUserByBloggerUseCase
     if (blogInfo[0].owner.id.toString() !== command.ownerId)
       throw new Errors.FORBIDDEN();
 
-    const user: User[] = await this.userQ.getOneUserById(command.userId);
-    if (user.length === 0) throw new Errors.NOT_FOUND();
+    const user: User = await this.userQ.getOneUserById(command.userId);
+    if (!user) throw new Errors.NOT_FOUND();
 
     if (command.bloggerBanDto.isBanned) {
       const bannedUser: BannedUserDto = {

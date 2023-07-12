@@ -16,10 +16,23 @@ import { UsersRepository } from '../../../application/infrastructure/users/users
 import { UsersQueryRepository } from '../../../application/infrastructure/users/users.query.repository';
 import { DevicesRepository } from '../../../application/infrastructure/devices/devices.repository';
 import { DevicesQueryRepository } from '../../../application/infrastructure/devices/devices.query.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../../../application/entities/users/user.entity';
+import { Device } from '../../../application/entities/devices/device.entity';
+import { EmailConfirmationForUsers } from '../../../application/entities/users/email.confirmation.for.users.entity';
+import { PasswordRecoveryForUsers } from '../../../application/entities/users/password.recovery.for.users.entity';
+import { BansForUserByAdmin } from '../../../application/entities/users/bans.for.user.by.admin.entity';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),
+    TypeOrmModule.forFeature([
+      User,
+      EmailConfirmationForUsers,
+      PasswordRecoveryForUsers,
+      BansForUserByAdmin,
+      Device,
+    ]),
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.jwtSecret,

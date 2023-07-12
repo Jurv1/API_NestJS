@@ -1,10 +1,13 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { DeviceCreateDto } from '../../dto/devices/dto/device-create.dto';
 import { Device } from '../../entities/devices/device.entity';
 
 export class DevicesRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Device) private readonly devicesRepo: Repository<Device>,
+  ) {}
 
   async createNewDevice(deviceDto: DeviceCreateDto): Promise<Device[] | null> {
     return await this.dataSource.query(
@@ -27,32 +30,23 @@ export class DevicesRepository {
     userId: string,
     deviceId: string,
   ): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      DELETE
-      FROM public."device"
-      WHERE
-        "userId" = $1 
-            AND "deviceId" != $2;
-      `,
-      [userId, deviceId],
-    );
+    const result = await this.devicesRepo
+      .createQueryBuilder('d')
+      .delete()
+      .from(Device)
+      .where('deviceId != :id AND userId = :userId', {
+        id: deviceId,
+        userId: userId,
+      })
+      .execute();
 
     return !!result;
   }
 
   async deleteOneDeviceById(id: string): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      DELETE 
-      FROM public."device"
-      WHERE
-        "deviceId" = $1;
-      `,
-      [id],
-    );
+    const result = await this.devicesRepo.delete({ deviceId: id });
 
-    return result[1] === 1;
+    return result.affected === 1;
   }
 
   async deleteAllDevices(userId: string) {

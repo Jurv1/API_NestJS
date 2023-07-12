@@ -12,7 +12,7 @@ export class GetAllUsersByAdminQueryCommand {
       pageSize: number;
       pageNumber: number;
     },
-    public sortingObj: { [key: string]: string },
+    public sortingObj: { [key: string]: 'ASC' | 'DESC' },
   ) {}
 }
 

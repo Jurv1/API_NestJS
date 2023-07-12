@@ -59,10 +59,8 @@ export class SuperAdminUsersController {
       pageSize: number;
       pageNumber: number;
     } = makePagination(pageNumber, pageSize);
-    const sortingObj: { [key: string]: string } = sortingForUsersByAdmin(
-      sortBy,
-      sortDirection,
-    );
+    const sortingObj: { [key: string]: 'ASC' | 'DESC' } =
+      sortingForUsersByAdmin(sortBy, sortDirection);
     return await this.queryBus.execute(
       new GetAllUsersByAdminQueryCommand(filter, pagination, sortingObj),
     );

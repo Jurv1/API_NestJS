@@ -17,10 +17,10 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
   async validateUser(login: string, password: string) {
-    const user: User[] = await this.userService.findUserByLogin(login);
+    const user: User = await this.userService.findUserByLogin(login);
 
-    if (user.length !== 0) {
-      const isPasswordLegit = await bcrypt.compare(password, user[0].password);
+    if (!user) {
+      const isPasswordLegit = await bcrypt.compare(password, user.passwordHash);
       if (isPasswordLegit) {
         return user;
       }
@@ -29,14 +29,14 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User[]) {
+  async login(user: User) {
     const accessPayload = {
-      username: user[0].login,
-      userId: user[0].id,
+      username: user.login,
+      userId: user.id,
     };
     const refreshPayload = {
-      username: user[0].login,
-      userId: user[0].id,
+      username: user.login,
+      userId: user.id,
       deviceId: uuidv4(),
     };
     return {
@@ -51,15 +51,15 @@ export class AuthService {
 
   async confirmEmail(code: string): Promise<boolean> {
     try {
-      const user: User[] = await this.userQ.getOneByConfirmationCode(code);
-      if (user.length === 0) return false;
-      if (user[0].isConfirmed) return false;
-      if (user[0].emailConfirmationForUsers.confirmationCode !== code)
+      const user: User = await this.userQ.getOneByConfirmationCode(code);
+      if (!user) return false;
+      if (user.isConfirmed) return false;
+      if (user.emailConfirmationForUsers.confirmationCode !== code)
         return false;
-      if (user[0].emailConfirmationForUsers.expirationDate < new Date())
+      if (user.emailConfirmationForUsers.expirationDate < new Date())
         return false;
       await this.userService.updateConfirmedFieldInUsers(
-        user[0].id.toString(),
+        user.id.toString(),
         true,
       );
       return true;
@@ -70,18 +70,18 @@ export class AuthService {
   }
 
   async resendConfirmationEmail(email: string) {
-    const user: User[] = await this.userQ.getOneByLoginOrEmail(email);
-    if (user.length === 0 || user[0].isConfirmed) return false;
+    const user: User = await this.userQ.getOneByLoginOrEmail(email);
+    if (!user || user.isConfirmed) return false;
     const newRegistrationCode = uuidv4();
     await this.userService.updateEmailConfirmation(
-      user[0].id.toString(),
+      user.id.toString(),
       newRegistrationCode,
     );
     try {
       await this.mailService.sendUserConfirmation(
-        user[0].email,
+        user.email,
         'Please, to continue work with our service confirm your email',
-        user[0].login,
+        user.login,
         newRegistrationCode,
       );
     } catch (err) {

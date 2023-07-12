@@ -13,9 +13,20 @@ import { UsersQueryRepository } from '../../application/infrastructure/users/use
 import { DeviceMapper } from '../../application/utils/mappers/device.mapper';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Device } from '../../application/entities/devices/device.entity';
+import { User } from '../../application/entities/users/user.entity';
+import { EmailConfirmationForUsers } from '../../application/entities/users/email.confirmation.for.users.entity';
+import { BansForUserByAdmin } from '../../application/entities/users/bans.for.user.by.admin.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Device]), CqrsModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Device,
+      User,
+      EmailConfirmationForUsers,
+      BansForUserByAdmin,
+    ]),
+    CqrsModule,
+  ],
   controllers: [PublicDeviceController],
   providers: [
     ...allDevicesUseCases,

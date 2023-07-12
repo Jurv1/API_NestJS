@@ -43,9 +43,7 @@ export class PublicAuthController {
     @CurrentUserData() currentUserData: UserLoginDataDto,
     @Response() res,
   ) {
-    const user: User[] = await this.userQ.getOneUserById(
-      currentUserData.userId,
-    );
+    const user: User = await this.userQ.getOneUserById(currentUserData.userId);
 
     const tokens = await this.authService.login(user);
     await this.deviceService.createNewDevice(
@@ -66,10 +64,10 @@ export class PublicAuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@CurrentUserId() currentUserId): Promise<UserGetMeDataDto> {
-    const user: User[] = await this.userQ.getOneUserById(currentUserId);
+    const user: User = await this.userQ.getOneUserById(currentUserId);
     return {
-      email: user[0].email,
-      login: user[0].login,
+      email: user.email,
+      login: user.login,
       userId: currentUserId.toString(),
     };
   }
@@ -81,8 +79,8 @@ export class PublicAuthController {
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
 
-    const isLoginExists: User[] = await this.userQ.getOneByLoginOrEmail(login);
-    if (isLoginExists.length !== 0) {
+    const isLoginExists: User = await this.userQ.getOneByLoginOrEmail(login);
+    if (!isLoginExists) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
           {
@@ -93,8 +91,8 @@ export class PublicAuthController {
       });
     }
 
-    const isEmailExists: User[] = await this.userQ.getOneByLoginOrEmail(email);
-    if (isEmailExists.length !== 0) {
+    const isEmailExists: User = await this.userQ.getOneByLoginOrEmail(email);
+    if (!isEmailExists) {
       throw new Errors.BAD_REQUEST({
         errorsMessages: [
           {
@@ -105,13 +103,13 @@ export class PublicAuthController {
       });
     }
 
-    const user: User[] = await this.userService.createOneUser(
+    const user: User = await this.userService.createOneUser(
       login,
       email,
       password,
       false,
     );
-    if (user.length !== 0) {
+    if (!user) {
       return { message: 'all good' };
     } else {
       throw new Errors.BAD_REQUEST({
@@ -218,18 +216,18 @@ export class PublicAuthController {
     }
     const userId = await this.authService.getUserIdByToken(refreshToken);
     if (userId) {
-      const user: User[] = await this.userQ.getOneUserById(userId.toString());
+      const user: User = await this.userQ.getOneUserById(userId.toString());
       const deviceId = await this.authService.getDeviceIdFromRefresh(
         refreshToken,
       );
       const accessToken = await this.authService.createAccessToken(
         userId,
-        user[0].login,
+        user.login,
         '10s',
       );
       const newRefreshToken = await this.authService.createRefreshToken(
         userId,
-        user[0].login,
+        user.login,
         deviceId,
         '20s',
       );

@@ -26,15 +26,15 @@ export class BanUnbanUserBySuperAdminUseCase
   ) {}
 
   async execute(command: BanUnbanUserBySuperAdminCommand) {
-    const user: User[] = await this.userQ.getOneUserById(command.userId);
-    if (user.length === 0) throw new Errors.NOT_FOUND();
+    const user: User = await this.userQ.getOneUserById(command.userId);
+    if (!user) throw new Errors.NOT_FOUND();
     if (command.banInfo.isBanned) {
       await this.deviceRepository.deleteAllDevices(command.userId);
     } else {
       command.banInfo.banReason = null;
     }
     await this.usersRepo.updateBanInfoForUser(
-      user[0].id.toString(),
+      user.id.toString(),
       command.banInfo,
     );
     await this.commandBus.execute(

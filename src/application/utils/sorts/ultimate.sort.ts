@@ -4,15 +4,15 @@ export function ultimateSort(
   sortBy: string,
   sortDirection: string,
   enumToCheck: enumType,
-): { [key: string]: string } {
+): { [key: string]: 'ASC' | 'DESC' } {
   if (typeof sortBy === 'undefined') {
     sortBy = 'createdAt';
   }
   if (!Object.values(enumToCheck).includes(sortBy)) sortBy = 'createdAt';
-  const sort: { [key: string]: string } = { [`${sortBy}`]: 'desc' };
+  const sort: { [key: string]: 'ASC' | 'DESC' } = { [`${sortBy}`]: 'DESC' };
 
   if (sortDirection === 'asc') {
-    sort[`${sortBy}`] = 'asc';
+    sort[`${sortBy}`] = 'ASC';
   }
   return sort;
 }

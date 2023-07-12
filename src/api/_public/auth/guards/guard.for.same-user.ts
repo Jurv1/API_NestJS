@@ -22,13 +22,13 @@ export class GuardForSameUser implements CanActivate {
     const tokenPayload: any = await this.authService.getTokenPayload(
       refreshToken,
     );
-    const user: User[] = await this.userQ.getOneUserById(tokenPayload.userId);
-    if (user.length === 0) throw new Errors.FORBIDDEN();
+    const user: User = await this.userQ.getOneUserById(tokenPayload.userId);
+    if (!user) throw new Errors.FORBIDDEN();
     const device: Device[] = await this.deviceQ.getOneDeviceById(
       request.params.id,
     );
     if (device.length === 0) throw new Errors.NOT_FOUND();
-    if (device[0].user.id !== user[0].id) throw new Errors.FORBIDDEN();
+    if (device[0].user.id !== user.id) throw new Errors.FORBIDDEN();
     return true;
   }
 }

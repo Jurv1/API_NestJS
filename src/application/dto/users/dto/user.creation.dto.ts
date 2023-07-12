@@ -4,4 +4,6 @@ export class UserCreationDto {
   passwordHash: string;
   passwordSalt: string;
   isConfirmed: boolean;
+  isBanned: boolean;
+  createdAt: Date;
 }

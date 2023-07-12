@@ -26,8 +26,8 @@ export class BindBlogToUserUseCase
     );
     if (blog.length === 0) throw new Errors.NOT_FOUND();
     if (blog[0].owner.id) throw new Errors.BAD_REQUEST();
-    const user: User[] = await this.userQ.getOneUserById(command.userId);
-    if (user.length === 0) throw new Errors.NOT_FOUND();
+    const user: User = await this.userQ.getOneUserById(command.userId);
+    if (!user) throw new Errors.NOT_FOUND();
     await this.blogService.bindUser(user[0].id, user[0].login, blog[0].id);
     return;
   }

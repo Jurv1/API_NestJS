@@ -1,7 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../../../../../application/infrastructure/users/users.service';
-import { UserDocument } from '../../../../../application/schemas/users/schemas/users.database.schema';
-import { Errors } from '../../../../../application/utils/handle.error';
 import { UserMapper } from '../../../../../application/utils/mappers/user.mapper';
 import { UserViewDto } from '../../../../../application/dto/users/dto/user.view.dto';
 import { User } from '../../../../../application/entities/users/user.entity';
@@ -23,13 +21,12 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute(command: CreateUserCommand): Promise<UserViewDto> {
-    const user: User[] = await this.userService.createOneUser(
+    const user: User = await this.userService.createOneUser(
       command.login,
       command.email,
       command.password,
       command.confirmed,
     );
-    if (user.length === 0) throw new Errors.NOT_FOUND();
     return this.userMapper.mapUser(user);
   }
 }

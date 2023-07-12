@@ -16,6 +16,7 @@ import { BannedUsersByBlogger } from '../../application/entities/users/banned.us
 import { BansForUserByAdmin } from '../../application/entities/users/bans.for.user.by.admin.entity';
 import { EmailConfirmationForUsers } from '../../application/entities/users/email.confirmation.for.users.entity';
 import { PasswordRecoveryForUsers } from '../../application/entities/users/password.recovery.for.users.entity';
+import { Device } from '../../application/entities/devices/device.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PasswordRecoveryForUsers } from '../../application/entities/users/passw
       BansForUserByAdmin,
       EmailConfirmationForUsers,
       PasswordRecoveryForUsers,
+      Device,
     ]),
     CqrsModule,
   ],

@@ -3,16 +3,16 @@ import { User } from '../../entities/users/user.entity';
 import { UserViewBloggerDto } from '../../dto/users/dto/user.view.blogger.dto';
 
 export class UserMapper {
-  mapUser(obj: User[]): UserViewDto {
+  mapUser(obj: User): UserViewDto {
     return {
-      id: obj[0].id.toString(),
-      login: obj[0].login,
-      email: obj[0].email,
-      createdAt: obj[0].createdAt.toISOString(),
+      id: obj.id.toString(),
+      login: obj.login,
+      email: obj.email,
+      createdAt: obj.createdAt.toISOString(),
       banInfo: {
-        isBanned: obj[0].isBanned,
-        banDate: obj[0].bansForUserByAdmin.banDate,
-        banReason: obj[0].bansForUserByAdmin.banReason,
+        isBanned: obj.isBanned,
+        banDate: null,
+        banReason: null,
       },
       //obj[0].banInfo,
     };
@@ -26,8 +26,8 @@ export class UserMapper {
         createdAt: el.createdAt.toISOString(),
         banInfo: {
           isBanned: el.isBanned,
-          banDate: el.bansForUserByAdmin.banDate,
-          banReason: el.bansForUserByAdmin.banReason,
+          banDate: el.bansForUserByAdmin.banDate || null,
+          banReason: el.bansForUserByAdmin.banReason || null,
         },
       };
     });

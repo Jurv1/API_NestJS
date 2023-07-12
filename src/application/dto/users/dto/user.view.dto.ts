@@ -5,5 +5,5 @@ export class UserViewDto {
   login: string;
   email: string;
   createdAt: string;
-  banInfo: BanInfo;
+  banInfo: BanInfo | null;
 }
