@@ -13,7 +13,10 @@ import { DevicesModule } from './api/modules/devices.module';
 import { BlogsModule } from './api/modules/blogs.module';
 import { CommentsModule } from './api/modules/comments.module';
 import { LikesModule } from './api/modules/likes.module';
-import { defaultTypeOrm } from './application/config/config.for.type-orm';
+import {
+  configForTypeOrm,
+  defaultTypeOrm,
+} from './application/config/config.for.type-orm';
 export const options: TypeOrmModuleOptions = {
   type: 'postgres',
   host: 'localhost',
@@ -27,7 +30,7 @@ export const options: TypeOrmModuleOptions = {
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot(defaultTypeOrm),
+    TypeOrmModule.forRoot(configForTypeOrm),
     AuthModule,
     MailModule,
     CqrsModule,
