@@ -19,7 +19,7 @@ export class AuthService {
   async validateUser(login: string, password: string) {
     const user: User = await this.userService.findUserByLogin(login);
 
-    if (!user) {
+    if (user) {
       const isPasswordLegit = await bcrypt.compare(password, user.passwordHash);
       if (isPasswordLegit) {
         return user;
@@ -73,10 +73,7 @@ export class AuthService {
     const user: User = await this.userQ.getOneByLoginOrEmail(email);
     if (!user || user.isConfirmed) return false;
     const newRegistrationCode = uuidv4();
-    await this.userService.updateEmailConfirmation(
-      user.id.toString(),
-      newRegistrationCode,
-    );
+    await this.userService.updateEmailConfirmation(user, newRegistrationCode);
     try {
       await this.mailService.sendUserConfirmation(
         user.email,

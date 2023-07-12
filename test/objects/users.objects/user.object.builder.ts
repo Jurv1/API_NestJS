@@ -5,7 +5,7 @@ export function userObjectBuilder(
 ) {
   return {
     login: login,
-    password: password,
     email: email,
+    password: password,
   };
 }

@@ -1,4 +1,4 @@
-import { UserDocument } from '../../../schemas/users/schemas/users.database.schema';
+import { UserDocument } from '../../../../schemas/users/schemas/users.database.schema';
 import { UserViewDto } from './user.view.dto';
 
 export class UserWithPaginationDto {

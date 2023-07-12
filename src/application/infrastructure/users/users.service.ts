@@ -3,13 +3,14 @@ import bcrypt from 'bcrypt';
 import { UserCreationDto } from '../../dto/users/dto/user.creation.dto';
 import { MailService } from '../../../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
-import add from 'date-fns/add';
 import { UpdatePasswordDto } from '../../dto/users/dto/update.password.dto';
 import { UsersRepository } from './users.repository';
 import { UsersQueryRepository } from './users.query.repository';
 import { User } from '../../entities/users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EmailConfirmationForUsers } from '../../entities/users/email.confirmation.for.users.entity';
+import { add } from 'date-fns';
 
 @Injectable()
 export class UsersService {
@@ -41,16 +42,16 @@ export class UsersService {
     const result: User = await this.usersRepository.save(userDto);
     await this.usersRepo.createBanInfoForNewUser(result);
     if (!confirmed) {
-      await this.updateEmailConfirmation(result.id.toString(), uuidv4());
+      await this.updateEmailConfirmation(result, uuidv4());
       const confirmationCode = await this.userQ.getConfirmationCodeByUserId(
-        result.id.toString(),
+        result.id,
       );
       try {
         await this.mailService.sendUserConfirmation(
-          result[0].email,
+          result.email,
           'Please, to continue work with our service confirm your email',
-          result[0].login,
-          confirmationCode[0].code,
+          result.login,
+          confirmationCode.confirmationCode,
         );
       } catch (err) {
         console.log(err);
@@ -77,16 +78,16 @@ export class UsersService {
       hours: 1,
     });
     await this.usersRepo.updatePasswordConfirmation(
-      user[0].id.toString(),
+      user.id.toString(),
       recoveryCode,
       expirationDate,
     );
 
     try {
       await this.mailService.sendPasswordRecoveryMessage(
-        user[0].email,
+        user.email,
         'Password Recovery',
-        user[0].login,
+        user.login,
         recoveryCode,
       );
     } catch (err) {
@@ -110,7 +111,7 @@ export class UsersService {
     };
 
     await this.usersRepo.updatePassword(
-      user[0].id.toString(),
+      user.id.toString(),
       updatePasswordDto.passwordHash,
       updatePasswordDto.passwordSalt,
     );
@@ -121,7 +122,13 @@ export class UsersService {
     await this.usersRepo.updateConfirmationInUsers(id, isConf);
   }
 
-  async updateEmailConfirmation(id: string, code: string) {
-    await this.usersRepo.updateEmailConfirmation(id, code);
+  async updateEmailConfirmation(user: User, code: string) {
+    const emailInfo: EmailConfirmationForUsers =
+      new EmailConfirmationForUsers();
+    emailInfo.user = user;
+    emailInfo.confirmationCode = code;
+    emailInfo.expirationDate = add(new Date(), { hours: 1, minutes: 3 });
+
+    await this.usersRepo.updateEmailConfirmation(emailInfo);
   }
 }

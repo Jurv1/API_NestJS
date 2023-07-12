@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
-import { defaultTypeOrm } from '../../src/application/config/config.for.type-orm';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppModule } from '../../src/app.module';
+import { AppModule, options } from '../../src/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import supertest, { SuperAgentTest } from 'supertest';
 import cookieParser from 'cookie-parser';
@@ -11,7 +10,7 @@ import { useContainer } from 'class-validator';
 
 export async function createAndGetApp() {
   const testingModule = await Test.createTestingModule({
-    imports: [TypeOrmModule.forRoot(defaultTypeOrm), AppModule],
+    imports: [TypeOrmModule.forRoot(options), AppModule],
   }).compile();
 
   const app: INestApplication = testingModule.createNestApplication();

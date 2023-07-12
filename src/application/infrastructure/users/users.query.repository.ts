@@ -146,20 +146,12 @@ export class UsersQueryRepository {
     // );
   }
 
-  async getConfirmationCodeByUserId(id: string) {
-    return await this.emailRepo.findOne({
-      select: {
-        confirmationCode: true,
-      },
-      relations: {
-        user: true,
-      },
-      where: {
-        user: {
-          id: +id,
-        },
-      },
-    });
+  async getConfirmationCodeByUserId(id: number) {
+    return await this.emailRepo
+      .createQueryBuilder('e')
+      .where(`e."userId" = :id`)
+      .setParameters({ id: id })
+      .getOne();
 
     // return await this.dataSource.query(
     //   `

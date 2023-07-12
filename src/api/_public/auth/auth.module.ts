@@ -22,6 +22,8 @@ import { Device } from '../../../application/entities/devices/device.entity';
 import { EmailConfirmationForUsers } from '../../../application/entities/users/email.confirmation.for.users.entity';
 import { PasswordRecoveryForUsers } from '../../../application/entities/users/password.recovery.for.users.entity';
 import { BansForUserByAdmin } from '../../../application/entities/users/bans.for.user.by.admin.entity';
+import { IsLoginExistsProv } from '../../../application/utils/custom.validation.decorators/is.login.exists';
+import { IsEmailExistsProv } from '../../../application/utils/custom.validation.decorators/is.email.exists';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { BansForUserByAdmin } from '../../../application/entities/users/bans.for
     DevicesQueryRepository,
     DevicesService,
     DevicesRepository,
+    IsLoginExistsProv,
+    IsEmailExistsProv,
   ],
   exports: [AuthService],
 })

@@ -1,4 +1,4 @@
-import { UserViewDto } from '../../../src/application/dto/users/dto/user.view.dto';
+import { UserViewDto } from '../../../src/application/dto/users/dto/view/user.view.dto';
 import {
   validUserLogin,
   validUserLogin2,

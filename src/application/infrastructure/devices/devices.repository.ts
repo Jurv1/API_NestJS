@@ -1,6 +1,5 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { DeviceCreateDto } from '../../dto/devices/dto/device-create.dto';
 import { Device } from '../../entities/devices/device.entity';
 
 export class DevicesRepository {
@@ -9,22 +8,8 @@ export class DevicesRepository {
     @InjectRepository(Device) private readonly devicesRepo: Repository<Device>,
   ) {}
 
-  async createNewDevice(deviceDto: DeviceCreateDto): Promise<Device[] | null> {
-    return await this.dataSource.query(
-      `
-      INSERT INTO public."device"
-        ("ip", "title", "userId", "deviceId", "lastActiveDate")
-      VALUES($1, $2, $3, $4, $5)
-      RETURNING "deviceId", "ip", "title", "userId", "lastActiveDate";
-      `,
-      [
-        deviceDto.ip,
-        deviceDto.title,
-        deviceDto.userId,
-        deviceDto.deviceId,
-        deviceDto.lastActiveDate,
-      ],
-    );
+  async createNewDevice(deviceDto: Device): Promise<Device | null> {
+    return await this.devicesRepo.save(deviceDto);
   }
   async deleteAllExceptActive(
     userId: string,

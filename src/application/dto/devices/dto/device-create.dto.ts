@@ -1,7 +1,7 @@
 export class DeviceCreateDto {
   ip: string;
   title: string;
-  lastActiveDate: string;
+  LastActiveDate: string;
   deviceId: string;
   userId: string;
 }

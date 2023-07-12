@@ -2,10 +2,10 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { BanBody } from '../../dto/users/dto/ban.body';
-import { add } from 'date-fns';
 import { getTimeForUserBan } from '../../utils/funcs/get.time.for.user-ban';
 import { User } from '../../entities/users/user.entity';
 import { BansForUserByAdmin } from '../../entities/users/bans.for.user.by.admin.entity';
+import { EmailConfirmationForUsers } from '../../entities/users/email.confirmation.for.users.entity';
 
 @Injectable()
 export class UsersRepository {
@@ -14,6 +14,8 @@ export class UsersRepository {
     @InjectRepository(User) private readonly usersRepo: Repository<User>,
     @InjectRepository(BansForUserByAdmin)
     private readonly bansRepo: Repository<BansForUserByAdmin>,
+    @InjectRepository(EmailConfirmationForUsers)
+    private readonly emailRepo: Repository<EmailConfirmationForUsers>,
   ) {}
 
   // async createOne(userCreationDto: UserCreationDto): Promise<User | null> {
@@ -85,41 +87,20 @@ export class UsersRepository {
       .set({ isBanned: banBody.isBanned })
       .where({ id: userId })
       .execute();
-
-    // await this.dataSource.query(
-    //   `
-    //   UPDATE public."bans_for_user_by_admin"
-    //   SET "banReason" = $1,
-    //     "banDate" = $2
-    //   WHERE "userId" = $3;
-    //   `,
-    //   [banBody.banReason, getTimeForUserBan(banBody.isBanned), userId],
-    // );
-
-    // await this.dataSource.query(
-    //   `
-    //   UPDATE public."user"
-    //   SET "isBanned" = $1
-    //   WHERE "id" = $2;
-    //   `,
-    //   [banBody.isBanned, userId],
-    // );
   }
 
-  async updateEmailConfirmation(id: string, code: string) {
-    await this.dataSource.query(
+  async updateEmailConfirmation(emailInfo: EmailConfirmationForUsers) {
+    await this.emailRepo.query(
       `
-      INSERT INTO public."email_confirmation_for_users" (
-        "confirmationCode",
-        "expirationDate",
-        "userId")
-      VALUES($1, $2, $3) 
+      INSERT INTO public."email_confirmation_for_users"
+      ("confirmationCode", "expirationDate", "userId")
+        VALUES($1, $2, $3) 
       ON CONFLICT ("userId") 
       DO 
         UPDATE SET "confirmationCode" = EXCLUDED."confirmationCode",
             "expirationDate" = EXCLUDED."expirationDate";
       `,
-      [code, add(new Date(), { hours: 1, minutes: 3 }), id],
+      [emailInfo.confirmationCode, emailInfo.expirationDate, emailInfo.user.id],
     );
   }
 
@@ -141,25 +122,21 @@ export class UsersRepository {
   }
 
   async updateConfirmationInUsers(id: string, isConfirmed: boolean) {
-    await this.dataSource.query(
-      `
-      UPDATE public."user"
-        SET "isConfirmed" = $1
-      WHERE "id" = $2;
-      `,
-      [isConfirmed, id],
-    );
+    await this.usersRepo
+      .createQueryBuilder()
+      .update(User)
+      .set({ isConfirmed: isConfirmed })
+      .where(`id = :id`, { id: id })
+      .execute();
   }
 
   async updatePassword(id: string, passHash: string, passSalt: string) {
-    await this.dataSource.query(
-      `
-      UPDATE public."user"
-        SET "password" = $1, "passwordSalt" = $2
-      WHERE "id" = $3;
-      `,
-      [passHash, passSalt, id],
-    );
+    await this.usersRepo
+      .createQueryBuilder()
+      .update(User)
+      .set({ passwordHash: passHash, passwordSalt: passSalt })
+      .where(`id = :id`, { id: id })
+      .execute();
   }
 
   async deleteOne(id: string): Promise<boolean> {

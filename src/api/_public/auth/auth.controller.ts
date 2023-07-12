@@ -49,6 +49,7 @@ export class PublicAuthController {
     await this.deviceService.createNewDevice(
       currentUserData,
       tokens.refresh_token,
+      user,
     );
 
     res
@@ -78,47 +79,8 @@ export class PublicAuthController {
   @Post('registration')
   async registerMe(@Body() body: UserBody) {
     const { login, password, email } = body;
-
-    const isLoginExists: User = await this.userQ.getOneByLoginOrEmail(login);
-    if (!isLoginExists) {
-      throw new Errors.BAD_REQUEST({
-        errorsMessages: [
-          {
-            message: 'Something went wrong',
-            field: 'login',
-          },
-        ],
-      });
-    }
-
-    const isEmailExists: User = await this.userQ.getOneByLoginOrEmail(email);
-    if (!isEmailExists) {
-      throw new Errors.BAD_REQUEST({
-        errorsMessages: [
-          {
-            message: 'Something went wrong',
-            field: 'email',
-          },
-        ],
-      });
-    }
-
-    const user: User = await this.userService.createOneUser(
-      login,
-      email,
-      password,
-      false,
-    );
-    if (!user) {
-      return { message: 'all good' };
-    } else {
-      throw new Errors.BAD_REQUEST({
-        errorsMessages: {
-          message: 's',
-          field: 'login',
-        },
-      });
-    }
+    await this.userService.createOneUser(login, email, password, false);
+    return;
   }
 
   @Post('password-recovery')

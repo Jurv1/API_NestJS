@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UserLoginDataDto } from '../../../api/_public/auth/dto/user-login-data.dto';
 import { JwtService } from '@nestjs/jwt';
-import { DeviceCreateDto } from '../../dto/devices/dto/device-create.dto';
 import { DevicesRepository } from './devices.repository';
+import { Device } from '../../entities/devices/device.entity';
+import { User } from '../../entities/users/user.entity';
 
 @Injectable()
 export class DevicesService {
@@ -18,17 +19,20 @@ export class DevicesService {
     return await this.deviceRepository.deleteOneDeviceById(deviceId);
   }
 
-  async createNewDevice(userDto: UserLoginDataDto, refreshToken: any) {
+  async createNewDevice(
+    userDto: UserLoginDataDto,
+    refreshToken: any,
+    user: User,
+  ) {
     const decodedToken: any = await this.jwtService.decode(refreshToken);
-    const deviceDto: DeviceCreateDto = {
-      ip: userDto.deviceIp,
-      title: userDto.device,
-      lastActiveDate: new Date(decodedToken.iat * 1000).toISOString(),
-      deviceId: decodedToken.deviceId,
-      userId: userDto.userId,
-    };
+    const newDevice: Device = new Device();
+    newDevice.deviceId = decodedToken.deviceId;
+    newDevice.ip = userDto.deviceIp;
+    newDevice.title = userDto.device;
+    newDevice.user = user;
+    newDevice.LastActiveDate = new Date(decodedToken.iat * 1000);
 
-    return await this.deviceRepository.createNewDevice(deviceDto);
+    return await this.deviceRepository.createNewDevice(newDevice);
   }
 
   async updateDeviceIdAndIat(

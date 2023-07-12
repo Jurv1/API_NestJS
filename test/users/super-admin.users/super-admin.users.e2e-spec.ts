@@ -67,7 +67,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder('', validPassword, validUserEmail))
+        .send(userObjectBuilder('', validPassword, validUserEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(loginField));
@@ -77,7 +77,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, '', validUserEmail))
+        .send(userObjectBuilder(validUserLogin, '', validUserEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(passwordField));
@@ -87,7 +87,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, validPassword, ''))
+        .send(userObjectBuilder(validUserLogin, validPassword, ''))
         .expect(400);
 
       expect(request.body).toEqual(makeException(emailField));
@@ -97,7 +97,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(longLogin, validPassword, validUserEmail))
+        .send(userObjectBuilder(longLogin, validPassword, validUserEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(loginField));
@@ -107,7 +107,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, longPassword, validUserEmail))
+        .send(userObjectBuilder(validUserLogin, longPassword, validUserEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(passwordField));
@@ -117,7 +117,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, validUserLogin, invalidEmail))
+        .send(userObjectBuilder(validUserLogin, validPassword, invalidEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(emailField));
@@ -127,7 +127,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(IntLogin, validPassword, validUserEmail))
+        .send(userObjectBuilder(IntLogin, validPassword, validUserEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(loginField));
@@ -137,7 +137,7 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, intPassword, validUserEmail))
+        .send(userObjectBuilder(validUserLogin, intPassword, validUserEmail))
         .expect(400);
 
       expect(request.body).toEqual(makeException(passwordField));
@@ -149,7 +149,7 @@ describe('Testing operations with users by super-admin', () => {
       await agent
         .post(baseSAUserUrl)
         .auth(superAdminFakeLoginPassword, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, intPassword, validUserEmail))
+        .send(userObjectBuilder(validUserLogin, intPassword, validUserEmail))
         .expect(401);
     });
 
@@ -157,7 +157,7 @@ describe('Testing operations with users by super-admin', () => {
       await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminFakeLoginPassword)
-        .set(userObjectBuilder(validUserLogin, intPassword, validUserEmail))
+        .send(userObjectBuilder(validUserLogin, intPassword, validUserEmail))
         .expect(401);
     });
   });
@@ -170,7 +170,9 @@ describe('Testing operations with users by super-admin', () => {
         const request = await agent
           .post(baseSAUserUrl)
           .auth(superAdminLogin, superAdminPassword)
-          .set(userObjectBuilder(validUserLogin, validPassword, validUserEmail))
+          .send(
+            userObjectBuilder(validUserLogin, validPassword, validUserEmail),
+          )
           .expect(201);
 
         expect(request.body).toEqual(userCreatedObject);
@@ -180,7 +182,7 @@ describe('Testing operations with users by super-admin', () => {
         const request = await agent
           .post(baseSAUserUrl)
           .auth(superAdminLogin, superAdminPassword)
-          .set(
+          .send(
             userObjectBuilder(validUserLogin, validPassword, validUserEmail2),
           )
           .expect(400);
@@ -192,7 +194,7 @@ describe('Testing operations with users by super-admin', () => {
         const request = await agent
           .post(baseSAUserUrl)
           .auth(superAdminLogin, superAdminPassword)
-          .set(
+          .send(
             userObjectBuilder(validUserLogin2, validPassword, validUserEmail),
           )
           .expect(400);
@@ -220,12 +222,12 @@ describe('Testing operations with users by super-admin', () => {
       const request = await agent
         .post(baseSAUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(userObjectBuilder(validUserLogin, validPassword, validUserEmail))
+        .send(userObjectBuilder(validUserLogin, validPassword, validUserEmail))
         .expect(201);
       const banResult = await agent
         .put(baseSAUserUrl + request.body.id + banUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(banUserObjectBuilder(validIsBannedTrue, shortBanReason))
+        .send(banUserObjectBuilder(validIsBannedTrue, shortBanReason))
         .expect(400);
       expect(banResult.body).toEqual(makeException(banReasonField));
     });
@@ -236,49 +238,61 @@ describe('Testing operations with users by super-admin', () => {
       const banResult = await agent
         .put(baseSAUserUrl + result.body.items[0].id + banUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(banUserObjectBuilder(validIsBannedTrue, invalidTypeForBanReason))
+        .send(banUserObjectBuilder(validIsBannedTrue, invalidTypeForBanReason))
         .expect(400);
       expect(banResult.body).toEqual(makeException(banReasonField));
     });
 
     it('should not ban user with invalid type on isBanned', async () => {
-      const result = await agent.get(baseSAUserUrl).expect(200);
+      const result = await agent
+        .get(baseSAUserUrl)
+        .auth(superAdminLogin, superAdminPassword)
+        .expect(200);
 
       const banResult = await agent
         .put(baseSAUserUrl + result.body.items[0].id + banUserUrl)
         .auth(superAdminLogin, superAdminPassword)
-        .set(banUserObjectBuilder(invalidIsBanned, validBanReason))
+        .send(banUserObjectBuilder(invalidIsBanned, validBanReason))
         .expect(400);
       expect(banResult.body).toEqual(makeException(isBannedField));
     });
 
     describe('it should ban/unban user', () => {
       it('should not ban user without creds', async () => {
-        const result = await agent.get(baseSAUserUrl).expect(200);
+        const result = await agent
+          .get(baseSAUserUrl)
+          .auth(superAdminLogin, superAdminPassword)
+          .expect(200);
         await agent
           .put(baseSAUserUrl + result.body.items[0].id + banUserUrl)
           .auth(superAdminFakeLoginPassword, superAdminPassword)
-          .set(banUserObjectBuilder(validIsBannedTrue, validBanReason))
+          .send(banUserObjectBuilder(validIsBannedTrue, validBanReason))
           .expect(401);
       });
 
       it('should ban user', async () => {
-        const result = await agent.get(baseSAUserUrl).expect(200);
+        const result = await agent
+          .get(baseSAUserUrl)
+          .auth(superAdminLogin, superAdminPassword)
+          .expect(200);
         await agent
           .put(baseSAUserUrl + result.body.items[0].id + banUserUrl)
           .auth(superAdminLogin, superAdminPassword)
-          .set(banUserObjectBuilder(validIsBannedTrue, validBanReason))
+          .send(banUserObjectBuilder(validIsBannedTrue, validBanReason))
           .expect(200);
         const newResult = await agent.get(baseSAUserUrl).expect(200);
         expect(newResult.body.items[0].banInfo).toEqual(bannedUserBanInfo);
       });
 
       it('should unban user', async () => {
-        const result = await agent.get(baseSAUserUrl).expect(200);
+        const result = await agent
+          .get(baseSAUserUrl)
+          .auth(superAdminLogin, superAdminPassword)
+          .expect(200);
         await agent
           .put(baseSAUserUrl + result.body.items[0].id + banUserUrl)
           .auth(superAdminLogin, superAdminPassword)
-          .set(banUserObjectBuilder(validIsBannedFalse, validBanReason))
+          .send(banUserObjectBuilder(validIsBannedFalse, validBanReason))
           .expect(200);
         const newResult = await agent.get(baseSAUserUrl).expect(200);
         expect(newResult.body.items[0].banInfo).toEqual(unbannedUserBanInfo);

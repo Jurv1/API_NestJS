@@ -1,6 +1,6 @@
-import { UserViewDto } from '../../dto/users/dto/user.view.dto';
+import { UserViewDto } from '../../dto/users/dto/view/user.view.dto';
 import { User } from '../../entities/users/user.entity';
-import { UserViewBloggerDto } from '../../dto/users/dto/user.view.blogger.dto';
+import { UserViewBloggerDto } from '../../dto/users/dto/view/user.view.blogger.dto';
 
 export class UserMapper {
   mapUser(obj: User): UserViewDto {

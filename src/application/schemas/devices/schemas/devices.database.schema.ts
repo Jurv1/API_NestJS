@@ -28,7 +28,7 @@ export class Device {
     const createdDevice = {
       ip: deviceCreateDto.ip,
       title: deviceCreateDto.title,
-      lastActiveDate: deviceCreateDto.lastActiveDate,
+      LastActiveDate: deviceCreateDto.LastActiveDate,
       deviceId: deviceCreateDto.deviceId,
       userId: deviceCreateDto.userId,
     };
