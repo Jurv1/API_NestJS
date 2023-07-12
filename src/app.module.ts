@@ -27,7 +27,7 @@ export const options: TypeOrmModuleOptions = {
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot(options),
+    TypeOrmModule.forRoot(defaultTypeOrm),
     AuthModule,
     MailModule,
     CqrsModule,
