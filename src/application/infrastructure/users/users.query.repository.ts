@@ -25,44 +25,18 @@ export class UsersQueryRepository {
     return await this.usersRepo
       .createQueryBuilder('u')
       .leftJoinAndSelect('u.bansForUserByAdmin', 'b')
-      .where('(u.login ILIKE :login OR u.email ILIKE :email)')
+      .where(`(u.login ILIKE :login OR u.email ILIKE :email)`)
       .andWhere('u.isBanned = :ban1 OR u.isBanned = :ban2')
-      .orderBy(`u.${Object.keys(sort)[0]}`, `${Object.values(sort)[0]}`)
-      .skip(pagination.skipValue)
-      .take(pagination.limitValue)
       .setParameters({
         login: filter['loginTerm'],
         email: filter['emailTerm'],
         ban1: filter['banCond'],
         ban2: filter['banCond1'],
       })
+      .orderBy(`u.${Object.keys(sort)[0]}`, Object.values(sort)[0])
+      .skip(pagination.skipValue)
+      .take(pagination.limitValue)
       .getMany();
-
-    // return await this.dataSource.query(
-    //   `
-    //   SELECT
-    //     Users."id",
-    //     Users."login",
-    //     Users."email",
-    //     Users."createdAt",
-    //     Users."isBanned",
-    //     Bans."banDate",
-    //     Bans."banReason"
-    //   FROM public."user" AS Users
-    //   LEFT JOIN public."bans_for_user_by_admin" AS Bans
-    //    ON Bans."userId" = Users."id"
-    //   WHERE ("login" ILIKE $1 OR "email" ILIKE $2)
-    //     AND ("isBanned" = $3 OR "isBanned" = $4)
-    //   ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}
-    //   LIMIT ${pagination.limitValue} OFFSET ${pagination.skipValue};
-    //   `,
-    //   [
-    //     filter['loginTerm'],
-    //     filter['emailTerm'],
-    //     filter['banCond'],
-    //     filter['banCond1'],
-    //   ],
-    // );
   }
 
   async countAllUsersRows(filter: { [key: string]: string | boolean }) {
