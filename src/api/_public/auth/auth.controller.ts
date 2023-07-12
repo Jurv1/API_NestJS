@@ -104,30 +104,18 @@ export class PublicAuthController {
   @HttpCode(204)
   @Post('registration-confirmation')
   async confirmRegistration(@Body('code') code: string) {
-    try {
-      const result = await this.authService.confirmEmail(code);
-      if (!result) {
-        throw new Errors.BAD_REQUEST({
-          errorsMessages: [
-            {
-              message: 'Something went wrong',
-              field: 'code',
-            },
-          ],
-        });
-      } else {
-        return { message: 'all good' };
-      }
-    } catch (err) {
-      console.log(err);
+    const result = await this.authService.confirmEmail(code);
+    if (!result) {
       throw new Errors.BAD_REQUEST({
-        errorsMessages: [
+        message: [
           {
             message: 'Something went wrong',
             field: 'code',
           },
         ],
       });
+    } else {
+      return { message: 'all good' };
     }
   }
 
@@ -136,24 +124,10 @@ export class PublicAuthController {
   @HttpCode(204)
   @Post('registration-email-resending')
   async resendRegistrationConfirming(@Body() body: EmailDto) {
-    try {
-      const result = await this.authService.resendConfirmationEmail(body.email);
-      if (!result) {
-        throw new Errors.BAD_REQUEST({
-          errorsMessages: [
-            {
-              message: 'Something went wrong',
-              field: 'email',
-            },
-          ],
-        });
-      }
-
-      return { message: 'all good' };
-    } catch (err) {
-      console.log(err);
+    const result = await this.authService.resendConfirmationEmail(body.email);
+    if (!result) {
       throw new Errors.BAD_REQUEST({
-        errorsMessages: [
+        message: [
           {
             message: 'Something went wrong',
             field: 'email',
@@ -161,6 +135,8 @@ export class PublicAuthController {
         ],
       });
     }
+
+    return { message: 'all good' };
   }
 
   @UseGuards(CustomGuardForRefreshToken)
