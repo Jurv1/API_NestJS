@@ -26,7 +26,9 @@ export class UserMapper {
         createdAt: el.createdAt.toISOString(),
         banInfo: {
           isBanned: el.isBanned,
-          banDate: el.bansForUserByAdmin.banDate || null,
+          banDate: el.bansForUserByAdmin.banDate
+            ? el.bansForUserByAdmin.banDate.toISOString()
+            : null,
           banReason: el.bansForUserByAdmin.banReason || null,
         },
       };
@@ -40,7 +42,9 @@ export class UserMapper {
         login: el.login,
         banInfo: {
           isBanned: true,
-          banDate: el.bansForUserByAdmin.banDate,
+          banDate: el.bansForUserByAdmin.banDate
+            ? el.bansForUserByAdmin.banDate.toISOString()
+            : null,
           banReason: el.bansForUserByAdmin.banReason,
         },
       };

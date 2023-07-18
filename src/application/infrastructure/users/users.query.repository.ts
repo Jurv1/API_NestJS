@@ -33,7 +33,7 @@ export class UsersQueryRepository {
         ban1: filter['banCond'],
         ban2: filter['banCond1'],
       })
-      .orderBy(`u."${Object.keys(sort)[0]}"`, Object.values(sort)[0])
+      .orderBy(`u.${Object.keys(sort)[0]}`, Object.values(sort)[0])
       .skip(pagination.skipValue)
       .take(pagination.limitValue)
       .getMany();

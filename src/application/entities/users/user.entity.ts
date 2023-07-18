@@ -44,7 +44,7 @@ export class User {
   createdAt: Date;
 
   @OneToOne(() => BansForUserByAdmin, (bans) => bans.user)
-  bansForUserByAdmin;
+  bansForUserByAdmin: BansForUserByAdmin;
 
   @OneToOne(
     () => EmailConfirmationForUsers,
