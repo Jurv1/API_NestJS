@@ -33,7 +33,7 @@ export class UsersQueryRepository {
         ban1: filter['banCond'],
         ban2: filter['banCond1'],
       })
-      .orderBy(`u.${Object.keys(sort)[0]}`, Object.values(sort)[0])
+      .orderBy(`u."${Object.keys(sort)[0]}"`, Object.values(sort)[0])
       .skip(pagination.skipValue)
       .take(pagination.limitValue)
       .getMany();
@@ -85,16 +85,6 @@ export class UsersQueryRepository {
         },
       },
     });
-
-    // return this.dataSource.query(
-    //   `
-    //   SELECT Users."id", "isConfirmed", "confirmationCode", "expirationDate"
-    //   FROM public."email_confirmation_for_users" AS Email
-    //       LEFT JOIN public."user" AS Users ON "confirmationCode" = $1
-    //   WHERE Users."id" = Email."userId";
-    //   `,
-    //   [confirmationCode],
-    // );
   }
 
   async getOneByPassCode(code: string): Promise<User | null> {
@@ -108,16 +98,6 @@ export class UsersQueryRepository {
         },
       },
     });
-
-    // return this.dataSource.query(
-    //   `
-    //   SELECT Users."id", "recoveryCode", "expirationDate"
-    //   FROM public."password_recovery_for_users" AS Pass
-    //       LEFT JOIN public."user" AS Users ON "RecoveryCode" = $1
-    //   WHERE Users."id" = Pass."userId";
-    //   `,
-    //   [code],
-    // );
   }
 
   async getConfirmationCodeByUserId(id: number) {
@@ -126,15 +106,5 @@ export class UsersQueryRepository {
       .where(`e."userId" = :id`)
       .setParameters({ id: id })
       .getOne();
-
-    // return await this.dataSource.query(
-    //   `
-    //   SELECT "confirmationCode" AS code
-    //   FROM public."email_confirmation_for_users"
-    //   WHERE
-    //     "userId" = $1;
-    //   `,
-    //   [id],
-    // );
   }
 }
