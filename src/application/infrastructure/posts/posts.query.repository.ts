@@ -1,10 +1,14 @@
-import { DataSource } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../../entities/posts/post.entity';
 import { Comment } from '../../entities/comments/comment.entity';
+import { PostsLike } from '../../entities/posts/posts.like.entity';
 
 export class PostsQueryRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
+  ) {}
 
   async getAllPosts(
     filter: { [key: string]: string | boolean },
@@ -40,6 +44,8 @@ export class PostsQueryRepository {
   }
 
   async getOnePost(id: string): Promise<Post[] | null> {
+    //const post = await this.postsRepo.createQueryBuilder('p').addSelect((query) => query.select('pL').from(PostsLike, 'pL').)
+
     return this.dataSource.query(
       `
       SELECT * FROM public."post"
