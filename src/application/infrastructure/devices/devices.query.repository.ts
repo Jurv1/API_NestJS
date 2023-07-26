@@ -25,10 +25,13 @@ export class DevicesQueryRepository {
     // );
   }
 
-  async getOneDeviceById(deviceId: string): Promise<Device[] | null> {
-    return this.deviseRepo.find({
+  async getOneDeviceById(deviceId: string): Promise<Device | null> {
+    return this.deviseRepo.findOne({
       where: {
         deviceId: deviceId,
+      },
+      relations: {
+        user: true,
       },
     });
     // return this.dataSource.query(

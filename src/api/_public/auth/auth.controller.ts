@@ -36,7 +36,7 @@ export class PublicAuthController {
   ) {}
 
   @Throttle(5, 10)
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(ThrottlerGuard, LocalAuthGuard)
   @HttpCode(200)
   @Post('login')
   async login(
