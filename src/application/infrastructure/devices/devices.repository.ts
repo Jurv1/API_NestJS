@@ -19,7 +19,7 @@ export class DevicesRepository {
       .createQueryBuilder('d')
       .delete()
       .from(Device)
-      .where('deviceId != :id AND userId = :userId', {
+      .where('deviceId != :id AND d.userId = :userId', {
         id: deviceId,
         userId: userId,
       })
@@ -35,38 +35,56 @@ export class DevicesRepository {
   }
 
   async deleteAllDevices(userId: string) {
-    return this.dataSource.query(
-      `
-      DELETE 
-      FROM public."device"
-      WHERE "userId" = $1;
-      `,
-      [userId],
-    );
+    return await this.devicesRepo
+      .createQueryBuilder('d')
+      .delete()
+      .where('d.userId = :id', { id: userId })
+      .execute();
+    // return this.dataSource.query(
+    //   `
+    //   DELETE
+    //   FROM public."device"
+    //   WHERE "userId" = $1;
+    //   `,
+    //   [userId],
+    // );
   }
 
   async updateDevice(oldDeviceId: string, newDeviceId: string, newIat: number) {
-    await this.dataSource.query(
-      `
-      UPDATE public."device"
-        SET "deviceId" = $1, 
-                "lastActiveDate" = $2
-      WHERE
-        "deviceId" = $3;
-      `,
-      [newDeviceId, new Date(newIat * 1000).toISOString(), oldDeviceId],
-    );
+    await this.devicesRepo
+      .createQueryBuilder('d')
+      .update(Device)
+      .set({ LastActiveDate: new Date(newIat * 1000), deviceId: newDeviceId })
+      .where('d.deviceId = :id', { id: oldDeviceId })
+      .execute();
+
+    // await this.dataSource.query(
+    //   `
+    //   UPDATE public."device"
+    //     SET "deviceId" = $1,
+    //             "lastActiveDate" = $2
+    //   WHERE
+    //     "deviceId" = $3;
+    //   `,
+    //   [newDeviceId, new Date(newIat * 1000).toISOString(), oldDeviceId],
+    // );
   }
 
   async updateDeviceIat(deviceId: string, iat: number): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      UPDATE public."device"
-        SET "lastActiveDate" = $1
-      WHERE "deviceId" = $2;
-      `,
-      [new Date(iat * 1000).toISOString(), deviceId],
-    );
+    const result = await this.devicesRepo
+      .createQueryBuilder('d')
+      .update(Device)
+      .set({ LastActiveDate: new Date(iat * 1000) })
+      .where('deviceId = :id', { id: deviceId })
+      .execute();
+    // const result = await this.dataSource.query(
+    //   `
+    //   UPDATE public."device"
+    //     SET "LastActiveDate" = $1
+    //   WHERE "deviceId" = $2;
+    //   `,
+    //   [new Date(iat * 1000).toISOString(), deviceId],
+    // );
 
     return result[1] === 1;
   }
