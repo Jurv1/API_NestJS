@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { BlogCreationDto } from '../../dto/blogs/dto/blog.creation.dto';
 import { BlogBody } from '../../dto/blogs/dto/body/blog.body';
 import { BannedUserDto } from '../../dto/blogs/dto/banned.user.dto';
@@ -8,7 +8,10 @@ import { Blog } from '../../entities/blogs/blog.entity';
 
 @Injectable()
 export class BlogsRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Blog) private readonly blogsRepo: Repository<Blog>,
+  ) {}
 
   async createOne(blogDto: BlogCreationDto): Promise<Blog[] | null> {
     return await this.dataSource.query(
@@ -43,14 +46,24 @@ export class BlogsRepository {
   }
 
   async updateOne(blogId: string, blogBody: BlogBody): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      UPDATE public."blog"
-      SET "name" = $1, "description" = $2, "websiteUrl" = $3
-      WHERE "id" = $4;
-      `,
-      [blogBody.name, blogBody.description, blogBody.websiteUrl, blogId],
-    );
+    const result = await this.blogsRepo
+      .createQueryBuilder()
+      .update(Blog)
+      .set({
+        name: blogBody.name,
+        description: blogBody.description,
+        websiteUrl: blogBody.websiteUrl,
+      })
+      .where('id = :id', { id: blogId })
+      .execute();
+    // const result = await this.dataSource.query(
+    //   `
+    //   UPDATE public."blog"
+    //   SET "name" = $1, "description" = $2, "websiteUrl" = $3
+    //   WHERE "id" = $4;
+    //   `,
+    //   [blogBody.name, blogBody.description, blogBody.websiteUrl, blogId],
+    // );
 
     return result[1] === 1;
   }
@@ -60,14 +73,20 @@ export class BlogsRepository {
     date: string | null,
     isBanned: boolean,
   ) {
-    await this.dataSource.query(
-      `
-      UPDATE public."blog"
-      SET "isBanned" = $1, "banDate" = $2
-      WHERE "id" = $3;
-      `,
-      [isBanned, date, blogId],
-    );
+    await this.blogsRepo
+      .createQueryBuilder()
+      .update(Blog)
+      .set({ isBanned: isBanned, banDate: date })
+      .where('id = :id', { id: blogId })
+      .execute();
+    // await this.dataSource.query(
+    //   `
+    //   UPDATE public."blog"
+    //   SET "isBanned" = $1, "banDate" = $2
+    //   WHERE "id" = $3;
+    //   `,
+    //   [isBanned, date, blogId],
+    // );
   }
 
   async updateIsBannedForBlogs(
@@ -75,14 +94,21 @@ export class BlogsRepository {
     date: string,
     isBanned: boolean,
   ) {
-    await this.dataSource.query(
-      `
-      UPDATE public."blog" AS Blogs
-        SET "isBanned" = $1, "banDate" = $2
-      WHERE Blogs."ownerId" = $3;
-      `,
-      [isBanned, date, userId],
-    );
+    await this.blogsRepo
+      .createQueryBuilder()
+      .update(Blog)
+      .set({ isBanned: isBanned, banDate: date })
+      .where('ownerId = :id', { id: userId })
+      .execute();
+
+    // await this.dataSource.query(
+    //   `
+    //   UPDATE public."blog" AS Blogs
+    //     SET "isBanned" = $1, "banDate" = $2
+    //   WHERE Blogs."ownerId" = $3;
+    //   `,
+    //   [isBanned, date, userId],
+    // );
   }
 
   async addBlogToBan(blogId: string) {
@@ -106,13 +132,20 @@ export class BlogsRepository {
   }
 
   async deleteOne(id: string): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      DELETE FROM public."blog"
-      WHERE "id" = $1;
-      `,
-      [id],
-    );
+    const result = await this.blogsRepo
+      .createQueryBuilder()
+      .delete()
+      .from(Blog)
+      .where('id = :id', { id: id })
+      .execute();
+
+    // const result = await this.dataSource.query(
+    //   `
+    //   DELETE FROM public."blog"
+    //   WHERE "id" = $1;
+    //   `,
+    //   [id],
+    // );
 
     return result[1] === 1;
   }

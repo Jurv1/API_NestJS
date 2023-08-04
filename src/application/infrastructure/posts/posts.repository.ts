@@ -1,11 +1,14 @@
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { PostCreationDto } from '../../dto/posts/dto/post.creation.dto';
 import { PostUpdateBody } from '../../dto/posts/dto/post.update.body';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../../entities/posts/post.entity';
 
 export class PostsRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
+  ) {}
 
   async createOne(postDto: PostCreationDto): Promise<Post[] | null> {
     return await this.dataSource.query(
@@ -42,32 +45,30 @@ export class PostsRepository {
   }
 
   async updatePost(id: string, postUpdateBody: PostUpdateBody) {
-    const result = await this.dataSource.query(
-      `
-      UPDATE public."post"
-      SET "title" = $1, "shortDescription" = $2, "content" = $3
-      WHERE "id" = $4 AND "blogId" = $5;
-      `,
-      [
-        postUpdateBody.title,
-        postUpdateBody.shortDescription,
-        postUpdateBody.content,
-        id,
-        postUpdateBody.blogId,
-      ],
-    );
+    const result = await this.postsRepo
+      .createQueryBuilder()
+      .update(Post)
+      .set({
+        title: postUpdateBody.title,
+        shortDescription: postUpdateBody.shortDescription,
+        content: postUpdateBody.content,
+      })
+      .where('id = :id AND blogId = :blogId', {
+        id: id,
+        blogId: postUpdateBody.blogId,
+      })
+      .execute();
 
     return result[1] === 1;
   }
 
   async deleteOne(id: string): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      DELETE FROM public."post"
-      WHERE "id" = $1;
-      `,
-      [id],
-    );
+    const result = await this.postsRepo
+      .createQueryBuilder()
+      .delete()
+      .from(Post)
+      .where('id = :id', { id: id })
+      .execute();
     return result[1] === 1;
   }
 
@@ -75,14 +76,12 @@ export class PostsRepository {
     postId: string,
     blogId: string,
   ): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      DELETE FROM public."post"
-      WHERE "id" = $1
-        AND "blogId" = $2;
-      `,
-      [postId, blogId],
-    );
+    const result = await this.postsRepo
+      .createQueryBuilder()
+      .delete()
+      .from(Post)
+      .where('id = :id AND blogId = :blogId', { id: postId, blogId: blogId })
+      .execute();
     return result[1] === 1;
   }
 

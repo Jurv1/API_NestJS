@@ -25,8 +25,10 @@ export class UsersQueryRepository {
     return await this.usersRepo
       .createQueryBuilder('u')
       .leftJoinAndSelect('u.bansForUserByAdmin', 'b')
-      .where('(u.login ILIKE :login OR u.email ILIKE :email)', {
+      .where('u.login ILIKE :login', {
         login: filter['loginTerm'],
+      })
+      .orWhere('u.email ILIKE :email', {
         email: filter['emailTerm'],
       })
       .andWhere('u.isBanned = :ban1 OR u.isBanned = :ban2', {

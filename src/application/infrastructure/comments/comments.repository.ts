@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CommentCreatingDto } from '../../dto/comments/dto/comment.creating.dto';
 import { Comment } from '../../entities/comments/comment.entity';
 
 @Injectable()
 export class CommentsRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Comment)
+    private readonly commentRepo: Repository<Comment>,
+  ) {}
 
   async createComment(
     commentCreationDTO: CommentCreatingDto,
@@ -40,36 +44,57 @@ export class CommentsRepository {
   }
 
   async deleteOne(id: string): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      DELETE FROM public."comment"
-      WHERE "id" = $1;
-      `,
-      [id],
-    );
+    const result = await this.commentRepo
+      .createQueryBuilder()
+      .delete()
+      .from(Comment)
+      .where('id = :id', { id: id })
+      .execute();
+
+    // const result = await this.dataSource.query(
+    //   `
+    //   DELETE FROM public."comment"
+    //   WHERE "id" = $1;
+    //   `,
+    //   [id],
+    // );
     return result[1] === 1;
   }
 
   async updateBanStatusForCommentOwner(userId: string, banStatus: boolean) {
-    return await this.dataSource.query(
-      `
-      UPDATE public."comment"
-      SET "userStatus" = $1
-      WHERE "commentatorId" = $2;
-      `,
-      [banStatus, userId],
-    );
+    return await this.commentRepo
+      .createQueryBuilder()
+      .update(Comment)
+      .set({ userStatus: banStatus })
+      .where('commentatorId = :id', { id: userId })
+      .execute();
+
+    // return await this.dataSource.query(
+    //   `
+    //   UPDATE public."comment"
+    //   SET "userStatus" = $1
+    //   WHERE "commentatorId" = $2;
+    //   `,
+    //   [banStatus, userId],
+    // );
   }
 
   async updateCommentById(id: string, content: string): Promise<boolean> {
-    const result = await this.dataSource.query(
-      `
-      UPDATE public."comments"
-      SET "content" = $1
-      WHERE "id" = $2;
-      `,
-      [content, id],
-    );
+    const result = await this.commentRepo
+      .createQueryBuilder()
+      .update(Comment)
+      .set({ content: content })
+      .where('id = :id', { id: id })
+      .execute();
+
+    // const result = await this.dataSource.query(
+    //   `
+    //   UPDATE public."comments"
+    //   SET "content" = $1
+    //   WHERE "id" = $2;
+    //   `,
+    //   [content, id],
+    // );
 
     return result[1] === 1;
   }

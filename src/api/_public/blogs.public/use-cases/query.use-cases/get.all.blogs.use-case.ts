@@ -6,7 +6,7 @@ import { paginator } from '../../../../../application/utils/paginator/paginator'
 export class GetAllBlogsQueryCommand {
   constructor(
     public filter: { [key: string]: string | boolean },
-    public sort: { [key: string]: string },
+    public sort: { [key: string]: 'ASC' | 'DESC' },
     public pagination: {
       skipValue: number;
       limitValue: number;
@@ -30,7 +30,7 @@ export class GetAllBlogsUseCase
       command.sort,
       command.pagination,
     );
-    const mapperBlogs = await this.blogMapper.mapBlogs(allBlogs);
+    const mapperBlogs = this.blogMapper.mapBlogs(allBlogs);
     const countedBlogs = await this.blogQ.countAllBlogs(command.filter);
 
     return paginator(
